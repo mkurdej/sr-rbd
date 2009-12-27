@@ -3,6 +3,8 @@
  */
 package ddb.db;
 
+import java.sql.SQLException;
+
 /** 
  * <!-- begin-UML-doc -->
  * Wyjatek rzucany, gdy wystapi blad w bazie danych.
@@ -10,7 +12,18 @@ package ddb.db;
  * @author User
  * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
  */
-public class DBException {
+public class DBException extends Exception
+{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public DBException(SQLException e)
+	{
+		errorMessage = e.getMessage();
+		errorCode = Integer.toString(e.getErrorCode());
+	}
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
@@ -30,11 +43,9 @@ public class DBException {
 	 * @return
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public String getErrorMessage() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-		return null;
-		// end-user-code
+	public String getErrorMessage()
+	{
+		return errorMessage;
 	}
 
 	/** 
@@ -43,10 +54,8 @@ public class DBException {
 	 * @return
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public String getErrorCode() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-		return null;
-		// end-user-code
+	public String getErrorCode()
+	{
+		return errorCode;
 	}
 }

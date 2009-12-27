@@ -1,64 +1,86 @@
-/**
- * 
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
  */
+
 package ddb.db;
 
-import static ddb.db.DbParser.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-/** 
- * <!-- begin-UML-doc -->
- * <!-- end-UML-doc -->
- * @author User
- * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
+import ddb.Logger;
+
+/**
+ *
+ * @author xeonic
  */
-public class DbConnectorImpl implements DbConnector {
-	/** 
-	 * /* (non-Javadoc)
-	 *  * @see DbConnector#query(String queryString)
-	 * 
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
-	 */
-	public String query(String queryString) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-		return null;
-		// end-user-code
-	}
+public class DbConnectorImpl implements DbConnector
+{
+    private static final String DRIVER = "com.mysql.jdbc.Driver";
+    private static final String URL_BEGIN = "jdbc:mysql";
+    private static final String DATABASE = "sr";
+    private static final String HOST = "localhost";
+    private static final String USER = "sr";
+    private static final String PASSWORD = "sr";
 
-	/** 
-	 * /* (non-Javadoc)
-	 *  * @see DbConnector#isLockPresent(String lockQuery)
-	 * 
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
-	 */
-	public boolean isLockPresent(String lockQuery) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-		return false;
-		// end-user-code
-	}
+    private Connection connection;
+    private static final String LOGGING_NAME = "DbConnector";
 
-	/** 
-	 * @generated "Singleton (com.ibm.xtools.patterns.content.gof.creational.singleton.SingletonPattern)"
-	 */
-	private static final DbConnectorImpl instance = new DbConnectorImpl();
+    private static final DbConnector instance = new DbConnectorImpl();
 
-	/** 
-	 * @generated "Singleton (com.ibm.xtools.patterns.content.gof.creational.singleton.SingletonPattern)"
-	 */
-	private DbConnectorImpl() {
-		// begin-user-code
-		// TODO: Implement constructor logic
-		// end-user-code
-	}
+    private DbConnectorImpl()
+    {
+        String url = URL_BEGIN + "://" + HOST + "/" + DATABASE;
 
-	/** 
-	 * @generated "Singleton (com.ibm.xtools.patterns.content.gof.creational.singleton.SingletonPattern)"
-	 */
-	public static DbConnectorImpl getInstance() {
-		// begin-user-code
+        try
+        {
+            Class.forName(DRIVER).newInstance();
+            connection = DriverManager.getConnection(url, USER, PASSWORD);
+        }
+        catch (InstantiationException ex)
+        {
+            Logger.getInstance().log("Can't connect to the database: " + ex.getMessage(),
+                    LOGGING_NAME, Logger.Level.SEVERE);
+        }
+        catch (IllegalAccessException ex)
+        {
+            Logger.getInstance().log("Can't connect to the database: " + ex.getMessage(),
+                    LOGGING_NAME, Logger.Level.SEVERE);
+        }
+        catch (ClassNotFoundException ex)
+        {
+            Logger.getInstance().log("Can't connect to the database: " + ex.getMessage(),
+                    LOGGING_NAME, Logger.Level.SEVERE);
+        }
+        catch (SQLException ex)
+        {
+            Logger.getInstance().log("Can't connect to the database: " + ex.getMessage(),
+                    LOGGING_NAME, Logger.Level.SEVERE);
 
-		return instance;
-		// end-user-code
-	}
+        }
+    }
+
+    public static DbConnector getInstance()
+    {
+        return instance;
+    }
+
+    public DatabaseTable query(String queryString) throws DBException
+    {
+    	Statement statement = null;
+    	DatabaseTable result = null;
+        try
+        {
+        	statement = connection.createStatement();
+			statement.execute(queryString);
+			result = new DatabaseTable(statement.getResultSet());
+		} 
+        catch (SQLException e) 
+        {
+        	throw new DBException(e);
+		}
+        return result;
+    }
 }
