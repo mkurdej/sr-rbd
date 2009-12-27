@@ -3,6 +3,8 @@
  */
 package ddb.communication;
 
+import ddb.msg.Message;
+
 /** 
  * <!-- begin-UML-doc -->
  * <!-- end-UML-doc -->
@@ -16,5 +18,5 @@ public interface UdpSender {
 	 * @param msg
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void sendToAll(Object msg);
+	public void sendToAll(Message msg);
 }
