@@ -9,7 +9,7 @@ package ddb.db;
  * @author User
  * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
  */
-public enum SQL_OPERATION_TYPE {
+public enum SqlOperationType {
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
@@ -45,5 +45,7 @@ public enum SQL_OPERATION_TYPE {
 	 * <!-- end-UML-doc -->
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	LOCK
+	LOCK, 
+	UNLOCK, 
+	UNDEFINED
 }
