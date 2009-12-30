@@ -3,13 +3,16 @@
  */
 package ddb.tpc.coh;
 
+import ddb.tpc.msg.AckPreCommitMessage;
+import ddb.tpc.msg.CanCommitMessage;
+
 /** 
  * <!-- begin-UML-doc -->
  * <!-- end-UML-doc -->
  * @author User
  * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
  */
-public class PreparedState implements CohordState {
+public class PreparedState extends CohordState {
 	/** 
 	 * /* (non-Javadoc)
 	 *  * @see TimeoutListener#onTimeout()
@@ -17,10 +20,8 @@ public class PreparedState implements CohordState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void onTimeout() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		this.cohord.endTransaction();
+		this.cohord.setState(new AbortState());
 	}
 
 	/** 
@@ -30,10 +31,8 @@ public class PreparedState implements CohordState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void onPreCommit() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		this.cohord.replyToCoordinator(new AckPreCommitMessage());
+		this.cohord.changeState(new WaitingDoCommit());
 	}
 
 	/** 
@@ -42,7 +41,7 @@ public class PreparedState implements CohordState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void onCanCommit() {
+	public void onCanCommit(CanCommitMessage message) {
 		// begin-user-code
 		// TODO Auto-generated method stub
 

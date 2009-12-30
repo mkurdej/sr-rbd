@@ -3,8 +3,11 @@
  */
 package ddb.tpc;
 
+import java.util.HashSet;
 import java.util.Set;
 import ddb.communication.TcpSender;
+import ddb.db.DatabaseState;
+import ddb.db.DbConnector;
 import ddb.msg.Message;
 import ddb.tpc.msg.TPCMessage;
 
@@ -16,6 +19,7 @@ import ddb.tpc.msg.TPCMessage;
  */
 public abstract class TPCParticipant implements MessageRecipient,
 		TimeoutListener {
+
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
@@ -67,25 +71,45 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	private String queryString;
-
+	/**
+	 * 
+	 */
+	private DatabaseState databaseState;
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	private TcpSender tcpSender;
+	protected TcpSender tcpSender;
 
+	/**
+	 * 
+	 */
+	protected DbConnector connector;
+
+	public TPCParticipant() {
+		this.endTransactionListeners = new HashSet<EndTransactionListener>();
+		this.timeoutGenerator = new TimeoutGenerator();
+		this.messageQueue = new MessageQueue();
+		startThread();
+	}
+	
+	public DatabaseState getDatabaseState() {
+		return databaseState;
+	}
+
+	public void setDatabaseState(DatabaseState databaseState) {
+		this.databaseState = databaseState;
+	}
+	
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * Ustawia id transakcji.
 	 * <!-- end-UML-doc -->
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void setTransactionId() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+	public void setTransactionId(String transactionId) {
+		this.transactionId = transactionId;
 	}
 
 	/** 
@@ -96,10 +120,7 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void processMessage(Message message) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		//TODO
 	}
 
 	/** 
@@ -110,10 +131,7 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public String getTransactionId() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-		return null;
-		// end-user-code
+		return this.transactionId;
 	}
 
 	/** 
@@ -124,10 +142,7 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void setTableName(String tableName) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		this.tableName = tableName;
 	}
 
 	/** 
@@ -138,10 +153,7 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public String getTableName() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-		return null;
-		// end-user-code
+		return this.tableName;
 	}
 
 	/** 
@@ -151,10 +163,8 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void waitForMessage() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		Message msg = this.messageQueue.getMessage();
+		onNewMessage(msg);
 	}
 
 	/** 
@@ -167,10 +177,7 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	protected void startTimer(long miliseconds) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		this.timeoutGenerator.startTimer(miliseconds);
 	}
 
 	/** 
@@ -180,10 +187,7 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	protected void stopTimer() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		this.timeoutGenerator.stopTimer();
 	}
 
 	/** 
@@ -193,7 +197,7 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * @param message
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	protected abstract void onNewMessage(TPCMessage message);
+	protected abstract void onNewMessage(Message message);
 
 	/** 
 	 * <!-- begin-UML-doc -->
@@ -205,10 +209,9 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public final void endTransaction() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		stopThread();
+		cleanupTransaction();
+		notifyEndTransactionListeners();
 	}
 
 	/** 
@@ -226,10 +229,7 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	private void startThread() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		//TODO
 	}
 
 	/** 
@@ -239,37 +239,25 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	private void stopThread() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		//TODO
 	}
 
 	/** 
-	 * <!-- begin-UML-doc -->
 	 * Dodaje obiekt, ktory chce zostac poinformowany o koncu transakcji.
-	 * <!-- end-UML-doc -->
 	 * @param listener
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void addEndTransactionListener(EndTransactionListener listener) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		endTransactionListeners.add(listener);
 	}
 
 	/** 
-	 * <!-- begin-UML-doc -->
 	 * Informuje wszystkich zainteresowanych o tym, ze zakonczono transakcje.
-	 * <!-- end-UML-doc -->
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	private void notifyEndTransactionListeners() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		for(EndTransactionListener listener : this.endTransactionListeners) {
+			listener.onEndTransaction(this);
+		}
 	}
 
 	/** 
@@ -280,10 +268,7 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void setQueryString(String queryString) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		this.queryString = queryString;
 	}
 
 	/** 
@@ -294,9 +279,18 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public String getQueryString() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-		return null;
-		// end-user-code
+		return queryString;
+	}
+
+	public TcpSender getTcpSender() {
+		return tcpSender;
+	}
+
+	public void setTcpSender(TcpSender tcpSender) {
+		this.tcpSender = tcpSender;
+	}
+	
+	public void setConnector(DbConnector connector) {
+		this.connector = connector;
 	}
 }

@@ -3,8 +3,11 @@
  */
 package ddb.tpc.cor;
 
+import ddb.msg.client.SuccessMessage;
+import ddb.msg.client.TimeoutMessage;
 import ddb.tpc.msg.HaveCommittedMessage;
 import ddb.tpc.msg.ErrorMessage;
+import ddb.tpc.msg.TransactionMessage;
 
 /** 
  * <!-- begin-UML-doc -->
@@ -12,7 +15,7 @@ import ddb.tpc.msg.ErrorMessage;
  * @author User
  * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
  */
-public class CommitState implements CoordinatorState {
+public class CommitState extends CoordinatorState {
 	/** 
 	 * /* (non-Javadoc)
 	 *  * @see TimeoutListener#onTimeout()
@@ -20,10 +23,7 @@ public class CommitState implements CoordinatorState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void onTimeout() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		coordinator.abortTransaction(new TimeoutMessage());
 	}
 
 	/** 
@@ -72,10 +72,8 @@ public class CommitState implements CoordinatorState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void onHaveCommitted(HaveCommittedMessage message) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		coordinator.getTcpSender().sendToClient(new SuccessMessage(), coordinator.getClientAddress(), coordinator.getClientPort());
+		coordinator.endTransaction();
 	}
 
 	/** 
@@ -84,7 +82,7 @@ public class CommitState implements CoordinatorState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void onTransaction() {
+	public void onTransaction(TransactionMessage message) {
 		// begin-user-code
 		// TODO Auto-generated method stub
 

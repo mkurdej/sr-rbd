@@ -21,7 +21,7 @@ public abstract class Message {
 	 * <!-- end-UML-doc -->
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	private String senderPort;
+	private int senderPort;
 
 	/** 
 	 * <!-- begin-UML-doc -->
@@ -30,10 +30,7 @@ public abstract class Message {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public String getSenderAddress() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-		return null;
-		// end-user-code
+		return this.senderAddress;
 	}
 
 	/** 
@@ -42,10 +39,17 @@ public abstract class Message {
 	 * @return
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public String getSenderPort() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-		return null;
-		// end-user-code
+	public int getSenderPort() {
+		return this.senderPort;
 	}
+
+	public void setSenderAddress(String senderAddress) {
+		this.senderAddress = senderAddress;
+	}
+
+	public void setSenderPort(int senderPort) {
+		this.senderPort = senderPort;
+	}
+	
+	
 }

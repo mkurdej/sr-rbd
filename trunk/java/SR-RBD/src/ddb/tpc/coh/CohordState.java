@@ -4,6 +4,7 @@
 package ddb.tpc.coh;
 
 import ddb.tpc.TimeoutListener;
+import ddb.tpc.msg.CanCommitMessage;
 
 /** 
  * <!-- begin-UML-doc -->
@@ -11,32 +12,44 @@ import ddb.tpc.TimeoutListener;
  * @author User
  * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
  */
-public interface CohordState extends TimeoutListener {
+abstract public class CohordState implements TimeoutListener {
+	/**
+	 * 
+	 */
+	protected CohordImpl cohord;
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void onPreCommit();
+	abstract public void onPreCommit();
 
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void onCanCommit();
+	abstract public void onCanCommit(CanCommitMessage message);
 
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void onAbort();
+	abstract public void onAbort();
 
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void onDoCommit();
+	abstract public void onDoCommit();
+
+	public CohordImpl getCohord() {
+		return cohord;
+	}
+
+	public void setCohord(CohordImpl cohord) {
+		this.cohord = cohord;
+	}
 }

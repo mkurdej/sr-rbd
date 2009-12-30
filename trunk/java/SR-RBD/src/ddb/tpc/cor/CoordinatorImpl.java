@@ -3,153 +3,139 @@
  */
 package ddb.tpc.cor;
 
+import ddb.msg.Message;
+import ddb.msg.client.ResultsetMessage;
+import ddb.msg.client.TimeoutMessage;
 import ddb.tpc.TPCParticipant;
 import static ddb.db.DatabaseState.*;
 import static ddb.communication.TcpSender.*;
 import static ddb.db.DbConnector.*;
+
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import javax.sql.rowset.spi.TransactionalWriter;
+
+import sun.security.jca.GetInstance;
+
+import ddb.tpc.msg.AbortMessage;
+import ddb.tpc.msg.AckPreCommitMessage;
+import ddb.tpc.msg.HaveCommittedMessage;
+import ddb.tpc.msg.NoForCommitMessage;
 import ddb.tpc.msg.TPCMessage;
+import ddb.tpc.msg.TransactionMessage;
+import ddb.tpc.msg.YesForCommitMessage;
 import ddb.db.DBException;
+import ddb.db.DatabaseState;
+import ddb.db.DatabaseTable;
+import ddb.db.DbConnector;
+import ddb.db.DbConnectorImpl;
 
 /** 
- * <!-- begin-UML-doc -->
- * <!-- end-UML-doc -->
- * @author User
- * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
  */
-public class CoordinatorImpl extends TPCParticipant {
-	/** 
-	 * <!-- begin-UML-doc -->
-	 * <!-- end-UML-doc -->
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
+public class CoordinatorImpl extends Coordinator {
+	private static final int TIMEOUT = 5000;
+	
+	/**
+	 * 
 	 */
 	private CoordinatorState state;
 	/** 
-	 * <!-- begin-UML-doc -->
 	 * Lista pozytywnych&nbsp;odpowiedzi&nbsp;od&nbsp;wezlow
-	 * <!-- end-UML-doc -->
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	private Set<String> answers;
 	/** 
-	 * <!-- begin-UML-doc -->
 	 * Lista wezlo bioracych udzial w transakcji
-	 * <!-- end-UML-doc -->
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	private Set<String> nodes;
-
-	/** 
-	 * <!-- begin-UML-doc -->
+	/**
 	 * Adres klienta, ktory zarzadal wykonania transakcji
-	 * <!-- end-UML-doc -->
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	private String clientAddress;
 	/** 
-	 * <!-- begin-UML-doc -->
-	 * Numer&nbsp;portu&nbsp;klienta, ktory zarzadal wykonania transakcji
+	 * Numer portu klienta, ktory zarzadal wykonania transakcji
 	 * <!-- end-UML-doc -->
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	private String clientPort;
+	private int clientPort;
+	
+	public CoordinatorImpl() {
+		//this.connector = DbConnectorImpl.getInstance();
+		setState(new InitState());
+		this.answers = new HashSet<String>();
+	}
+
+	protected void setState(CoordinatorState state) {
+		this.state = state;
+		state.setCoordinator(this);
+	}
+
 
 	/** 
-	 * <!-- begin-UML-doc -->
 	 * Czysci wszystkie odpowiedzi.
-	 * <!-- end-UML-doc -->
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	private void clearAnswers() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		this.answers.clear();
 	}
 
 	/** 
-	 * <!-- begin-UML-doc -->
 	 * Ustawia liste wezlow bioracych udzial w transakcji.
-	 * <!-- end-UML-doc -->
 	 * @param nodeList
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void setNodeList(String... nodeList) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+	public void setNodeList(Set<String> nodeList) {
+		this.nodes = nodeList;
 	}
 
 	/** 
-	 * <!-- begin-UML-doc -->
 	 * <p>
 	 *     Ustawia odpowiedz od podanego wezla
 	 * </p>
-	 * <!-- end-UML-doc -->
-	 * @param nodeName
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
+	 * @param nodeName nazwa wezla
 	 */
 	private void addAnswer(String nodeName) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		this.answers.add(nodeName);
 	}
 
 	/** 
-	 * <!-- begin-UML-doc -->
 	 * Sprawdza czy wszystkie wezly odpowiedzialy pozytywnie.
-	 * <!-- end-UML-doc -->
 	 * @return
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	private boolean checkAnswers() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-		return false;
-		// end-user-code
+		return this.answers.size() == this.nodes.size();
 	}
 
 	/** 
-	 * <!-- begin-UML-doc -->
 	 * Wyslij wiadomosc do wszystkich wezlow bioracych udzial w transakcji.
-	 * <!-- end-UML-doc -->
 	 * @param message
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void broadcastMessage(TPCMessage message) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		this.clearAnswers();
+		message.setTransactionId(getTransactionId());
+		this.tcpSender.sendToAllNodes(message);
 	}
 
 	/** 
-	 * <!-- begin-UML-doc -->
 	 * Zmienia stan koordynatora
-	 * <!-- end-UML-doc -->
-	 * @param state
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
+	 * @param state nowy stan
 	 */
 	public void changeState(CoordinatorState state) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		this.stopTimer();
+		this.startTimer(TIMEOUT);
+		this.state = state;
+		state.setCoordinator(this);
+		this.waitForMessage();
 	}
 
 	/** 
-	 * <!-- begin-UML-doc -->
 	 * Metoda wywolywana, gdy transakcja zostala zakonczona niepomyslnie.
-	 * <!-- end-UML-doc -->
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void abortTransaction() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+	public void abortTransaction(Message messageToClient) {
+		broadcastMessage(new AbortMessage());
+		tcpSender.sendToClient(messageToClient, getClientAddress(), getClientPort());
+		setState(new AbortState());
+		endTransaction();
 	}
 
 	/** 
@@ -159,10 +145,7 @@ public class CoordinatorImpl extends TPCParticipant {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void onTimeout() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		state.onTimeout();
 	}
 
 	/** 
@@ -185,12 +168,15 @@ public class CoordinatorImpl extends TPCParticipant {
 	 * @param nextState Nastepny stan.
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void processAnswer(String node, TPCMessage message,
-			CoordinatorState nextState) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+	public void processAnswer(String node, TPCMessage message, CoordinatorState nextState) {
+		addAnswer(node);
+		if(checkAnswers()) {
+			broadcastMessage(message);
+			changeState(nextState);
+		}
+		else {
+			waitForMessage();
+		}
 	}
 
 	/** 
@@ -201,10 +187,7 @@ public class CoordinatorImpl extends TPCParticipant {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void setClientAddress(String clientAddress) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		this.clientAddress = clientAddress;
 	}
 
 	/** 
@@ -215,38 +198,23 @@ public class CoordinatorImpl extends TPCParticipant {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public String getClientAddress() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-		return null;
-		// end-user-code
+		return clientAddress;
 	}
 
 	/** 
-	 * <!-- begin-UML-doc -->
-	 * Ustawia numer&nbsp;portu&nbsp;klienta, ktory zarzadal wykonania transakcji
-	 * <!-- end-UML-doc -->
+	 * Ustawia numer portu klienta, ktory zarzadal wykonania transakcji
 	 * @param port
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void setClientPort(String port) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+	public void setClientPort(int port) {
+		this.clientPort = port;
 	}
 
 	/** 
-	 * <!-- begin-UML-doc -->
-	 * Pobiera&nbsp;numer&nbsp;portu&nbsp;klienta, ktory zarzadal wykonania transakcji
-	 * <!-- end-UML-doc -->
+	 * Pobiera numer portu klienta, ktory zarzadal wykonania transakcji
 	 * @return
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public String getClientPort() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-		return null;
-		// end-user-code
+	public int getClientPort() {
+		return clientPort;
 	}
 
 	/** 
@@ -261,10 +229,16 @@ public class CoordinatorImpl extends TPCParticipant {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void processSelect() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		try {
+			DatabaseTable table = this.connector.query(getQueryString());
+			ResultsetMessage msg = new ResultsetMessage();
+			msg.setResultSet(table);
+			tcpSender.sendToClient(msg, this.getClientAddress(), this.getClientPort());
+			setState(new CommitState());
+		}
+		catch(DBException ex) {
+			processDBException(ex);
+		}
 	}
 
 	/** 
@@ -275,10 +249,9 @@ public class CoordinatorImpl extends TPCParticipant {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public final void processDBException(DBException exception) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		ddb.msg.client.ErrorMessage msg = new ddb.msg.client.ErrorMessage();
+		msg.setException(exception);
+		tcpSender.sendToClient(msg, this.getClientAddress(), this.getClientPort());
 	}
 
 	/** 
@@ -287,11 +260,23 @@ public class CoordinatorImpl extends TPCParticipant {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	protected void onNewMessage(TPCMessage message) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+	protected void onNewMessage(Message message) {
+		if(message instanceof YesForCommitMessage) {
+			state.onYesForCommit(message.getSenderAddress());
+		}
+		else if(message instanceof NoForCommitMessage) {
+			state.onNoForCommit(message.getSenderAddress());
+		}
+		else if(message instanceof HaveCommittedMessage) {
+			state.onHaveCommitted((HaveCommittedMessage)message);
+		}
+		else if(message instanceof AckPreCommitMessage) {
+			state.onAckPreCommit(message.getSenderAddress());
+		}
+		else if(message instanceof TransactionMessage) {
+			state.onTransaction((TransactionMessage)message);
+		}
+		
 	}
 
 	/** 
@@ -301,9 +286,11 @@ public class CoordinatorImpl extends TPCParticipant {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	protected void cleanupTransaction() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		//do nothing
 	}
+
+	public CoordinatorState getState() {
+		return state;
+	}
+	
 }

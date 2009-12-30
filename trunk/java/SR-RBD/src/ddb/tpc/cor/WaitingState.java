@@ -3,60 +3,43 @@
  */
 package ddb.tpc.cor;
 
+import ddb.msg.client.ConflictMessage;
+import ddb.msg.client.TimeoutMessage;
 import ddb.tpc.msg.HaveCommittedMessage;
 import ddb.tpc.msg.ErrorMessage;
+import ddb.tpc.msg.PreCommitMessage;
+import ddb.tpc.msg.TransactionMessage;
 
-/** 
- * <!-- begin-UML-doc -->
- * <!-- end-UML-doc -->
- * @author User
- * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
+/**
  */
-public class WaitingState implements CoordinatorState {
+public class WaitingState extends CoordinatorState {
 	/** 
-	 * /* (non-Javadoc)
-	 *  * @see TimeoutListener#onTimeout()
 	 * 
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
+	 * @see TimeoutListener#onTimeout()
+	 * 
 	 */
 	public void onTimeout() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		coordinator.abortTransaction(new TimeoutMessage());
 	}
 
 	/** 
-	 * /* (non-Javadoc)
-	 *  * @see CoordinatorState#onYesForCommit(String node)
-	 * 
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
+	 *  @see CoordinatorState#onYesForCommit(String node)
 	 */
 	public void onYesForCommit(String node) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		coordinator.processAnswer(node, new PreCommitMessage(), new PreparedState());
 	}
 
 	/** 
-	 * /* (non-Javadoc)
-	 *  * @see CoordinatorState#onNoForCommit(String node)
+	 *  @see CoordinatorState#onNoForCommit(String node)
 	 * 
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void onNoForCommit(String node) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		coordinator.abortTransaction(new ConflictMessage());
 	}
 
 	/** 
-	 * /* (non-Javadoc)
-	 *  * @see CoordinatorState#onAckPreCommit(String node)
-	 * 
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
+	 *  @see CoordinatorState#onAckPreCommit(String node)
+	 *
 	 */
 	public void onAckPreCommit(String node) {
 		// begin-user-code
@@ -66,10 +49,7 @@ public class WaitingState implements CoordinatorState {
 	}
 
 	/** 
-	 * /* (non-Javadoc)
-	 *  * @see CoordinatorState#onHaveCommitted(HaveCommittedMessage message)
-	 * 
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
+	 *  @see CoordinatorState#onHaveCommitted(HaveCommittedMessage message)
 	 */
 	public void onHaveCommitted(HaveCommittedMessage message) {
 		// begin-user-code
@@ -79,12 +59,10 @@ public class WaitingState implements CoordinatorState {
 	}
 
 	/** 
-	 * /* (non-Javadoc)
-	 *  * @see CoordinatorState#onTransaction()
+	 * @see CoordinatorState#onTransaction()
 	 * 
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void onTransaction() {
+	public void onTransaction(TransactionMessage message) {
 		// begin-user-code
 		// TODO Auto-generated method stub
 
@@ -92,10 +70,8 @@ public class WaitingState implements CoordinatorState {
 	}
 
 	/** 
-	 * /* (non-Javadoc)
-	 *  * @see CoordinatorState#onErrorMessage(ErrorMessage message)
+	 *  @see CoordinatorState#onErrorMessage(ErrorMessage message)
 	 * 
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void onErrorMessage(ErrorMessage message) {
 		// begin-user-code

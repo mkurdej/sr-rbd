@@ -28,26 +28,11 @@ public class CanCommitMessage extends TPCMessage {
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
-	 */
-	public void CanCommit() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
-	}
-
-	/** 
-	 * <!-- begin-UML-doc -->
-	 * <!-- end-UML-doc -->
 	 * @return
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public String getTableName() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-		return null;
-		// end-user-code
+		return this.tableName;
 	}
 
 	/** 
@@ -57,10 +42,7 @@ public class CanCommitMessage extends TPCMessage {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void setTableName(String tableName) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		this.tableName = tableName;
 	}
 
 	/** 
@@ -70,10 +52,7 @@ public class CanCommitMessage extends TPCMessage {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void setQueryString(String queryString) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		this.queryString = queryString;
 	}
 
 	/** 
@@ -83,9 +62,6 @@ public class CanCommitMessage extends TPCMessage {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public String getQueryString() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-		return null;
-		// end-user-code
+		return  queryString;
 	}
 }

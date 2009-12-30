@@ -3,10 +3,17 @@
  */
 package ddb.tpc.coh;
 
+import ddb.msg.Message;
 import ddb.tpc.TPCParticipant;
 import static ddb.db.DatabaseState.*;
 import static ddb.communication.TcpSender.*;
 import static ddb.db.DbConnector.*;
+import ddb.tpc.msg.AbortMessage;
+import ddb.tpc.msg.CanCommitMessage;
+import ddb.tpc.msg.DoCommitMessage;
+import ddb.tpc.msg.ErrorMessage;
+import ddb.tpc.msg.HaveCommittedMessage;
+import ddb.tpc.msg.PreCommitMessage;
 import ddb.tpc.msg.TPCMessage;
 import ddb.db.DBException;
 
@@ -16,7 +23,8 @@ import ddb.db.DBException;
  * @author User
  * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
  */
-public class CohordImpl extends TPCParticipant implements CohordState {
+public class CohordImpl extends TPCParticipant {
+	private static final int TIMEOUT = 5000;
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
@@ -31,6 +39,11 @@ public class CohordImpl extends TPCParticipant implements CohordState {
 	 */
 	private String coordinatorAddress;
 
+	
+	public CohordImpl() {
+		setState(new InitState());
+		
+	}
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * Wyslanie wiadomosci do koordynatora transakcji
@@ -39,10 +52,7 @@ public class CohordImpl extends TPCParticipant implements CohordState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void replyToCoordinator(TPCMessage message) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		this.tcpSender.sendToNode(message, getCoordinatorAddress());
 	}
 
 	/** 
@@ -53,10 +63,10 @@ public class CohordImpl extends TPCParticipant implements CohordState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void changeState(CohordState state) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		stopTimer();
+		startTimer(TIMEOUT);
+		setState(state);
+		waitForMessage();
 	}
 
 	/** 
@@ -66,10 +76,7 @@ public class CohordImpl extends TPCParticipant implements CohordState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void onTimeout() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		state.onTimeout();
 	}
 
 	/** 
@@ -80,10 +87,7 @@ public class CohordImpl extends TPCParticipant implements CohordState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void setCoordinatorAddress(String address) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		this.coordinatorAddress = address;
 	}
 
 	/** 
@@ -94,10 +98,7 @@ public class CohordImpl extends TPCParticipant implements CohordState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public String getCoordinatorAddress() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-		return null;
-		// end-user-code
+		return this.coordinatorAddress;
 	}
 
 	/** 
@@ -107,10 +108,17 @@ public class CohordImpl extends TPCParticipant implements CohordState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void commitTransaction() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		try {
+			this.connector.query(getQueryString());
+			replyToCoordinator(new HaveCommittedMessage());
+			setState(new CommittedState());
+		} catch (DBException exception) {
+			ErrorMessage msg = new ErrorMessage();
+			msg.setException(exception);
+			replyToCoordinator(msg);
+			setState(new AbortState());
+		}
+		endTransaction();
 	}
 
 	/** 
@@ -133,11 +141,19 @@ public class CohordImpl extends TPCParticipant implements CohordState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	protected void onNewMessage(TPCMessage message) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+	protected void onNewMessage(Message message) {
+		if(message instanceof CanCommitMessage) {
+			onCanCommit((CanCommitMessage)message);
+		}
+		else if(message instanceof AbortMessage) {
+			onAbort();
+		}
+		else if(message instanceof DoCommitMessage) {
+			onDoCommit();
+		}
+		else if(message instanceof PreCommitMessage) {
+			onPreCommit();
+		}
 	}
 
 	/** 
@@ -147,10 +163,7 @@ public class CohordImpl extends TPCParticipant implements CohordState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	protected void cleanupTransaction() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		this.getDatabaseState().unlockTable(this.getTableName());
 	}
 
 	/** 
@@ -160,10 +173,7 @@ public class CohordImpl extends TPCParticipant implements CohordState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void onPreCommit() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		state.onPreCommit();
 	}
 
 	/** 
@@ -172,11 +182,9 @@ public class CohordImpl extends TPCParticipant implements CohordState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void onCanCommit() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+	public void onCanCommit(CanCommitMessage message) {
+		state.onCanCommit(message);
+		
 	}
 
 	/** 
@@ -186,10 +194,7 @@ public class CohordImpl extends TPCParticipant implements CohordState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void onAbort() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		state.onAbort();
 	}
 
 	/** 
@@ -199,9 +204,17 @@ public class CohordImpl extends TPCParticipant implements CohordState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void onDoCommit() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		state.onDoCommit();
 	}
+
+	public CohordState getState() {
+		return state;
+	}
+
+	protected void setState(CohordState state) {
+		this.state = state;
+		state.setCohord(this);
+	}
+	
+	
 }

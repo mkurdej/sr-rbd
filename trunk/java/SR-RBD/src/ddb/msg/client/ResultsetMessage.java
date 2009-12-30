@@ -3,6 +3,8 @@
  */
 package ddb.msg.client;
 
+import ddb.db.DatabaseTable;
+
 /** 
  * <!-- begin-UML-doc -->
  * <!-- end-UML-doc -->
@@ -15,7 +17,7 @@ public class ResultsetMessage extends SuccessMessage {
 	 * <!-- end-UML-doc -->
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	private String resultSet;
+	private DatabaseTable table;
 
 	/** 
 	 * <!-- begin-UML-doc -->
@@ -23,10 +25,7 @@ public class ResultsetMessage extends SuccessMessage {
 	 * @param resultSet
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void setResultSet(String resultSet) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+	public void setResultSet(DatabaseTable table) {
+		this.table = table;
 	}
 }
