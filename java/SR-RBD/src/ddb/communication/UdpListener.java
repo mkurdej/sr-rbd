@@ -22,7 +22,7 @@ public class UdpListener implements Runnable
 {
 
     private static UdpListener instance = new UdpListener();
-    public static final int LISTEN_PORT = 1234;
+    public static final int LISTEN_PORT = 1502;
     private final int DATAGRAM_SIZE = 100;
     private final String LOGGING_NAME = "UdpListener";
     
