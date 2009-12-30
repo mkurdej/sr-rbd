@@ -44,7 +44,7 @@ public class TcpSenderImpl implements TcpSender {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void sendToClient(Message message, String inetAddress, String port) {
+	public void sendToClient(Message message, String inetAddress, int port) {
 		// begin-user-code
 		// TODO Auto-generated method stub
 

@@ -3,8 +3,11 @@
  */
 package ddb.tpc.cor;
 
+import ddb.msg.client.TimeoutMessage;
+import ddb.tpc.msg.DoCommitMessage;
 import ddb.tpc.msg.HaveCommittedMessage;
 import ddb.tpc.msg.ErrorMessage;
+import ddb.tpc.msg.TransactionMessage;
 
 /** 
  * <!-- begin-UML-doc -->
@@ -12,7 +15,7 @@ import ddb.tpc.msg.ErrorMessage;
  * @author User
  * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
  */
-public class PreparedState implements CoordinatorState {
+public class PreparedState extends CoordinatorState {
 	/** 
 	 * /* (non-Javadoc)
 	 *  * @see TimeoutListener#onTimeout()
@@ -20,10 +23,7 @@ public class PreparedState implements CoordinatorState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void onTimeout() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		coordinator.abortTransaction(new TimeoutMessage());
 	}
 
 	/** 
@@ -33,10 +33,7 @@ public class PreparedState implements CoordinatorState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void onYesForCommit(String node) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		
 	}
 
 	/** 
@@ -59,10 +56,7 @@ public class PreparedState implements CoordinatorState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void onAckPreCommit(String node) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		coordinator.processAnswer(node, new DoCommitMessage(), new CommitState());
 	}
 
 	/** 
@@ -84,7 +78,7 @@ public class PreparedState implements CoordinatorState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void onTransaction() {
+	public void onTransaction(TransactionMessage message) {
 		// begin-user-code
 		// TODO Auto-generated method stub
 

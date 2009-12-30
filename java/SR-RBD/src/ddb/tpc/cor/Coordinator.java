@@ -12,6 +12,7 @@ import ddb.tpc.TPCParticipant;
  * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
  */
 public abstract class Coordinator extends TPCParticipant {
+	
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
@@ -42,7 +43,7 @@ public abstract class Coordinator extends TPCParticipant {
 	 * @param port
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void setClientPort(String port) {
+	public void setClientPort(int port) {
 		// begin-user-code
 		// TODO Auto-generated method stub
 

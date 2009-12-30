@@ -18,7 +18,7 @@ public class DatabaseStateImpl implements DatabaseState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void lockTable(String tableName) {
+	public void lockTable(String tableName) throws TableLockedException {
 		// begin-user-code
 		// TODO Auto-generated method stub
 

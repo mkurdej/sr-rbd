@@ -3,46 +3,40 @@
  */
 package ddb.tpc;
 
-import java.util.Collection;
+import java.util.LinkedList;
 import ddb.tpc.msg.TPCMessage;
 
 /** 
  * <!-- begin-UML-doc -->
  * <!-- end-UML-doc -->
- * @author User
- * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
+ * @author PKalanski
  */
 public class MessageQueue {
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	private Collection<TPCMessage> messages;
-
+	private LinkedList<TPCMessage> messages;
+	
+	public MessageQueue() {
+		this.messages = new LinkedList<TPCMessage>();
+	}
+	
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
 	 * @param message
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void putMessage(TPCMessage message) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		messages.offer(message);
 	}
 
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
 	 * @return
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public TPCMessage getMessage() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-		return null;
-		// end-user-code
+		return messages.poll();
 	}
 }
