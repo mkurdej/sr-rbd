@@ -18,7 +18,7 @@ import ddb.Logger;
 public class TcpListener implements Runnable
 {
     private final static String LOGGING_NAME = "TcpListener";
-    public final static int LISTEN_PORT = 1234;
+    public final static int LISTEN_PORT = 1501;
     private final static TcpListener instance = new TcpListener();
 
     ServerSocket serverSocket = null;
