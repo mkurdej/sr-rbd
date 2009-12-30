@@ -52,9 +52,15 @@ public class UdpListener implements Runnable
                 byte[] rest = new byte[DATAGRAM_SIZE];
                 dis.read(rest, 4, size);
                 String restString = new String(rest).substring(4, size + 4);
-                System.out.println("Broadcast from " +
+                
+                Logger.getInstance().log("Broadcast from " +
                         packet.getAddress().getHostAddress().toString() +
-                        ":" + packet.getPort() + ", size = " + size + " : " + restString);
+                        ":" + packet.getPort() + ", size = " + size + " : " + restString,
+                        LOGGING_NAME, Logger.Level.INFO);
+                
+                DispatcherImpl.getInstance().dispatchMessage(restString,
+                		packet.getAddress().getHostAddress().toString(),
+                		packet.getPort());
             }
         }
         catch (SocketException ex)
