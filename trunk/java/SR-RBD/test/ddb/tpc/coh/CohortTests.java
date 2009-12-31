@@ -23,7 +23,7 @@ import ddb.tpc.msg.PreCommitMessage;
 import ddb.tpc.msg.YesForCommitMessage;
 
 public class CohortTests extends TestCase {
-	private CohordImpl instance;
+	private CohortImpl instance;
 	private DatabaseStateStub databaseState;
 	private TcpSenderStub tcpSender;
 	private String coordinatorAddress;
@@ -32,7 +32,7 @@ public class CohortTests extends TestCase {
 	public void setUp() throws Exception {
 		coordinatorAddress = "192.168.0.167";
 		
-		instance = new CohordImpl();
+		instance = new CohortImpl();
 		
 		tcpSender = new TcpSenderStub();
 		instance.setTcpSender(tcpSender);
