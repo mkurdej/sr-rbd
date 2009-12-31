@@ -5,11 +5,13 @@ package ddb.tpc;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import ddb.Logger;
+import ddb.Logger.Level;
 import ddb.communication.TcpSender;
 import ddb.db.DatabaseState;
 import ddb.db.DbConnector;
 import ddb.msg.Message;
-import ddb.tpc.msg.TPCMessage;
 
 /** 
  * <!-- begin-UML-doc -->
@@ -19,7 +21,7 @@ import ddb.tpc.msg.TPCMessage;
  */
 public abstract class TPCParticipant implements MessageRecipient,
 		TimeoutListener {
-
+	public static final int TIMEOUT = 5000;
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
@@ -119,8 +121,8 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * @param message
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void processMessage(Message message) {
-		//TODO
+	synchronized public void processMessage(Message message) {
+		this.messageQueue.putMessage(message);
 	}
 
 	/** 
@@ -162,9 +164,16 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * <!-- end-UML-doc -->
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void waitForMessage() {
-		Message msg = this.messageQueue.getMessage();
-		onNewMessage(msg);
+	synchronized public void waitForMessage() {
+		Logger.getInstance().log("waitForMessage " + Thread.currentThread(), "TPC", Logger.Level.INFO);
+		
+		try {
+			Message msg = this.messageQueue.getMessage();
+			onNewMessage(msg);
+		} catch (InterruptedException e) {
+			Logger.getInstance().log(e.getMessage(), "TPC", Logger.Level.SEVERE);
+		}
+		
 	}
 
 	/** 
@@ -229,7 +238,15 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	private void startThread() {
-		//TODO
+		new Thread(
+				new Runnable() {
+					@Override
+					public void run() {
+						Logger.getInstance().log("startThread " + Thread.currentThread() , "TPC", Level.INFO);
+						waitForMessage();
+					}
+				}, "TPC_THREAD"
+		).start();
 	}
 
 	/** 

@@ -4,6 +4,8 @@
 package ddb.tpc;
 
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /** 
  * <!-- begin-UML-doc -->
@@ -17,13 +19,19 @@ public class TimeoutGenerator {
 	 * <!-- end-UML-doc -->
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	private boolean stopped;
+	private volatile boolean stopped = false;
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	private TimeoutListener timeoutListener;
+
+	private Timer timer = new Timer();	
+	
+	public void setTimeoutListener(TimeoutListener timeoutListener) {
+		this.timeoutListener = timeoutListener;
+	}
 
 	/** 
 	 * <!-- begin-UML-doc -->
@@ -32,10 +40,16 @@ public class TimeoutGenerator {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void startTimer(long miliseconds) {
-		// begin-user-code
-		// TODO Auto-generated method stub
+		timer.schedule(new TimerTask() {
 
-		// end-user-code
+			@Override
+			public void run() {
+				if(!stopped) {
+					timeoutListener.onTimeout();
+				}
+			}
+			
+		}, miliseconds);
 	}
 
 	/** 
@@ -44,9 +58,6 @@ public class TimeoutGenerator {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void stopTimer() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		stopped = true;
 	}
 }

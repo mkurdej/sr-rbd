@@ -27,7 +27,7 @@ public class Logger
     {
     }
 
-    public static Logger getInstance()
+    synchronized public static Logger getInstance()
     {
         return instance;
     }
