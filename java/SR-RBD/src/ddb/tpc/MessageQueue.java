@@ -4,7 +4,14 @@
 package ddb.tpc;
 
 import java.util.LinkedList;
-import ddb.tpc.msg.TPCMessage;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+
+import ddb.Logger;
+import ddb.Logger.Level;
+import ddb.msg.Message;
+import ddb.tpc.cor.CoordinatorImpl;
 
 /** 
  * <!-- begin-UML-doc -->
@@ -16,10 +23,12 @@ public class MessageQueue {
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
 	 */
-	private LinkedList<TPCMessage> messages;
+	//private LinkedList<Message> messages;
+	private BlockingQueue<Message> messages;
 	
 	public MessageQueue() {
-		this.messages = new LinkedList<TPCMessage>();
+		//this.messages = new LinkedList<Message>();
+		this.messages = new LinkedBlockingQueue<Message>();
 	}
 	
 	/** 
@@ -27,16 +36,22 @@ public class MessageQueue {
 	 * <!-- end-UML-doc -->
 	 * @param message
 	 */
-	public void putMessage(TPCMessage message) {
+	public synchronized void putMessage(Message message) {
+		//TODO:
 		messages.offer(message);
+		//notify();
 	}
 
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
 	 * @return
+	 * @throws InterruptedException 
 	 */
-	public TPCMessage getMessage() {
-		return messages.poll();
+	public synchronized Message getMessage() throws InterruptedException {
+		//TODO:
+		Logger.getInstance().log("Liczba wiadomosci w kolejce: " + messages.size(), "MQ", Level.INFO);
+		//return messages.poll();
+		return messages.poll(TPCParticipant.TIMEOUT, TimeUnit.MILLISECONDS);
 	}
 }

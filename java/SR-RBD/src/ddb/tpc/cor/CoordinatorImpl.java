@@ -3,6 +3,7 @@
  */
 package ddb.tpc.cor;
 
+import ddb.Logger;
 import ddb.msg.Message;
 import ddb.msg.client.ResultsetMessage;
 import ddb.msg.client.TimeoutMessage;
@@ -35,8 +36,6 @@ import ddb.db.DbConnectorImpl;
 /** 
  */
 public class CoordinatorImpl extends Coordinator {
-	private static final int TIMEOUT = 5000;
-	
 	/**
 	 * 
 	 */
@@ -61,6 +60,7 @@ public class CoordinatorImpl extends Coordinator {
 	private int clientPort;
 	
 	public CoordinatorImpl() {
+		super();
 		//this.connector = DbConnectorImpl.getInstance();
 		setState(new InitState());
 		this.answers = new HashSet<String>();
@@ -261,6 +261,8 @@ public class CoordinatorImpl extends Coordinator {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	protected void onNewMessage(Message message) {
+		Logger.getInstance().log("NewMessage: " + message, "Coordinator", Logger.Level.INFO);
+		
 		if(message instanceof YesForCommitMessage) {
 			state.onYesForCommit(message.getSenderAddress());
 		}

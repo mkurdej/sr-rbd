@@ -19,9 +19,7 @@ public abstract class Coordinator extends TPCParticipant {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public Coordinator() {
-		// begin-user-code
-		// TODO Auto-generated constructor stub
-		// end-user-code
+		super();
 	}
 
 	/** 
