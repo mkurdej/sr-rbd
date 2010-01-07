@@ -44,6 +44,19 @@ public class TableRow implements Serializable {
         return values.get(columnIndex);
     }
     
+    @Override
+    public String toString() {
+                StringBuilder builder = new StringBuilder();
+                
+                for(Object v : getValues()) {
+                        builder.append( v );
+                        builder.append( "\t" );
+                }
+                
+                return builder.toString();
+        
+    }
+    
     /** Wartosci w poszczegolnych kolumnach. */
     private ArrayList<Object> values;
     private DatabaseTable table;
