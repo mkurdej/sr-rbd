@@ -66,6 +66,26 @@ public class DatabaseTable implements Serializable
     public TableRow getRow(int idx){
         return rows.get(idx);
     }
+    
+    @Override
+    public String toString() {
+                StringBuilder builder = new StringBuilder();
+                
+                for(String col : getColumnNames()) {
+                        builder.append( col );
+                        builder.append( "\t" );
+                }
+                
+                builder.append( "\n" );
+                
+                for(TableRow row : getRows()) {
+                        builder.append( row.toString() );
+                        builder.append( "\n" );
+                }
+                
+                return builder.toString();
+        
+    }
 
     /** Nazwa tabeli */
     private String tableName;
