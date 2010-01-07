@@ -35,10 +35,11 @@ public class MessageQueue {
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
 	 * @param message
+	 * @throws InterruptedException 
 	 */
-	public synchronized void putMessage(Message message) {
+	public synchronized void putMessage(Message message) throws InterruptedException {
 		//TODO:
-		messages.offer(message);
+		messages.put(message);
 		//notify();
 	}
 
@@ -52,6 +53,6 @@ public class MessageQueue {
 		//TODO:
 		Logger.getInstance().log("Liczba wiadomosci w kolejce: " + messages.size(), "MQ", Level.INFO);
 		//return messages.poll();
-		return messages.poll(TPCParticipant.TIMEOUT, TimeUnit.MILLISECONDS);
+		return messages.take();
 	}
 }

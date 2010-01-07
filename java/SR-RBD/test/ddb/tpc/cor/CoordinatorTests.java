@@ -60,7 +60,7 @@ public class CoordinatorTests extends TestCase {
 		//instance.onNewMessage(message);
 		instance.processMessage(message);
 
-		//Thread.sleep(200);
+		Thread.sleep(200);
 		
 		assertEquals(WaitingState.class, instance.getState().getClass());
 		assertEquals("KLIENCI", instance.getTableName());
@@ -77,7 +77,7 @@ public class CoordinatorTests extends TestCase {
 		//instance.onNewMessage(message);
 		instance.processMessage(message);
 
-		//Thread.sleep(200);
+		Thread.sleep(200);
 		
 		assertEquals(CommitState.class, instance.getState().getClass());
 		assertEquals("KLIENCI", instance.getTableName());
@@ -92,26 +92,25 @@ public class CoordinatorTests extends TestCase {
 		message.setQueryString(queryString);
 		//instance.onNewMessage(message);
 		instance.processMessage(message);
-
-		//Thread.sleep(200);
 		
 		for (String node : databaseState.getNodes()) {
 			YesForCommitMessage yesForCommitMessage = new YesForCommitMessage();
 			yesForCommitMessage.setSenderAddress(node);
+			
+			Thread.sleep(1000);
 			assertEquals(WaitingState.class, instance.getState().getClass());
 			//instance.onNewMessage(yesForCommitMessage);
 			instance.processMessage(yesForCommitMessage);
-			
-			//Thread.sleep(200);
 		}
 
+		Thread.sleep(200);
 		assertEquals(PreparedState.class, instance.getState().getClass());
 		assertEquals(PreCommitMessage.class, tcpSender.getLastMessage()
 				.getClass());
 	}
 
 	@Test
-	public void testNoForCommitMessage() {
+	public void testNoForCommitMessage() throws InterruptedException {
 		TransactionMessage message = new TransactionMessage();
 		String queryString = "UPDATE KLIENCI SET NAZWA = 'jasio' WHERE ID = 1024435";
 		message.setQueryString(queryString);
@@ -120,17 +119,20 @@ public class CoordinatorTests extends TestCase {
 
 		NoForCommitMessage noForCommitMessage = new NoForCommitMessage();
 		noForCommitMessage.setSenderAddress("192.168.0.1");
+		
+		Thread.sleep(200);
 		assertEquals(WaitingState.class, instance.getState().getClass());
 		//instance.onNewMessage(noForCommitMessage);
 		instance.processMessage(noForCommitMessage);
-
+		
+		Thread.sleep(200);
 		assertEquals(AbortState.class, instance.getState().getClass());
 		assertEquals(ConflictMessage.class, tcpSender.getLastMessage()
 				.getClass());
 	}
 
 	@Test
-	public void testAckPreCommitMessage() {
+	public void testAckPreCommitMessage() throws InterruptedException {
 		TransactionMessage message = new TransactionMessage();
 		String queryString = "UPDATE KLIENCI SET NAZWA = 'jasio' WHERE ID = 1024435";
 		message.setQueryString(queryString);
@@ -140,6 +142,8 @@ public class CoordinatorTests extends TestCase {
 		for (String node : databaseState.getNodes()) {
 			YesForCommitMessage yesForCommitMessage = new YesForCommitMessage();
 			yesForCommitMessage.setSenderAddress(node);
+			
+			Thread.sleep(200);
 			assertEquals(WaitingState.class, instance.getState().getClass());
 			//instance.onNewMessage(yesForCommitMessage);
 			instance.processMessage(yesForCommitMessage);
@@ -148,18 +152,21 @@ public class CoordinatorTests extends TestCase {
 		for (String node : databaseState.getNodes()) {
 			AckPreCommitMessage ackPreCommitMessage = new AckPreCommitMessage();
 			ackPreCommitMessage.setSenderAddress(node);
+			
+			Thread.sleep(200);
 			assertEquals(PreparedState.class, instance.getState().getClass());
 			//instance.onNewMessage(ackPreCommitMessage);
 			instance.processMessage(ackPreCommitMessage);
 		}
 		
+		Thread.sleep(200);
 		assertEquals(CommitState.class, instance.getState().getClass());
 		assertEquals(DoCommitMessage.class, tcpSender.getLastMessage()
 				.getClass());
 	}
 
 	@Test
-	public void testHaveCommittedMessage() {
+	public void testHaveCommittedMessage() throws InterruptedException {
 		TransactionMessage message = new TransactionMessage();
 		String queryString = "UPDATE KLIENCI SET NAZWA = 'jasio' WHERE ID = 1024435";
 		message.setQueryString(queryString);
@@ -183,6 +190,8 @@ public class CoordinatorTests extends TestCase {
 		for (String node : databaseState.getNodes()) {
 			HaveCommittedMessage haveCommittedMessage = new HaveCommittedMessage();
 			haveCommittedMessage.setSenderAddress(node);
+			
+			Thread.sleep(200);
 			assertEquals(CommitState.class, instance.getState().getClass());
 			//instance.onNewMessage(haveCommittedMessage);
 			instance.processMessage(haveCommittedMessage);

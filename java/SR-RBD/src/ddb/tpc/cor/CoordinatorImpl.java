@@ -125,7 +125,6 @@ public class CoordinatorImpl extends Coordinator {
 		this.startTimer(TIMEOUT);
 		this.state = state;
 		state.setCoordinator(this);
-		this.waitForMessage();
 	}
 
 	/** 
@@ -173,9 +172,6 @@ public class CoordinatorImpl extends Coordinator {
 		if(checkAnswers()) {
 			broadcastMessage(message);
 			changeState(nextState);
-		}
-		else {
-			waitForMessage();
 		}
 	}
 

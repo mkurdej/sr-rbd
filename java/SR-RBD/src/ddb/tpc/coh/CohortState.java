@@ -49,7 +49,7 @@ abstract public class CohortState implements TimeoutListener {
 		return cohort;
 	}
 
-	public void setCohort(CohortImpl cohord) {
-		this.cohort = cohord;
+	public void setCohort(CohortImpl cohort) {
+		this.cohort = cohort;
 	}
 }

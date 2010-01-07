@@ -50,14 +50,17 @@ public class CohortTests extends TestCase {
 	}
 	
 	@Test
-	public void testCanCommitSuccess() {
+	public void testCanCommitSuccess() throws InterruptedException {
 		CanCommitMessage message = new CanCommitMessage();
 		message.setQueryString("UPDATE KLIENCI SET NAZWA = 'st' WHERE ID = 1");
 		message.setTableName("KLIENCI");
 		
 		assertFalse(databaseState.isLocked("KLIENCI"));
 		
-		instance.onNewMessage(message);
+		//instance.onNewMessage(message);
+		instance.processMessage(message);
+		
+		Thread.sleep(200);
 		
 		assertEquals(PreparedState.class, instance.getState().getClass());
 		assertEquals(YesForCommitMessage.class, tcpSender.getLastMessage().getClass());
@@ -67,62 +70,75 @@ public class CohortTests extends TestCase {
 	}
 	
 	@Test
-	public void testCanCommitFailure() throws TableLockedException {
+	public void testCanCommitFailure() throws TableLockedException, InterruptedException {
 		CanCommitMessage message = new CanCommitMessage();
 		message.setQueryString("UPDATE KLIENCI SET NAZWA = 'st' WHERE ID = 1");
 		message.setTableName("KLIENCI");
 		
 		databaseState.lockTable("KLIENCI");
 		
-		instance.onNewMessage(message);
+		//instance.onNewMessage(message);
+		instance.processMessage(message);
 		
+		Thread.sleep(200);
 		assertEquals(AbortState.class, instance.getState().getClass());
 		assertEquals(NoForCommitMessage.class, tcpSender.getLastMessage().getClass());
 	}
 	
 	@Test
-	public void testPreCommit() {
+	public void testPreCommit() throws InterruptedException {
 		CanCommitMessage message = new CanCommitMessage();
 		message.setQueryString("UPDATE KLIENCI SET NAZWA = 'st' WHERE ID = 1");
 		message.setTableName("KLIENCI");
 		
-		instance.onNewMessage(message);
+		//instance.onNewMessage(message);
+		instance.processMessage(message);
 		
 		PreCommitMessage preCommitMessage = new PreCommitMessage();
-		instance.onNewMessage(preCommitMessage);
+		//instance.onNewMessage(preCommitMessage);
+		instance.processMessage(preCommitMessage);
 		
+		Thread.sleep(200);
 		assertEquals(WaitingDoCommit.class, instance.getState().getClass());
 		assertEquals(AckPreCommitMessage.class, tcpSender.getLastMessage().getClass());
 	}
 	
 	@Test
-	public void testDoCommitSuccess() {
+	public void testDoCommitSuccess() throws InterruptedException {
 		CanCommitMessage message = new CanCommitMessage();
 		message.setQueryString("UPDATE KLIENCI SET NAZWA = 'st' WHERE ID = 1");
 		message.setTableName("KLIENCI");
-		instance.onNewMessage(message);
+		//instance.onNewMessage(message);
+		instance.processMessage(message);
 		PreCommitMessage preCommitMessage = new PreCommitMessage();
-		instance.onNewMessage(preCommitMessage);
+		//instance.onNewMessage(preCommitMessage);
+		instance.processMessage(preCommitMessage);
 		DoCommitMessage doCommitMessage = new DoCommitMessage();
-		instance.onNewMessage(doCommitMessage);
+		//instance.onNewMessage(doCommitMessage);
+		instance.processMessage(doCommitMessage);
 		
+		Thread.sleep(200);
 		assertEquals(CommittedState.class, instance.getState().getClass());
 		assertEquals(HaveCommittedMessage.class, tcpSender.getLastMessage().getClass());
 	}
 	
 	@Test
-	public void testDoCommitFailure() {
+	public void testDoCommitFailure() throws InterruptedException {
 		instance.setConnector(new DBconnectorFailureStub());
 		
 		CanCommitMessage message = new CanCommitMessage();
 		message.setQueryString("UPDATE KLIENCI SET NAZWA = 'st' WHERE ID = 1");
 		message.setTableName("KLIENCI");
-		instance.onNewMessage(message);
+		//instance.onNewMessage(message);
+		instance.processMessage(message);
 		PreCommitMessage preCommitMessage = new PreCommitMessage();
-		instance.onNewMessage(preCommitMessage);
+		//instance.onNewMessage(preCommitMessage);
+		instance.processMessage(preCommitMessage);
 		DoCommitMessage doCommitMessage = new DoCommitMessage();
-		instance.onNewMessage(doCommitMessage);
+		//instance.onNewMessage(doCommitMessage);
+		instance.processMessage(doCommitMessage);
 		
+		Thread.sleep(200);
 		assertEquals(AbortState.class, instance.getState().getClass());
 		assertEquals(ErrorMessage.class, tcpSender.getLastMessage().getClass());
 	}
@@ -137,7 +153,8 @@ public class CohortTests extends TestCase {
 	@Test
 	public void testTimeoutOnPreparedState() {
 		CanCommitMessage message = new CanCommitMessage();
-		instance.onNewMessage(message);
+		//instance.onNewMessage(message);
+		instance.processMessage(message);
 		
 		instance.onTimeout();
 		
@@ -147,7 +164,8 @@ public class CohortTests extends TestCase {
 	@Test
 	public void testTimeoutOnWaitingDoCommitState() {
 		CanCommitMessage message = new CanCommitMessage();
-		instance.onNewMessage(message);
+		//instance.onNewMessage(message);
+		instance.processMessage(message);
 		
 		instance.onTimeout();
 		
