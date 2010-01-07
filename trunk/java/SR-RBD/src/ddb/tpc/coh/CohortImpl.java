@@ -65,7 +65,6 @@ public class CohortImpl extends TPCParticipant {
 		stopTimer();
 		startTimer(TIMEOUT);
 		setState(state);
-		waitForMessage();
 	}
 
 	/** 

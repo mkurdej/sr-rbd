@@ -57,7 +57,7 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * <!-- end-UML-doc -->
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	private boolean stopped;
+	protected volatile boolean stopped = false;
 
 	/** 
 	 * <!-- begin-UML-doc -->
@@ -93,7 +93,7 @@ public abstract class TPCParticipant implements MessageRecipient,
 		this.endTransactionListeners = new HashSet<EndTransactionListener>();
 		this.timeoutGenerator = new TimeoutGenerator();
 		this.messageQueue = new MessageQueue();
-		startThread();
+		//startThread();
 	}
 	
 	public DatabaseState getDatabaseState() {
@@ -122,7 +122,15 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	synchronized public void processMessage(Message message) {
-		this.messageQueue.putMessage(message);
+		/*
+		try {
+			this.messageQueue.putMessage(message);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			Logger.getInstance().log(e.getMessage(), "TPC", Level.SEVERE);
+		}
+		*/
+		this.onNewMessage(message);
 	}
 
 	/** 
@@ -164,7 +172,7 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * <!-- end-UML-doc -->
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	synchronized public void waitForMessage() {
+	synchronized private void waitForMessage() {
 		Logger.getInstance().log("waitForMessage " + Thread.currentThread(), "TPC", Logger.Level.INFO);
 		
 		try {
@@ -243,7 +251,9 @@ public abstract class TPCParticipant implements MessageRecipient,
 					@Override
 					public void run() {
 						Logger.getInstance().log("startThread " + Thread.currentThread() , "TPC", Level.INFO);
-						waitForMessage();
+						while(!stopped) {
+							waitForMessage();
+						}
 					}
 				}, "TPC_THREAD"
 		).start();
@@ -256,7 +266,7 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	private void stopThread() {
-		//TODO
+		stopped = true;
 	}
 
 	/** 
