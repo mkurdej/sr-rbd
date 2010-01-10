@@ -3,15 +3,12 @@
  */
 package ddb.tpc;
 
-import java.util.LinkedList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 import ddb.Logger;
 import ddb.Logger.Level;
 import ddb.msg.Message;
-import ddb.tpc.cor.CoordinatorImpl;
 
 /** 
  * <!-- begin-UML-doc -->

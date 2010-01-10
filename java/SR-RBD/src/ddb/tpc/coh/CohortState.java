@@ -16,7 +16,7 @@ abstract public class CohortState implements TimeoutListener {
 	/**
 	 * 
 	 */
-	protected CohortImpl cohort;
+	protected Cohort cohort;
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
@@ -45,11 +45,11 @@ abstract public class CohortState implements TimeoutListener {
 	 */
 	abstract public void onDoCommit();
 
-	public CohortImpl getCohort() {
+	public Cohort getCohort() {
 		return cohort;
 	}
 
-	public void setCohort(CohortImpl cohort) {
+	public void setCohort(Cohort cohort) {
 		this.cohort = cohort;
 	}
 }

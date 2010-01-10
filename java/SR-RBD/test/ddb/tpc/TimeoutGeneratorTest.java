@@ -10,11 +10,13 @@ import org.junit.Test;
 public class TimeoutGeneratorTest extends TestCase {
 	static public boolean timeout;
 	
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		timeout = false;
 	}
 
+	@Override
 	@After
 	public void tearDown() throws Exception {
 	}
