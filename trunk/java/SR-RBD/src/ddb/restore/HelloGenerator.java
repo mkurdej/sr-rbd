@@ -3,7 +3,6 @@
  */
 package ddb.restore;
 
-import static ddb.communication.UdpSender.*;
 
 /** 
  * <!-- begin-UML-doc -->

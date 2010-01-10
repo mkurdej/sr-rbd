@@ -3,8 +3,6 @@
  */
 package ddb.restore;
 
-import static ddb.communication.UdpSender.*;
-import static ddb.db.DatabaseState.*;
 
 /** 
  * <!-- begin-UML-doc -->

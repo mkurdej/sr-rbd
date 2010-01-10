@@ -3,7 +3,6 @@
  */
 package ddb.tpc;
 
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
