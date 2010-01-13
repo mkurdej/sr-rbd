@@ -7,6 +7,7 @@ package ddb;
 
 import ddb.communication.TcpListener;
 import ddb.communication.UdpListener;
+import ddb.restore.HelloGenerator;
 
 /**
  *
@@ -22,6 +23,7 @@ public class Main
     {
         new Thread(TcpListener.getInstance()).start();
         new Thread(UdpListener.getInstance()).start();
+        new Thread(HelloGenerator.getInstance()).start();
     }
 
 }
