@@ -3,6 +3,7 @@
  */
 package ddb.communication;
 
+import ddb.msg.Message;
 import ddb.tpc.EndTransactionListener;
 
 /** 
@@ -20,6 +21,6 @@ public interface Dispatcher extends EndTransactionListener {
 	 * @param senderPort
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void dispatchMessage(String msgString, String senderAddress,
+	public abstract void dispatchMessage(Message m, String senderAddress,
 			int senderPort);
 }

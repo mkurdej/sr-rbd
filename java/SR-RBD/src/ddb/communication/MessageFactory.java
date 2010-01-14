@@ -4,6 +4,7 @@
 package ddb.communication;
 
 import ddb.msg.Message;
+import ddb.msg.MessageType;
 
 /** 
  * <!-- begin-UML-doc -->
@@ -11,13 +12,13 @@ import ddb.msg.Message;
  * @author User
  * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
  */
-public class MessageParser {
+public class MessageFactory {
 	/**
 	 * Private constructor -- there are only static methods
 	 */
-	private MessageParser() {}
+	private MessageFactory() {}
 
-	public static Message parse(String msgString) {
+	public static Message create(MessageType type) {
 		// TODO Auto-generated method stub
 		return null;
 	}

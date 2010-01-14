@@ -94,10 +94,7 @@ public class DispatcherImpl implements Dispatcher {
 	}
 
 	@Override
-	public void dispatchMessage(String msgString, String senderAddress,
-			int senderPort) {
-		// TODO Auto-generated method stub
-		Message msg = MessageParser.parse(msgString);
+	public void dispatchMessage(Message msg, String senderAddress, int senderPort) {
 
 		if (msg instanceof TPCMessage) {
 			String transactionId = ((TPCMessage) msg).getTransactionId();
