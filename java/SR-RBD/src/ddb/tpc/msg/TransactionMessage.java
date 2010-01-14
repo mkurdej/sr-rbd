@@ -3,7 +3,12 @@
  */
 package ddb.tpc.msg;
 
+import java.io.IOException;
+
+import ddb.communication.DataInputStream;
+import ddb.communication.DataOutputStream;
 import ddb.msg.Message;
+import ddb.msg.MessageType;
 
 /** 
  * <!-- begin-UML-doc -->
@@ -26,5 +31,20 @@ public class TransactionMessage extends Message {
 
 	public void setQueryString(String queryString) {
 		this.queryString = queryString;
+	}
+
+	@Override
+	public void fromBinary(DataInputStream s) throws IOException {
+		queryString = s.readString();
+	}
+
+	@Override
+	public MessageType getType() {
+		return MessageType.TRANSACTION_MESSAGE;
+	}
+
+	@Override
+	public void toBinary(DataOutputStream s) throws IOException {
+		s.WriteString(queryString);
 	}
 }

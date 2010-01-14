@@ -3,6 +3,11 @@
  */
 package ddb.msg;
 
+import java.io.IOException;
+
+import ddb.communication.DataInputStream;
+import ddb.communication.DataOutputStream;
+
 /** 
  * <!-- begin-UML-doc -->
  * <!-- end-UML-doc -->
@@ -51,5 +56,21 @@ public abstract class Message {
 		this.senderPort = senderPort;
 	}
 	
+	/**
+	 * 
+	 * @return type constant for specialized class
+	 */
+	public abstract MessageType getType();
 	
+	/**
+	 * Converts object into binary representation
+	 * @param s data storage
+	 */
+	public abstract void toBinary(DataOutputStream s) throws IOException;
+	
+	/**
+	 * Object constructs itself from binary data
+	 * @param s data storage
+	 */
+	public abstract void fromBinary(DataInputStream s) throws IOException;
 }
