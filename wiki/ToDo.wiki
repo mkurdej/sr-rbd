@@ -20,8 +20,8 @@ Marek
 
 
 Piotr
-- CohordTestasd - sprawdzenie numeru tabeli
-- Cohord - inkrementacja numeru tabeli
+- Cohort - sprawdzenie numeru tabeli
+- Cohort - inkrementacja numeru tabeli
 - DatabaseState - metody dla powyższych
 - DatabaseState - pobranie wersji tabeli
 - Numer tabeli przy CanCommitMessage
