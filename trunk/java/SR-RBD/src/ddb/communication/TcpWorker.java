@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.net.Socket;
 
 import ddb.Logger;
+import ddb.msg.Message;
+import ddb.msg.MessageType;
 
 /**
  *
@@ -40,6 +42,7 @@ public class TcpWorker implements Runnable
 
     			DataInputStream in = new DataInputStream(socket.getInputStream());
     			int size = in.readInt();
+    			int type = in.readInt();
     			byte[] b = new byte[size];
 
     			Logger.getInstance().log("Size = " + Integer.toString(size),
@@ -49,7 +52,9 @@ public class TcpWorker implements Runnable
     			for(left = size; left > 0; )
     				left -= in.read(b, size - left, left);
 
-    			DispatcherImpl.getInstance().dispatchMessage(new String(b),
+    			Message m = Message.Unserialize(MessageType.values()[type], b);
+    			
+    			DispatcherImpl.getInstance().dispatchMessage(m,
     					socket.getInetAddress().getHostAddress().toString(),
     					socket.getPort());
     		}
