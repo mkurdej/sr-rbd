@@ -5,10 +5,8 @@
 
 package ddb.db;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.io.*;
+import java.sql.*;
 
 import ddb.Logger;
 
@@ -83,4 +81,107 @@ public class DbConnectorImpl implements DbConnector
 		}
         return result;
     }
+    
+    public void clearDatabase() throws DBException
+    {                                             
+        Statement statement = null;               
+        ResultSet result = null;                  
+        try                                       
+        {                                         
+            statement = connection.createStatement();
+            statement.execute("SHOW TABLES");        
+
+            Logger.getInstance().log("Clearing database...", LOGGING_NAME,
+                    Logger.Level.INFO);                                   
+
+            result = statement.getResultSet();
+
+            while(result.next())
+            {                   
+               statement = connection.createStatement();
+                statement.execute("DROP TABLE " + result.getString(1));
+                Logger.getInstance().log("DROP TABLE: " + result.getString(1),
+                        LOGGING_NAME, Logger.Level.INFO);                     
+            }                                                                 
+        }                                                                     
+        catch (SQLException e)                                                
+        {                                                                     
+            throw new DBException(e);                                         
+        }                                                                     
+    }                                                                         
+
+    public String dumpTable(String tableName)
+    {                                        
+        String output = "";                  
+        String cmd = "mysqldump -u " + USER + " -p" + PASSWORD + " " + DATABASE
+                + " " + tableName;                                             
+
+        Logger.getInstance().log(cmd, LOGGING_NAME, Logger.Level.INFO);
+
+        Process p = null;
+        try              
+        {                
+            p = Runtime.getRuntime().exec(cmd);
+        }                                      
+        catch (IOException e)                  
+        {                                      
+            Logger.getInstance().log("IO error during table dump: " + e.getMessage(),
+                    LOGGING_NAME, Logger.Level.WARNING);                             
+        }                                                                            
+
+        BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+        try
+        {  
+            String line = null;
+            while ((line = input.readLine()) != null)
+            {                                        
+                if(!line.startsWith("/*") && !line.startsWith("--"))
+                    output += line;                                 
+            }                                                       
+        }                                                           
+        catch (IOException e)                                       
+        {                                                           
+            Logger.getInstance().log("IO error during table dump: " + e.getMessage(),
+                    LOGGING_NAME, Logger.Level.WARNING);                             
+        }                                                                            
+
+        return output;
+    }                 
+
+    public void importTable(String dump)
+    {                                   
+        File tmpFile = new File("dump.txt");
+        BufferedWriter out;                 
+        try                                 
+        {                                   
+            out = new BufferedWriter(new FileWriter(tmpFile));
+            out.write(dump);                                  
+            out.flush();                                      
+        }                                                     
+        catch (IOException ex)                                
+        {                                                     
+            Logger.getInstance().log("IO error during dump file write",
+                    LOGGING_NAME, Logger.Level.INFO);                  
+        }
+        String cmd = "mysql -v -u " + USER + " -p" + PASSWORD + " " + DATABASE;
+
+        Logger.getInstance().log(cmd, LOGGING_NAME, Logger.Level.INFO);
+
+        Process p = null;
+        try
+        {
+            p = Runtime.getRuntime().exec(cmd);
+            OutputStream stdin = p.getOutputStream();
+            stdin.write(dump.toString().getBytes());
+            stdin.flush();
+        }
+        catch (IOException e)
+        {
+            Logger.getInstance().log("IO error during table import: " + e.getMessage(),
+                    LOGGING_NAME, Logger.Level.WARNING);
+        }
+        tmpFile.delete();
+    }
+
 }
