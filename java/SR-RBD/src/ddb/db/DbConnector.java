@@ -18,4 +18,7 @@ public interface DbConnector {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public DatabaseTable query(String queryString) throws DBException;
+    public void clearDatabase() throws DBException;
+    public String dumpTable(String tableName);
+    public void importTable(String dump);
 }
