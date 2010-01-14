@@ -20,7 +20,7 @@ Marek
 
 
 Piotr
-- Cohord - sprawdzenie numeru tabeli
+- CohordTestasd - sprawdzenie numeru tabeli
 - Cohord - inkrementacja numeru tabeli
 - DatabaseState - metody dla powyższych
 - DatabaseState - pobranie wersji tabeli
