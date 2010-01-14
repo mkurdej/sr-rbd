@@ -1,0 +1,28 @@
+#summary One-sentence summary of this page.
+
+= Introduction =
+
+Wszystko jedno...
+
+
+= Details =
+Adrian
+- przykład implementacji (de)serializacji
+- Restore + dispatcher
+- HelloMessage
+
+Marcin
+- dump bazy
+- implementacja metod wirtualnych: getType(), toBinary(), fromBinary()
+
+Marek
+- Dodać w TcpSenderze zarządzanie węzłami
+
+
+Piotr
+- Cohord - sprawdzenie numeru tabeli
+- Cohord - inkrementacja numeru tabeli
+- DatabaseState - metody dla powyższych
+- DatabaseState - pobranie wersji tabeli
+- Numer tabeli przy CanCommitMessage
+- Parsowanie wiadomosci
