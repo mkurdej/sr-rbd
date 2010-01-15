@@ -151,20 +151,7 @@ public class DbConnectorImpl implements DbConnector
 
     public void importTable(String dump)
     {                                   
-        File tmpFile = new File("dump.txt");
-        BufferedWriter out;                 
-        try                                 
-        {                                   
-            out = new BufferedWriter(new FileWriter(tmpFile));
-            out.write(dump);                                  
-            out.flush();                                      
-        }                                                     
-        catch (IOException ex)                                
-        {                                                     
-            Logger.getInstance().log("IO error during dump file write",
-                    LOGGING_NAME, Logger.Level.INFO);                  
-        }
-        String cmd = "mysql -v -u " + USER + " -p" + PASSWORD + " " + DATABASE;
+        String cmd = "mysql -u " + USER + " -p" + PASSWORD + " " + DATABASE;
 
         Logger.getInstance().log(cmd, LOGGING_NAME, Logger.Level.INFO);
 
@@ -181,7 +168,6 @@ public class DbConnectorImpl implements DbConnector
             Logger.getInstance().log("IO error during table import: " + e.getMessage(),
                     LOGGING_NAME, Logger.Level.WARNING);
         }
-        tmpFile.delete();
     }
 
 }
