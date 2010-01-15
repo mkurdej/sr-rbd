@@ -144,7 +144,7 @@ public class DispatcherImpl implements Dispatcher {
 			coh.setTransactionId(transactionId);
 			coh.setCoordinatorAddress(coorAddr);
 			coh.addEndTransactionListener(this);
-			coh.putMessage(msg);
+			coh.processMessage(msg);
 		} 
 		else if (msg instanceof PreCommitMessage
 				|| msg instanceof DoCommitMessage
@@ -162,7 +162,7 @@ public class DispatcherImpl implements Dispatcher {
 				return;
 			}
 			
-			cohort.putMessage(msg);
+			cohort.processMessage(msg);
 		} 
 		else if (msg instanceof YesForCommitMessage
 				|| msg instanceof NoForCommitMessage
@@ -181,7 +181,7 @@ public class DispatcherImpl implements Dispatcher {
 				return;
 			}
 			
-			coordinator.putMessage(msg);
+			coordinator.processMessage(msg);
 		}
 	}
 	
@@ -202,7 +202,7 @@ public class DispatcherImpl implements Dispatcher {
 		coor.addEndTransactionListener(this);
 		
 		// give him the message
-		coor.putMessage(msg);
+		coor.processMessage(msg);
 	}
 	
 	public void  processHelloMessage(HelloMessage msg)
@@ -231,7 +231,9 @@ public class DispatcherImpl implements Dispatcher {
 			else if(nsi.BeatsOutOfSync >= OUT_OF_SYNC_BEATS_THRESHOLD)
 			{
 				RestoreCoordinator rc = new RestoreCoordinator(node);
-				restoreCoordinators.put(rc);
+				restoreCoordinators.put(node, rc);
+				
+				 new Thread(rc).start();
 			}
 		}
 		*/

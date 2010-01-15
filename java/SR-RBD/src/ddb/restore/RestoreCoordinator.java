@@ -4,16 +4,18 @@
 package ddb.restore;
 
 import ddb.Logger;
+import ddb.TimeoutException;
 import ddb.Worker;
 import ddb.msg.Message;
-import ddb.restore.msg.RestoreAck;
+import ddb.msg.MessageType;
+import ddb.communication.TcpSender;
+import ddb.db.DbConnectorImpl;
+import ddb.restore.msg.RestoreIncentive;
 import ddb.restore.msg.RestoreNack;
-import ddb.tpc.cor.CoordinatorState;
-import ddb.tpc.msg.AckPreCommitMessage;
-import ddb.tpc.msg.HaveCommittedMessage;
-import ddb.tpc.msg.NoForCommitMessage;
-import ddb.tpc.msg.TransactionMessage;
-import ddb.tpc.msg.YesForCommitMessage;
+import ddb.restore.msg.RestoreTable;
+import ddb.restore.msg.RestoreTableList;
+import ddb.restore.msg.TableVersion;
+
 
 
 /** 
@@ -24,7 +26,8 @@ import ddb.tpc.msg.YesForCommitMessage;
  */
 public class RestoreCoordinator extends Worker 
 {
-	private RestoreCoordinatorState state = new RestoreCoordinatorInitialState();
+	private final static String LOGGING_NAME = "RestoreCoordinator";
+	private static final int RESTORE_TIMEOUT = 1000;
 	String targetNode;
 
 	public RestoreCoordinator(String node)
@@ -32,29 +35,65 @@ public class RestoreCoordinator extends Worker
 		targetNode = node;
 	}
 	
-	public void RestoreNode()
-	{
-		// TODO: finish
-		// TcpSender.getInstance().sendToNode(new RestoreIncentive(), targetNode);
-	}
-	
-	synchronized public void processMessage(Message message) {
-		/*
-		 * try { this.messageQueue.putMessage(message); } catch
-		 * (InterruptedException e) { // TODO Auto-generated catch block
-		 * Logger.getInstance().log(e.getMessage(), "TPC", Level.SEVERE); }
-		 */
-		this.onNewMessage(message);
-	}
-	
-	protected void onNewMessage(Message message) {
-		Logger.getInstance().log("NewMessage: " + message, "RestoreCoordinatorImpl", Logger.Level.INFO);
+
+	@Override
+	public void run() {
 		
-		if(message instanceof RestoreAck) {
-			state.onYesForCommit(message.getSenderAddress());
+		// TODO: tutaj nie moze byc zadnych transakcji
+		Message msg;
+		MessageType[] incentiveReply = { MessageType.RESTORE_ACK, MessageType.RESTORE_NACK };
+		
+		// send restore incentive
+		TcpSender.getInstance().sendToNode(new RestoreIncentive(), targetNode);
+		
+		// receive reply
+		try
+		{
+			setTimeout(RESTORE_TIMEOUT);
+			msg = accept(incentiveReply, targetNode);
 		}
-		else if(message instanceof RestoreNack) {
-			state.onNoForCommit(message.getSenderAddress());
+		catch(TimeoutException ex)
+		{
+			msg = null;
 		}
+		
+		if(msg == null || msg instanceof RestoreNack)
+		{
+			Logger.getInstance().log("Restore incentive rejected by " + targetNode,
+					LOGGING_NAME, Logger.Level.INFO);
+			return;
+		}
+		
+		// TODO: lock whole database ( all tables )
+		RestoreTableList rtl = new RestoreTableList(); // TODO: fill data
+		TcpSender.getInstance().sendToNode(rtl, targetNode);
+		
+		// receive reply
+		try
+		{
+			setTimeout(RESTORE_TIMEOUT);
+			msg = accept(MessageType.RESTORE_ACK, targetNode);
+		}
+		catch(TimeoutException ex)
+		{
+			Logger.getInstance().log(
+					"Restore of '" + targetNode + "' failed due to timeout while receiving tablelist ack ",
+					LOGGING_NAME, 
+					Logger.Level.INFO);
+			return;
+		}
+		
+		// TODO: release lock
+		
+		// send all tables
+		for(TableVersion tv : ri.getTables())
+		{
+			String dump = DbConnectorImpl.getInstance().dumpTable(tv.getTableName());
+			RestoreTable rt = new RestoreTable(tv.getVersion(), tv.getTableName(), dump);
+			
+			TcpSender.getInstance().sendToNode(rt, targetNode);
+		}	
+		
+		// finished
 	}
 }

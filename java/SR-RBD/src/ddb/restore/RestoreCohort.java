@@ -19,6 +19,7 @@ import ddb.restore.msg.RestoreIncentive;
 import ddb.restore.msg.RestoreNack;
 import ddb.restore.msg.RestoreTable;
 import ddb.restore.msg.RestoreTableList;
+import ddb.restore.msg.TableVersion;
 
 /**
  * <!-- begin-UML-doc --> <!-- end-UML-doc -->
@@ -90,10 +91,9 @@ public class RestoreCohort extends Worker {
 		}
 		
 		// set table state as out of sync if versions dont match
-		clearTimeout();
-		RestoreTableList rtlm = (RestoreTableList)msg;
-		int left = rtlm.getTables().length;
-		for(String table : rtlm.getTables())
+		RestoreTableList incentive = (RestoreTableList)msg;
+		int left = incentive.getTables().length;
+		for(TableVersion table : incentive.getTables())
 		{
 			// TODO: implement
 		}
@@ -112,27 +112,27 @@ public class RestoreCohort extends Worker {
 				// deny restore since its already happening
 				TcpSender.getInstance().sendTo(new RestoreNack(), node);
 			}
-			else
+			else // RestoreTable
 			{
-				clearTimeout();
-				
-				RestoreTable rtm = (RestoreTable)msg;
-				String tableName = rtm.getTableName();
-				int version = rtm.getTableVersion();
-				
-				if(DatabaseStateImpl.getInstance().getTableVersion(tableName) < version)
-				{
-					// TODO: czy w dumpach jest drop table?
-					DbConnectorImpl.getInstance().importTable(rtm.getTableDump());
-				}
-				
+				restoreTable((RestoreTable)msg);
 				--left;
-				
 				setTimeout(RESTORE_TIMEOUT);
 			}
 			
 		}
 		
 		clearTimeout();
+	}
+	
+	protected void restoreTable(RestoreTable rtm)
+	{
+		String tableName = rtm.getTableName();
+		int version = rtm.getTableVersion();
+		
+		if(DatabaseStateImpl.getInstance().getTableVersion(tableName) < version)
+		{
+			// TODO: czy w dumpach jest drop table?
+			DbConnectorImpl.getInstance().importTable(tableName, version, rtm.getTableDump());
+		}
 	}
 }

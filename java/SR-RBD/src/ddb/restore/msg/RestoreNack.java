@@ -14,7 +14,7 @@ public class RestoreNack extends RestoreMessage {
 	}
 
 	@Override
-	protected MessageType getType() {
+	public MessageType getType() {
 		return MessageType.RESTORE_NACK;
 	}
 

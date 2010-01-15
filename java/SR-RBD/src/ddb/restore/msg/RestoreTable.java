@@ -12,6 +12,11 @@ public class RestoreTable extends RestoreMessage{
 	protected String tableName;
 	protected String tableDump;
 	
+	public RestoreTable()
+	{
+		
+	}
+	
 	public RestoreTable(int version, String name, String dump) {
 		setTableVersion(version);
 		setTableName(name);
@@ -57,8 +62,8 @@ public class RestoreTable extends RestoreMessage{
 	@Override
 	protected void toBinary(DataOutputStream s) throws IOException {
 		s.writeInt(tableVersion);
-		s.WriteString(tableName);
-		s.WriteString(tableDump);
+		s.writeString(tableName);
+		s.writeString(tableDump);
 	}
 
 	

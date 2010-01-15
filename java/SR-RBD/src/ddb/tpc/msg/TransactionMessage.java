@@ -45,6 +45,6 @@ public class TransactionMessage extends Message {
 
 	@Override
 	public void toBinary(DataOutputStream s) throws IOException {
-		s.WriteString(queryString);
+		s.writeString(queryString);
 	}
 }
