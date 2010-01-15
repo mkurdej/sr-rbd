@@ -37,16 +37,4 @@ public class DatabaseStateStub implements DatabaseState {
 	public boolean isLocked(String tableName){
 		return locked.contains(tableName);
 	}
-
-	@Override
-	public void addTable(String tableName, String createStatement) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void incrementTableVersion(String tableName) {
-		// TODO Auto-generated method stub
-		
-	}
 }

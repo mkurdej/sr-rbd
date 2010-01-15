@@ -66,5 +66,11 @@ public class DatabaseStateImpl implements DatabaseState {
 	public void unlockTable(String tableName) {
 		tables.get(tableName).unlockTable();
 	}
+
+
+	@Override
+	public int getTableVersion(String tableName) {
+		return tables.get(tableName).getVersion();
+	}
 	
 }
