@@ -1,4 +1,4 @@
-package ddb.restore;
+package ddb.restore.msg;
 
 
 import ddb.msg.Message;

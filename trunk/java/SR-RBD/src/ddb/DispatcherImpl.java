@@ -14,7 +14,9 @@ import ddb.communication.UdpListener;
 import ddb.msg.HelloMessage;
 import ddb.msg.Message;
 import ddb.restore.RestoreCohort;
-import ddb.restore.RestoreMessage;
+import ddb.restore.RestoreCoordinator;
+import ddb.restore.msg.RestoreIncentive;
+import ddb.restore.msg.RestoreMessage;
 import ddb.tpc.TPCParticipant;
 import ddb.tpc.coh.Cohort;
 import ddb.tpc.coh.CohortImpl;
@@ -42,6 +44,8 @@ import ddb.util.Util;
 public class DispatcherImpl implements Dispatcher {
 
 	private final static String LOGGING_NAME = "DispatcherImpl";
+	private final static int OUT_OF_SYNC_BEATS_THRESHOLD = 4;
+	private final static int OUT_OF_SYNC_RESET_TIME_MS = 5000;
 	
 	// destination for messages
 	protected BlockingQueue<Message> queue = new LinkedBlockingQueue<Message>();
@@ -54,8 +58,18 @@ public class DispatcherImpl implements Dispatcher {
 	// workers
 	private Map<String, Cohort> cohorts = new HashMap<String, Cohort>();
 	private Map<String, Coordinator> coordinators = new HashMap<String, Coordinator>();
-	private Map<String, RestoreCohort> restoreCohorts = new HashMap<String, RestoreCohort>();
+	
+	private RestoreCohort restoreCohort = new RestoreCohort();
+	private Map<String, RestoreCoordinator> restoreCoordinators = new HashMap<String, RestoreCoordinator>();
+	
 	private Map<String, String> coordinatorAddresses = new HashMap<String, String>();
+	private Map<String, NodeSyncInfo> nodeSynchronization = new HashMap<String, NodeSyncInfo>();
+	
+	class NodeSyncInfo
+	{
+		public int BeatsOutOfSync;
+		public int LastBeat;
+	}
 	
 	public DispatcherImpl()
 	{
@@ -68,6 +82,9 @@ public class DispatcherImpl implements Dispatcher {
 		new Thread(tcp).start();
         new Thread(udp).start();
         new Thread(hello).start();
+        
+        // install restore thread
+        new Thread(restoreCohort).start();
 	}
 	
 	public void Run() throws InterruptedException
@@ -85,7 +102,7 @@ public class DispatcherImpl implements Dispatcher {
 	}
 	
 	// IMPROVEMENT: should be visitor pattern
-	public void process(Message msg) 
+	public void process(Message msg) throws InterruptedException
 	{
 		if (msg instanceof TPCMessage) 
 		{
@@ -105,29 +122,47 @@ public class DispatcherImpl implements Dispatcher {
 		}
 	}
 	
-	public void processTpcMessage(TPCMessage msg)
+	public void processTpcMessage(TPCMessage msg) throws InterruptedException
 	{
-		String transactionId = ((TPCMessage) msg).getTransactionId();
+		String transactionId = msg.getTransactionId();
 		String coorAddr = coordinatorAddresses.get(transactionId);
+		
+		if(coorAddr == null)
+		{
+			Logger.getInstance().log(
+					"processTpcMessage coordinator address for tid " + transactionId + " is null", 
+					LOGGING_NAME, 
+					Logger.Level.WARNING);
+			return;
+		}
 		
 		if (msg instanceof CanCommitMessage) 
 		{
-			// CREATE COHORT
-			// TODO change CohortImpl to extend Cohort (write to interface,
-			// not to implementation!)
+			// create cohort and start his job
 			Cohort coh = new CohortImpl();
 			cohorts.put(transactionId, coh);
 			coh.setTransactionId(transactionId);
 			coh.setCoordinatorAddress(coorAddr);
 			coh.addEndTransactionListener(this);
-			coh.processMessage(msg);
+			coh.putMessage(msg);
 		} 
 		else if (msg instanceof PreCommitMessage
 				|| msg instanceof DoCommitMessage
 				|| msg instanceof AbortMessage) 
 		{
-			Cohort coh = cohorts.get(transactionId);
-			coh.processMessage(msg);
+			// check if cohort exists
+			Cohort cohort = cohorts.get(transactionId);
+			
+			if(cohort == null)
+			{
+				Logger.getInstance().log(
+						"No cohort for tid" + transactionId, 
+						LOGGING_NAME, 
+						Logger.Level.WARNING);
+				return;
+			}
+			
+			cohort.putMessage(msg);
 		} 
 		else if (msg instanceof YesForCommitMessage
 				|| msg instanceof NoForCommitMessage
@@ -135,17 +170,27 @@ public class DispatcherImpl implements Dispatcher {
 				|| msg instanceof HaveCommittedMessage) 
 		{
 			// send to COORDINATOR
-			Coordinator coor = coordinators.get(transactionId);
-			coor.processMessage(msg);
+			Coordinator coordinator = coordinators.get(transactionId);
+			
+			if(coordinator == null)
+			{
+				Logger.getInstance().log(
+						"No coordinator for tid" + transactionId, 
+						LOGGING_NAME, 
+						Logger.Level.WARNING);
+				return;
+			}
+			
+			coordinator.putMessage(msg);
 		}
 	}
 	
-	public void  processRestoreMessage(RestoreMessage msg)
+	public void  processRestoreMessage(RestoreMessage msg) throws InterruptedException
 	{
-		// TODO: finish
+		restoreCohort.putMessage(msg);
 	}
 	
-	public void  processTransactionMessage(TransactionMessage msg)
+	public void  processTransactionMessage(TransactionMessage msg) throws InterruptedException
 	{
 		// create COORDINATOR
 		String transactionId = Util.generateGUID();
@@ -155,14 +200,41 @@ public class DispatcherImpl implements Dispatcher {
 		coor.setClientAddress(msg.getSenderAddress());
 		coor.setClientPort(msg.getSenderPort());
 		coor.addEndTransactionListener(this);
-		coor.processMessage(msg);
+		
+		// give him the message
+		coor.putMessage(msg);
 	}
 	
 	public void  processHelloMessage(HelloMessage msg)
 	{
+		String node = msg.getSenderAddress();
+		
 		// TODO: sprawdzanie czy wezel istnieje - nie istnieje dodanie
+		// if( !TcpSender.has(node) ) TcpSender.addNode(node);
 		
 		// TODO: zliczanie jak dlugo wezel jest out of sync
+		
+		/*
+		NodeSyncInfo nsi = nodeSynchronization.get(node);
+		
+		if(nsi == null)
+		{
+			nsi = new NodeSyncInfo(0,0);
+			nodeSynchronization.put(node, nsi);
+		}
+		else
+		{
+			if(System.cnsi.LastBeat < OUT_OF_SYNC_RESET_TIME_MS)
+			{
+				// reset counter and increment by 1
+			}
+			else if(nsi.BeatsOutOfSync >= OUT_OF_SYNC_BEATS_THRESHOLD)
+			{
+				RestoreCoordinator rc = new RestoreCoordinator(node);
+				restoreCoordinators.put(rc);
+			}
+		}
+		*/
 		
 		// TODO: jezeli nie byl aktywny przez dlugi okres czasu - stworzernie
 		// Restore Coordinator
