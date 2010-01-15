@@ -15,7 +15,7 @@ public class RestoreAck extends RestoreMessage {
 	}
 
 	@Override
-	protected MessageType getType() {
+	public MessageType getType() {
 		return MessageType.RESTORE_ACK;
 	}
 

@@ -9,7 +9,7 @@ public class DataOutputStream extends java.io.DataOutputStream
 		super(out);
 	}
 	
-	public void WriteString(String s) throws IOException {
+	public void writeString(String s) throws IOException {
 		
 		// transform string to bytes
 		byte[] bytes = s.getBytes();
