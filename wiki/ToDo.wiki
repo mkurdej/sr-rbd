@@ -7,14 +7,14 @@ Wszystko jedno...
 
 = Details =
 ==Adrian==
-- przykład implementacji (de)serializacji
-- Restore + dispatcher
-- HelloMessage
-- przebudowa architektury
+  * - przykład implementacji (de)serializacji
+  * - Restore + dispatcher
+  * - HelloMessage
+  * - przebudowa architektury
 
 ==Marcin==
-+ dump bazy
-- implementacja metod wirtualnych: getType(), toBinary(), fromBinary()
+  * + dump bazy
+  * - implementacja metod wirtualnych: getType(), toBinary(), fromBinary()
 
 ==Marek==
 - Dodać w TcpSenderze zarządzanie węzłami
