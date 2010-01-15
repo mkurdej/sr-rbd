@@ -1,9 +1,7 @@
 /**
  * 
  */
-package ddb;
-
-import ddb.tpc.EndTransactionListener;
+package ddb.restore;
 
 /** 
  * <!-- begin-UML-doc -->
@@ -11,6 +9,5 @@ import ddb.tpc.EndTransactionListener;
  * @author User
  * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
  */
-public interface Dispatcher extends EndTransactionListener {
-	public abstract void Run() throws InterruptedException;
+public interface RestoreCoordinator {
 }

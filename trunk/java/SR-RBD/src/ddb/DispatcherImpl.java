@@ -41,13 +41,15 @@ import ddb.util.Util;
  */
 public class DispatcherImpl implements Dispatcher {
 
+	private final static String LOGGING_NAME = "DispatcherImpl";
+	
 	// destination for messages
-	BlockingQueue<Message> queue = new LinkedBlockingQueue<Message>();
+	protected BlockingQueue<Message> queue = new LinkedBlockingQueue<Message>();
 	
 	// communication
-	TcpListener tcp = new TcpListener(queue);
-	UdpListener udp = new UdpListener(queue);
-	HelloGenerator hello = new HelloGenerator();
+	protected TcpListener tcp = new TcpListener(queue);
+	protected UdpListener udp = new UdpListener(queue);
+	protected HelloGenerator hello = new HelloGenerator();
 	
 	// workers
 	private Map<String, Cohort> cohorts = new HashMap<String, Cohort>();
@@ -70,7 +72,9 @@ public class DispatcherImpl implements Dispatcher {
 	
 	public void Run() throws InterruptedException
 	{
+    	Logger.getInstance().log("Initializing", LOGGING_NAME, Logger.Level.INFO);
 		Initialize();
+		Logger.getInstance().log("Initializing Done", LOGGING_NAME, Logger.Level.INFO);
 		
 		// main loop
 		while(true)
