@@ -110,7 +110,7 @@ public class DbConnectorImpl implements DbConnector
         }                                                                     
     }                                                                         
 
-    public String dumpTable(String tableName)
+    public String dumpTable(String tableName) throws DumpTableException
     {                                        
         String output = "";                  
         String cmd = "mysqldump -u " + USER + " -p" + PASSWORD + " " + DATABASE
@@ -126,7 +126,8 @@ public class DbConnectorImpl implements DbConnector
         catch (IOException e)                  
         {                                      
             Logger.getInstance().log("IO error during table dump: " + e.getMessage(),
-                    LOGGING_NAME, Logger.Level.WARNING);                             
+                    LOGGING_NAME, Logger.Level.WARNING); 
+            throw new DumpTableException(e);
         }                                                                            
 
         BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -143,13 +144,14 @@ public class DbConnectorImpl implements DbConnector
         catch (IOException e)                                       
         {                                                           
             Logger.getInstance().log("IO error during table dump: " + e.getMessage(),
-                    LOGGING_NAME, Logger.Level.WARNING);                             
+                    LOGGING_NAME, Logger.Level.WARNING);
+            throw new DumpTableException(e);
         }                                                                            
 
         return output;
     }                 
 
-    public void importTable(String dump)
+    public void importTable(String dump) throws ImportTableException
     {                                   
         String cmd = "mysql -u " + USER + " -p" + PASSWORD + " " + DATABASE;
 
@@ -167,6 +169,7 @@ public class DbConnectorImpl implements DbConnector
         {
             Logger.getInstance().log("IO error during table import: " + e.getMessage(),
                     LOGGING_NAME, Logger.Level.WARNING);
+            throw new ImportTableException(e);
         }
     }
 
