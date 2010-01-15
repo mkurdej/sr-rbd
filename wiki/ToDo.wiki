@@ -6,25 +6,25 @@ Wszystko jedno...
 
 
 = Details =
-Adrian
+==Adrian==
 - przykład implementacji (de)serializacji
 - Restore + dispatcher
 - HelloMessage
 - przebudowa architektury
 
-Marcin
+==Marcin==
 + dump bazy
 - implementacja metod wirtualnych: getType(), toBinary(), fromBinary()
 
-Marek
+==Marek==
 - Dodać w TcpSenderze zarządzanie węzłami
 
 
-Piotr
-* + Cohort - sprawdzenie numeru tabeli
-* + Cohort - inkrementacja numeru tabeli
-* + DatabaseState - metody dla powyższych
-* + DatabaseState - pobranie wersji tabeli
-* + Numer tabeli przy CanCommitMessage
+==Piotr==
+  * + Cohort - sprawdzenie numeru tabeli
+  * + Cohort - inkrementacja numeru tabeli
+  * + DatabaseState - metody dla powyższych
+  * + DatabaseState - pobranie wersji tabeli
+  * + Numer tabeli przy CanCommitMessage
 - Parsowanie wiadomosci
 - MD5 na konkatenacje numerow wersji tabel
