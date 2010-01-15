@@ -8,8 +8,10 @@ package ddb.communication;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.BlockingQueue;
 
 import ddb.Logger;
+import ddb.msg.Message;
 
 /**
  *
@@ -17,19 +19,15 @@ import ddb.Logger;
  */
 public class TcpListener implements Runnable
 {
-    private final static String LOGGING_NAME = "TcpListener";
+	private final static String LOGGING_NAME = "TcpListener";
     public final static int LISTEN_PORT = 1501;
-    private final static TcpListener instance = new TcpListener();
 
-    ServerSocket serverSocket = null;
+	protected BlockingQueue<Message> storage = null;
+	protected ServerSocket serverSocket = null;
 
-    private TcpListener()
+    public TcpListener(BlockingQueue<Message> queue)
     {
-    }
-
-    public static TcpListener getInstance()
-    {
-        return instance;
+    	storage = queue;
     }
 
     public void run()
@@ -53,7 +51,7 @@ public class TcpListener implements Runnable
             try
             {
                 Socket newConnection = serverSocket.accept();
-                TcpWorker worker = new TcpWorker(newConnection);
+                TcpWorker worker = new TcpWorker(newConnection, storage);
                 new Thread(worker).start();
             }
             catch (IOException ex)

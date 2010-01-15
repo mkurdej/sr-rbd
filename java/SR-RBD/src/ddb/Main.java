@@ -7,9 +7,10 @@ package ddb;
 
 import java.util.Locale;
 
+import ddb.Logger.Level;
+import ddb.communication.HelloGenerator;
 import ddb.communication.TcpListener;
 import ddb.communication.UdpListener;
-import ddb.restore.HelloGenerator;
 
 /**
  *
@@ -23,12 +24,16 @@ public class Main
      */
     public static void main(String[] args) 
     {
-    	// set locale as in all nodes
-    	Locale.setDefault(new Locale("en", "US"));
+    	Dispatcher dispatcher = new DispatcherImpl();
     	
-        new Thread(TcpListener.getInstance()).start();
-        new Thread(UdpListener.getInstance()).start();
-        new Thread(HelloGenerator.getInstance()).start();
+    	try 
+    	{
+			dispatcher.Run();
+		} 
+    	catch (InterruptedException e) 
+    	{
+			Logger.getInstance().log("InterruptedException" + e.getMessage(), "MAIN", Level.SEVERE);
+		}
     }
 
 }
