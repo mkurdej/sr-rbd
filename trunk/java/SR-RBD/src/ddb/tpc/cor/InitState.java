@@ -100,6 +100,12 @@ public class InitState extends CoordinatorState {
 			CanCommitMessage msg = new CanCommitMessage();
 			msg.setTableName(parser.getTableName());
 			msg.setQueryString(parser.getQueryString());
+			if(parser.getOperationType().equals(SqlOperationType.CREATE)) {
+				msg.setCreate(true);
+			}
+			else {
+				msg.setCreate(false);
+			}
 			coordinator.broadcastMessage(msg);
 			coordinator.changeState(new WaitingState());
 		}

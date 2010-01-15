@@ -3,6 +3,12 @@
  */
 package ddb.tpc.msg;
 
+import java.io.IOException;
+
+import ddb.communication.DataInputStream;
+import ddb.communication.DataOutputStream;
+import ddb.msg.MessageType;
+
 /** 
  * <!-- begin-UML-doc -->
  * <!-- end-UML-doc -->
@@ -28,5 +34,23 @@ public class HaveCommittedMessage extends TPCMessage {
 		// TODO Auto-generated method stub
 		return null;
 		// end-user-code
+	}
+
+	@Override
+	protected void fromBinary(DataInputStream s) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected MessageType getType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected void toBinary(DataOutputStream s) throws IOException {
+		// TODO Auto-generated method stub
+		
 	}
 }
