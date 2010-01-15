@@ -57,7 +57,7 @@ public class TcpListener implements Runnable
             catch (IOException ex)
             {
                 Logger.getInstance().log("Could not accept new connection!",
-                        LOGGING_NAME, Logger.Level.SEVERE);
+                        LOGGING_NAME, Logger.Level.WARNING);
             }
 
         }
