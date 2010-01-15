@@ -21,10 +21,10 @@ Marek
 
 
 Piotr
-+ Cohort - sprawdzenie numeru tabeli
-+ Cohort - inkrementacja numeru tabeli
-+ DatabaseState - metody dla powyższych
-+ DatabaseState - pobranie wersji tabeli
-+ Numer tabeli przy CanCommitMessage
+* + Cohort - sprawdzenie numeru tabeli
+* + Cohort - inkrementacja numeru tabeli
+* + DatabaseState - metody dla powyższych
+* + DatabaseState - pobranie wersji tabeli
+* + Numer tabeli przy CanCommitMessage
 - Parsowanie wiadomosci
 - MD5 na konkatenacje numerow wersji tabel
