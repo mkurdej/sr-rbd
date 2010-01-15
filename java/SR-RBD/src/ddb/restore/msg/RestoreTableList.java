@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import ddb.communication.DataInputStream;
 import ddb.communication.DataOutputStream;
+import ddb.db.TableVersion;
 import ddb.msg.MessageType;
 
 public class RestoreTableList extends RestoreMessage {
