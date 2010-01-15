@@ -63,7 +63,7 @@ public abstract class Message {
 	 * 
 	 * @return type constant for specialized class
 	 */
-	protected abstract MessageType getType();
+	public abstract MessageType getType();
 	
 	/**
 	 * Converts object into binary representation
