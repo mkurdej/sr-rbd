@@ -13,7 +13,6 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.concurrent.BlockingQueue;
 
-import ddb.DispatcherImpl;
 import ddb.Logger;
 import ddb.msg.InvalidMessageTypeException;
 import ddb.msg.Message;
