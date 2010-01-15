@@ -8,10 +8,12 @@ import java.io.DataInputStream;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.concurrent.BlockingQueue;
 
 import ddb.Logger;
 import ddb.msg.Message;
 import ddb.msg.MessageType;
+import ddb.msg.InvalidMessageTypeException;
 
 /**
  *
@@ -19,12 +21,14 @@ import ddb.msg.MessageType;
  */
 public class TcpWorker implements Runnable
 {
-
     private final static String LOGGING_NAME = "TcpWorker";
-    Socket socket;
-
-    public TcpWorker(Socket newSocket)
+    
+    protected BlockingQueue<Message> storage;
+    protected Socket socket;
+    
+    public TcpWorker(Socket newSocket, BlockingQueue<Message> queue)
     {
+    	storage = queue;
         socket = newSocket;
     }
 
@@ -52,18 +56,30 @@ public class TcpWorker implements Runnable
     			for(left = size; left > 0; )
     				left -= in.read(b, size - left, left);
 
-    			Message m = Message.Unserialize(MessageType.values()[type], b);
+    			Message m = Message.Unserialize(MessageType.fromInt(type), b);
     			
-    			DispatcherImpl.getInstance().dispatchMessage(m,
-    					socket.getInetAddress().getHostAddress().toString(),
-    					socket.getPort());
+    			storage.put(m);
     		}
     		catch (IOException ex)
     		{
-    			Logger.getInstance().log("Socket exception!", LOGGING_NAME,
+    			Logger.getInstance().log("Socket exception! " + ex.getMessage(), 
+    					LOGGING_NAME,
     					Logger.Level.WARNING);
     			break;
-    		}
+    		} 
+    		catch (InterruptedException ex) 
+    		{
+    			Logger.getInstance().log("InterruptedException " + ex.getMessage(), 
+    					LOGGING_NAME,
+    					Logger.Level.WARNING);
+				break;
+			} catch (InvalidMessageTypeException ex) {
+				Logger.getInstance().log("InvalidMessageTypeException " + ex.getMessage(), 
+    					LOGGING_NAME,
+    					Logger.Level.WARNING);
+				break;
+			}
+    		
     	} while(true);
     }
 }
