@@ -1,4 +1,4 @@
-package ddb.restore.msg;
+package ddb.db;
 
 public class TableVersion 
 {

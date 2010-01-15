@@ -14,12 +14,12 @@ import ddb.communication.TcpSender;
 import ddb.db.DatabaseStateImpl;
 import ddb.db.DbConnector;
 import ddb.db.DbConnectorImpl;
+import ddb.db.TableVersion;
 import ddb.restore.msg.RestoreAck;
 import ddb.restore.msg.RestoreIncentive;
 import ddb.restore.msg.RestoreNack;
 import ddb.restore.msg.RestoreTable;
 import ddb.restore.msg.RestoreTableList;
-import ddb.restore.msg.TableVersion;
 
 /**
  * <!-- begin-UML-doc --> <!-- end-UML-doc -->

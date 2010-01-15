@@ -5,6 +5,7 @@ package ddb.communication;
 
 import ddb.Logger;
 import ddb.msg.HelloMessage;
+import ddb.db.DatabaseState;
 
 
 /** 
@@ -17,7 +18,7 @@ public class HelloGenerator implements Runnable {
 	
 	private final static HelloGenerator instance = new HelloGenerator();
 	private final static String LOGGING_NAME = "HelloGenerator";
-	private final static int BROADCAST_INTERVAL_MS = 200;
+	private final static int BROADCAST_INTERVAL_MS = 2000;
 	
 	public void run()
     {
@@ -32,8 +33,8 @@ public class HelloGenerator implements Runnable {
 	        while(true)
 	        {
 	        	Thread.sleep(BROADCAST_INTERVAL_MS);
-	        	// TODO: przekazac do hello message numer wersji bazy
-	        	sender.sendToAll(new HelloMessage());
+	        	HelloMessage hm = new HelloMessage(DatabaseState.GetTableVersions());
+	        	sender.sendToAll(hm);
 	        } 
 		}
         catch (InterruptedException e) {

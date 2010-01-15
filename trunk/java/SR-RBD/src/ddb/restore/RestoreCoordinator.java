@@ -9,12 +9,13 @@ import ddb.Worker;
 import ddb.msg.Message;
 import ddb.msg.MessageType;
 import ddb.communication.TcpSender;
+import ddb.db.DatabaseState;
 import ddb.db.DbConnectorImpl;
+import ddb.db.TableVersion;
 import ddb.restore.msg.RestoreIncentive;
 import ddb.restore.msg.RestoreNack;
 import ddb.restore.msg.RestoreTable;
 import ddb.restore.msg.RestoreTableList;
-import ddb.restore.msg.TableVersion;
 
 
 
@@ -65,7 +66,7 @@ public class RestoreCoordinator extends Worker
 		}
 		
 		// TODO: lock whole database ( all tables )
-		RestoreTableList rtl = new RestoreTableList(); // TODO: fill data
+		RestoreTableList rtl = new RestoreTableList(DatabaseState.GetTableVersions()); 
 		TcpSender.getInstance().sendToNode(rtl, targetNode);
 		
 		// receive reply
