@@ -14,6 +14,17 @@ import ddb.tpc.msg.TPCMessage;
  *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
  */
 public abstract class Cohort extends TPCParticipant {
+	private boolean isCreate;
+	
+	public boolean isCreate() {
+		return isCreate;
+	}
+
+	public void setCreate(boolean isCreate) {
+		this.isCreate = isCreate;
+	}
+
+	
 	/**
 	 * <!-- begin-UML-doc --> <!-- end-UML-doc -->
 	 * 

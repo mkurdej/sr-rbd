@@ -22,11 +22,10 @@ import ddb.tpc.msg.TPCMessage;
  *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
  */
 public class CohortImpl extends Cohort {
-
+	
 	public CohortImpl() {
 		setState(new InitState());
 	}
-
 	/**
 	 * <!-- begin-UML-doc --> Wyslanie wiadomosci do koordynatora transakcji
 	 * <!-- end-UML-doc -->
@@ -77,6 +76,7 @@ public class CohortImpl extends Cohort {
 	public void commitTransaction() {
 		try {
 			this.connector.query(getQueryString());
+			this.getDatabaseState().incrementTableVersion(getTableName());
 			replyToCoordinator(new HaveCommittedMessage());
 			setState(new CommittedState());
 		} catch (DBException exception) {

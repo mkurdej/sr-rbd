@@ -3,6 +3,12 @@
  */
 package ddb.tpc.msg;
 
+import java.io.IOException;
+
+import ddb.communication.DataInputStream;
+import ddb.communication.DataOutputStream;
+import ddb.msg.MessageType;
+
 /** 
  * <!-- begin-UML-doc -->
  * <!-- end-UML-doc -->
@@ -24,7 +30,11 @@ public class CanCommitMessage extends TPCMessage {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	private String tableName;
-
+	/**
+	 * Czy transakcja dotyczy utworzenia nowej tabeli
+	 */
+	private boolean isCreate;
+	
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
@@ -63,5 +73,31 @@ public class CanCommitMessage extends TPCMessage {
 	 */
 	public String getQueryString() {
 		return  queryString;
+	}
+	
+	public boolean isCreate() {
+		return isCreate;
+	}
+
+	public void setCreate(boolean isCreate) {
+		this.isCreate = isCreate;
+	}
+
+	@Override
+	protected void fromBinary(DataInputStream s) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected MessageType getType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected void toBinary(DataOutputStream s) throws IOException {
+		// TODO Auto-generated method stub
+		
 	}
 }

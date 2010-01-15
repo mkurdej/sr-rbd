@@ -42,4 +42,16 @@ public interface DatabaseState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void unlockTable(String tableName);
+	/**
+	 * Zwieksza numer wersji tabeli. Jest to liczba zdan DML wykonanych na tej tabeli.
+	 * 
+	 * @param tableName nazwa tabeli
+	 */
+	public void incrementTableVersion(String tableName);
+	/**
+	 * Dodaje nowa tabele
+	 * @param tableName nazwa tabeli
+	 * @param createStatement zapytanei tworzace tabele
+	 */
+	public void addTable(String tableName, String createStatement);
 }
