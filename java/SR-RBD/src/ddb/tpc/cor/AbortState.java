@@ -1,6 +1,6 @@
 package ddb.tpc.cor;
 
-import java.net.SocketAddress;
+import java.net.InetSocketAddress;
 
 import ddb.tpc.msg.ErrorMessage;
 import ddb.tpc.msg.HaveCommittedMessage;
@@ -9,7 +9,7 @@ import ddb.tpc.msg.TransactionMessage;
 public class AbortState extends CoordinatorState {
 
 	@Override
-	public void onAckPreCommit(SocketAddress node) {
+	public void onAckPreCommit(InetSocketAddress node) {
 		// TODO Auto-generated method stub
 
 	}
@@ -27,7 +27,7 @@ public class AbortState extends CoordinatorState {
 	}
 
 	@Override
-	public void onNoForCommit(SocketAddress node) {
+	public void onNoForCommit(InetSocketAddress node) {
 		// TODO Auto-generated method stub
 
 	}
@@ -39,7 +39,7 @@ public class AbortState extends CoordinatorState {
 	}
 
 	@Override
-	public void onYesForCommit(SocketAddress node) {
+	public void onYesForCommit(InetSocketAddress node) {
 		// TODO Auto-generated method stub
 
 	}

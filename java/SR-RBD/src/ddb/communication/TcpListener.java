@@ -6,6 +6,7 @@
 package ddb.communication;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
@@ -52,7 +53,10 @@ public class TcpListener implements Runnable
             try
             {
                 Socket newConnection = serverSocket.accept();
-                TcpSender.getInstance().addNodeBySocket(newConnection);
+                TcpSender.getInstance().addNodeBySocket(
+            		(InetSocketAddress)newConnection.getRemoteSocketAddress(),
+            		newConnection
+        		);
                 
                 TcpWorker worker = new TcpWorker(newConnection, storage);
                 new Thread(worker).start();

@@ -3,7 +3,7 @@
  */
 package ddb.tpc.cor;
 
-import java.net.SocketAddress;
+import java.net.InetSocketAddress;
 
 import ddb.communication.TcpSender;
 import ddb.msg.client.SuccessMessage;
@@ -35,7 +35,7 @@ public class CommitState extends CoordinatorState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void onYesForCommit(SocketAddress node) {
+	public void onYesForCommit(InetSocketAddress node) {
 		// begin-user-code
 		// TODO Auto-generated method stub
 
@@ -48,7 +48,7 @@ public class CommitState extends CoordinatorState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void onNoForCommit(SocketAddress node) {
+	public void onNoForCommit(InetSocketAddress node) {
 		// begin-user-code
 		// TODO Auto-generated method stub
 
@@ -61,7 +61,7 @@ public class CommitState extends CoordinatorState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void onAckPreCommit(SocketAddress node) {
+	public void onAckPreCommit(InetSocketAddress node) {
 		// begin-user-code
 		// TODO Auto-generated method stub
 

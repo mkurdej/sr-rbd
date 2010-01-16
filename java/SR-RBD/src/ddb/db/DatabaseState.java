@@ -3,7 +3,7 @@
  */
 package ddb.db;
 
-import java.net.SocketAddress;
+import java.net.InetSocketAddress;
 import java.util.Set;
 
 /** 
@@ -31,7 +31,7 @@ public interface DatabaseState {
 	 * @return
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public Set<SocketAddress> getNodes();
+	public Set<InetSocketAddress> getNodes();
 
 	/** 
 	 * <!-- begin-UML-doc -->

@@ -3,7 +3,7 @@
  */
 package ddb.restore;
 
-import java.net.SocketAddress;
+import java.net.InetSocketAddress;
 import java.util.Arrays;
 
 import ddb.Logger;
@@ -69,7 +69,7 @@ public class RestoreCohort extends Worker {
 		msg = accept(MessageType.RESTORE_INCENTIVE, null);
 		
 		// answer ok
-		SocketAddress node = msg.getSender();
+		InetSocketAddress node = msg.getSender();
 		TcpSender.getInstance().sendToNode(new RestoreAck(), node);
 
 		// set timeout for restore process
