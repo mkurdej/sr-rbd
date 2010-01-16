@@ -1,5 +1,6 @@
 package ddb;
 
+import java.net.SocketAddress;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -29,13 +30,13 @@ public abstract class Worker implements Runnable
 		queue.put(msg);
 	}
 	
-	public Message accept(MessageType type, String node) throws InterruptedException, TimeoutException
+	public Message accept(MessageType type, SocketAddress node) throws InterruptedException, TimeoutException
 	{
 		MessageType[] types = { type };
 		return accept(types, node);
 	}
 	
-	public Message accept(MessageType[] types, String node) throws InterruptedException, TimeoutException
+	public Message accept(MessageType[] types, SocketAddress node) throws InterruptedException, TimeoutException
 	{
 		while(true)
 		{
@@ -56,7 +57,7 @@ public abstract class Worker implements Runnable
 			MessageType type = msg.getType();
 			
 			// check if source matches
-			if(node == null || msg.getSenderAddress().equals(node))
+			if(node == null || msg.getSender().equals(node))
 			{
 				// check if type matches
 				for(MessageType t : types)

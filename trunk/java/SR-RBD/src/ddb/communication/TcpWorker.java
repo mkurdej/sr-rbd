@@ -5,9 +5,11 @@
 package ddb.communication;
 
 import java.io.DataInputStream;
+import java.io.EOFException;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.concurrent.BlockingQueue;
 
 import ddb.Logger;
@@ -38,48 +40,59 @@ public class TcpWorker implements Runnable
 			+ socket.getInetAddress().getHostAddress().toString() + ":"
 			+ socket.getPort()
 			, LOGGING_NAME, Logger.Level.INFO);
-    	do
-    	{
-    		try
-    		{
-    			socket.setSoTimeout(0);
-
-    			DataInputStream in = new DataInputStream(socket.getInputStream());
-    			int size = in.readInt();
-    			int type = in.readInt();
-    			byte[] b = new byte[size];
-
-    			Logger.getInstance().log("Size = " + Integer.toString(size),
-    					LOGGING_NAME, Logger.Level.INFO);
-
-    			int left;
-    			for(left = size; left > 0; )
-    				left -= in.read(b, size - left, left);
-
-    			Message m = Message.Unserialize(MessageType.fromInt(type), b);
-    			
-    			storage.put(m);
-    		}
-    		catch (IOException ex)
-    		{
-    			Logger.getInstance().log("Socket exception! " + ex.getMessage(), 
-    					LOGGING_NAME,
-    					Logger.Level.WARNING);
-    			break;
-    		} 
-    		catch (InterruptedException ex) 
-    		{
-    			Logger.getInstance().log("InterruptedException " + ex.getMessage(), 
-    					LOGGING_NAME,
-    					Logger.Level.WARNING);
-				break;
-			} catch (InvalidMessageTypeException ex) {
-				Logger.getInstance().log("InvalidMessageTypeException " + ex.getMessage(), 
-    					LOGGING_NAME,
-    					Logger.Level.WARNING);
-				break;
-			}
-    		
-    	} while(true);
+    	
+    	// IMPROVEMENT: i'm unsure if this would work in finally clause
+    	SocketAddress address = socket.getRemoteSocketAddress();
+    	
+		try
+		{
+			int size;
+			int type;
+			socket.setSoTimeout(0);
+			DataInputStream in = new DataInputStream(socket.getInputStream());
+			
+			while(true)
+	    	{
+				try
+				{
+					size = in.readInt();
+				}
+				catch(EOFException ex)
+				{
+					break; // node has disconnected legally
+				}
+				
+				type = in.readInt();
+				byte[] b = new byte[size];
+	
+				Logger.getInstance().log("Size = " + Integer.toString(size),
+						LOGGING_NAME, Logger.Level.INFO);
+	
+				int left;
+				for(left = size; left > 0; )
+					left -= in.read(b, size - left, left);
+	
+				Message m = Message.Unserialize(MessageType.fromInt(type), b, address);
+				storage.put(m);
+	    	}
+		}
+		catch (IOException ex)
+		{
+			Logger.getInstance().log("Socket exception! " + ex.getMessage(), 
+					LOGGING_NAME,
+					Logger.Level.WARNING);
+		} 
+		catch (InterruptedException ex) 
+		{
+			Logger.getInstance().log("InterruptedException " + ex.getMessage(), 
+					LOGGING_NAME,
+					Logger.Level.WARNING);
+		} catch (InvalidMessageTypeException ex) {
+			Logger.getInstance().log("InvalidMessageTypeException " + ex.getMessage(), 
+					LOGGING_NAME,
+					Logger.Level.WARNING);
+		} finally {
+			TcpSender.getInstance().removeNode(address);
+		}
     }
 }

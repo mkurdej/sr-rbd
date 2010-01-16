@@ -3,6 +3,9 @@
  */
 package ddb.tpc.cor;
 
+import java.net.SocketAddress;
+
+import ddb.communication.TcpSender;
 import ddb.msg.client.SuccessMessage;
 import ddb.msg.client.TimeoutMessage;
 import ddb.tpc.msg.HaveCommittedMessage;
@@ -32,7 +35,7 @@ public class CommitState extends CoordinatorState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void onYesForCommit(String node) {
+	public void onYesForCommit(SocketAddress node) {
 		// begin-user-code
 		// TODO Auto-generated method stub
 
@@ -45,7 +48,7 @@ public class CommitState extends CoordinatorState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void onNoForCommit(String node) {
+	public void onNoForCommit(SocketAddress node) {
 		// begin-user-code
 		// TODO Auto-generated method stub
 
@@ -58,7 +61,7 @@ public class CommitState extends CoordinatorState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void onAckPreCommit(String node) {
+	public void onAckPreCommit(SocketAddress node) {
 		// begin-user-code
 		// TODO Auto-generated method stub
 
@@ -72,7 +75,7 @@ public class CommitState extends CoordinatorState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void onHaveCommitted(HaveCommittedMessage message) {
-		coordinator.getTcpSender().sendToClient(new SuccessMessage(), coordinator.getClientAddress(), coordinator.getClientPort());
+		TcpSender.getInstance().sendToNode(new SuccessMessage(), coordinator.getClientAddress());
 		coordinator.endTransaction();
 	}
 

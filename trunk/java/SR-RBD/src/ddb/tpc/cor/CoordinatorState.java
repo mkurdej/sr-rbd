@@ -3,6 +3,8 @@
  */
 package ddb.tpc.cor;
 
+import java.net.SocketAddress;
+
 import ddb.tpc.TimeoutListener;
 import ddb.tpc.msg.HaveCommittedMessage;
 import ddb.tpc.msg.ErrorMessage;
@@ -22,17 +24,17 @@ abstract public class CoordinatorState implements TimeoutListener {
 	/** 
 	 * @param node
 	 */
-	abstract public void onYesForCommit(String node);
+	abstract public void onYesForCommit(SocketAddress node);
 
 	/** 
 	 * @param node
 	 */
-	abstract public void onNoForCommit(String node);
+	abstract public void onNoForCommit(SocketAddress node);
 
 	/** 
 	 * @param node
 	 */
-	abstract public void onAckPreCommit(String node);
+	abstract public void onAckPreCommit(SocketAddress node);
 
 	/** 
 	 * @param message

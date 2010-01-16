@@ -3,6 +3,8 @@
  */
 package ddb.tpc.cor;
 
+import java.net.SocketAddress;
+
 import ddb.msg.client.ConflictMessage;
 import ddb.msg.client.TimeoutMessage;
 import ddb.tpc.msg.HaveCommittedMessage;
@@ -18,6 +20,7 @@ public class WaitingState extends CoordinatorState {
 	 * @see TimeoutListener#onTimeout()
 	 * 
 	 */
+	@Override
 	public void onTimeout() {
 		coordinator.abortTransaction(new TimeoutMessage());
 	}
@@ -25,7 +28,8 @@ public class WaitingState extends CoordinatorState {
 	/** 
 	 *  @see CoordinatorState#onYesForCommit(String node)
 	 */
-	public void onYesForCommit(String node) {
+	@Override
+	public void onYesForCommit(SocketAddress node) {
 		coordinator.processAnswer(node, new PreCommitMessage(), new PreparedState());
 	}
 
@@ -33,7 +37,8 @@ public class WaitingState extends CoordinatorState {
 	 *  @see CoordinatorState#onNoForCommit(String node)
 	 * 
 	 */
-	public void onNoForCommit(String node) {
+	@Override
+	public void onNoForCommit(SocketAddress node) {
 		coordinator.abortTransaction(new ConflictMessage());
 	}
 
@@ -41,7 +46,8 @@ public class WaitingState extends CoordinatorState {
 	 *  @see CoordinatorState#onAckPreCommit(String node)
 	 *
 	 */
-	public void onAckPreCommit(String node) {
+	@Override
+	public void onAckPreCommit(SocketAddress node) {
 		// begin-user-code
 		// TODO Auto-generated method stub
 
@@ -51,6 +57,7 @@ public class WaitingState extends CoordinatorState {
 	/** 
 	 *  @see CoordinatorState#onHaveCommitted(HaveCommittedMessage message)
 	 */
+	@Override
 	public void onHaveCommitted(HaveCommittedMessage message) {
 		// begin-user-code
 		// TODO Auto-generated method stub
@@ -73,6 +80,7 @@ public class WaitingState extends CoordinatorState {
 	 *  @see CoordinatorState#onErrorMessage(ErrorMessage message)
 	 * 
 	 */
+	@Override
 	public void onErrorMessage(ErrorMessage message) {
 		// begin-user-code
 		// TODO Auto-generated method stub

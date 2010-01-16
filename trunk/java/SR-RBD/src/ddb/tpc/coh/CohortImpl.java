@@ -3,6 +3,7 @@
  */
 package ddb.tpc.coh;
 
+import ddb.communication.TcpSender;
 import ddb.db.DBException;
 import ddb.msg.Message;
 import ddb.tpc.TPCParticipant;
@@ -36,7 +37,7 @@ public class CohortImpl extends Cohort {
 	 */
 	@Override
 	public void replyToCoordinator(TPCMessage message) {
-		this.tcpSender.sendToNode(message, getCoordinatorAddress());
+		TcpSender.getInstance().sendToNode(message, getCoordinatorAddress());
 	}
 
 	/**

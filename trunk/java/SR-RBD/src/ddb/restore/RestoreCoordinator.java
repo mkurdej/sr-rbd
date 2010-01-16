@@ -3,6 +3,8 @@
  */
 package ddb.restore;
 
+import java.net.SocketAddress;
+
 import ddb.Logger;
 import ddb.TimeoutException;
 import ddb.Worker;
@@ -29,9 +31,9 @@ public class RestoreCoordinator extends Worker
 {
 	private final static String LOGGING_NAME = "RestoreCoordinator";
 	private static final int RESTORE_TIMEOUT = 1000;
-	String targetNode;
+	SocketAddress targetNode;
 
-	public RestoreCoordinator(String node)
+	public RestoreCoordinator(SocketAddress node)
 	{
 		targetNode = node;
 	}
@@ -66,7 +68,7 @@ public class RestoreCoordinator extends Worker
 		}
 		
 		// TODO: lock whole database ( all tables )
-		RestoreTableList rtl = new RestoreTableList(DatabaseState.GetTableVersions()); 
+		RestoreTableList rtl = new RestoreTableList(DatabaseState.getInstance().GetTableVersions()); 
 		TcpSender.getInstance().sendToNode(rtl, targetNode);
 		
 		// receive reply
@@ -87,7 +89,7 @@ public class RestoreCoordinator extends Worker
 		// TODO: release lock
 		
 		// send all tables
-		for(TableVersion tv : ri.getTables())
+		for(TableVersion tv : rtl.getTables())
 		{
 			String dump = DbConnectorImpl.getInstance().dumpTable(tv.getTableName());
 			RestoreTable rt = new RestoreTable(tv.getVersion(), tv.getTableName(), dump);

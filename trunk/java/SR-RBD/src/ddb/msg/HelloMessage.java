@@ -11,7 +11,8 @@ import ddb.msg.Message;
 
 public class HelloMessage extends Message 
 {
-	private List<TableVersion> tables = new LinkedList<TableVersion>();
+	private int listeningPort;
+	private List<TableVersion> tables;
 
 	
 	public HelloMessage()
@@ -19,27 +20,40 @@ public class HelloMessage extends Message
 		// empty
 	}
 	
-	public HelloMessage(List<TableVersion> tables)
+	public HelloMessage(List<TableVersion> tables, int port)
 	{
 		setTables(tables);
+		setListeningPort(port);
 	}
 	
-	private void setTables(List<TableVersion> tables) {
+	
+	public void setListeningPort(int listeningPort) {
+		this.listeningPort = listeningPort;
+	}
+
+	public int getListeningPort() {
+		return listeningPort;
+	}
+	
+	public void setTables(List<TableVersion> tables) {
 		this.tables = tables;
 	}
 
-	private List<TableVersion> getTables() {
+	public List<TableVersion> getTables() {
 		return tables;
 	}
 	
 	@Override
 	public void fromBinary(DataInputStream s) throws IOException {
+		// read port
+		listeningPort = s.readInt();
+		
 		// read count
 		int count = s.readInt();
 		setTables(new LinkedList<TableVersion>());
 		
 		// read contents
-		for(int i = 0; i < count; ++i)
+		while(count-- > 0)
 			getTables().add(new TableVersion(s));
 		
 	}
@@ -51,6 +65,9 @@ public class HelloMessage extends Message
 
 	@Override
 	public void toBinary(DataOutputStream s) throws IOException {
+		// write port
+		s.writeInt(listeningPort);
+		
 		// write length
 		s.writeInt(getTables().size());
 		

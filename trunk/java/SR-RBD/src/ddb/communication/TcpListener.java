@@ -20,28 +20,29 @@ import ddb.msg.Message;
 public class TcpListener implements Runnable
 {
 	private final static String LOGGING_NAME = "TcpListener";
-    public final static int LISTEN_PORT = 1501;
 
 	protected BlockingQueue<Message> storage = null;
+	protected int listenPort;
 	protected ServerSocket serverSocket = null;
 
-    public TcpListener(BlockingQueue<Message> queue)
+    public TcpListener(BlockingQueue<Message> queue, int port)
     {
     	storage = queue;
+    	listenPort = port;
     }
 
     public void run()
     {
         try
         {
-            serverSocket = new ServerSocket(LISTEN_PORT);
+            serverSocket = new ServerSocket(listenPort);
             Logger.getInstance().log("Server is listening on port " +
-                    LISTEN_PORT + ".", LOGGING_NAME, Logger.Level.INFO);
+            		listenPort + ".", LOGGING_NAME, Logger.Level.INFO);
         }
         catch (IOException ex)
         {
             Logger.getInstance().log("Could not listen on port " +
-                    Integer.toString(LISTEN_PORT) + "!", LOGGING_NAME,
+                    Integer.toString(listenPort) + "!", LOGGING_NAME,
                     Logger.Level.SEVERE);
             return;
         }
@@ -51,6 +52,8 @@ public class TcpListener implements Runnable
             try
             {
                 Socket newConnection = serverSocket.accept();
+                TcpSender.getInstance().addNodeBySocket(newConnection);
+                
                 TcpWorker worker = new TcpWorker(newConnection, storage);
                 new Thread(worker).start();
             }
