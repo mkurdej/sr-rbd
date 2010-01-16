@@ -3,7 +3,9 @@
  */
 package ddb.restore;
 
-import java.net.SocketAddress;
+import java.net.InetSocketAddress;
+import java.util.HashSet;
+import java.util.Set;
 
 import ddb.Logger;
 import ddb.TimeoutException;
@@ -18,6 +20,7 @@ import ddb.restore.msg.RestoreIncentive;
 import ddb.restore.msg.RestoreNack;
 import ddb.restore.msg.RestoreTable;
 import ddb.restore.msg.RestoreTableList;
+import ddb.tpc.EndTransactionListener;
 
 
 
@@ -31,18 +34,36 @@ public class RestoreCoordinator extends Worker
 {
 	private final static String LOGGING_NAME = "RestoreCoordinator";
 	private static final int RESTORE_TIMEOUT = 1000;
-	SocketAddress targetNode;
+	
+	private Set<EndRestorationListener> endRestorationListeners = new HashSet<EndRestorationListener>();
+	private InetSocketAddress targetNode;
 
-	public RestoreCoordinator(SocketAddress node)
+	public RestoreCoordinator(InetSocketAddress node)
 	{
 		targetNode = node;
 	}
 	
-
-	@Override
-	public void run() {
-		
-		// TODO: tutaj nie moze byc zadnych transakcji
+	public void addEndRestorationListener(EndRestorationListener listener) {
+		endRestorationListeners.add(listener);
+	}
+	
+	public void removeEndRestorationListener(EndRestorationListener listener) {
+		endRestorationListeners.remove(listener);
+	}
+	
+	private void notifyEndRestorationListener() {
+		for (EndRestorationListener listener : endRestorationListeners) {
+			listener.onEndRestoration(this);
+		}
+	}
+	
+	public InetSocketAddress getTargetNode()
+	{
+		return targetNode;
+	}
+	
+	public void Restore() throws TimeoutException
+	{
 		Message msg;
 		MessageType[] incentiveReply = { MessageType.RESTORE_ACK, MessageType.RESTORE_NACK };
 		
@@ -50,41 +71,19 @@ public class RestoreCoordinator extends Worker
 		TcpSender.getInstance().sendToNode(new RestoreIncentive(), targetNode);
 		
 		// receive reply
-		try
-		{
-			setTimeout(RESTORE_TIMEOUT);
-			msg = accept(incentiveReply, targetNode);
-		}
-		catch(TimeoutException ex)
-		{
-			msg = null;
-		}
+		setTimeout(RESTORE_TIMEOUT);
+		msg = accept(incentiveReply, targetNode);
+
 		
-		if(msg == null || msg instanceof RestoreNack)
-		{
-			Logger.getInstance().log("Restore incentive rejected by " + targetNode,
-					LOGGING_NAME, Logger.Level.INFO);
-			return;
-		}
-		
+		// TODO: tutaj nie moze byc zadnych transakcji
 		// TODO: lock whole database ( all tables )
 		RestoreTableList rtl = new RestoreTableList(DatabaseState.getInstance().GetTableVersions()); 
 		TcpSender.getInstance().sendToNode(rtl, targetNode);
 		
 		// receive reply
-		try
-		{
-			setTimeout(RESTORE_TIMEOUT);
-			msg = accept(MessageType.RESTORE_ACK, targetNode);
-		}
-		catch(TimeoutException ex)
-		{
-			Logger.getInstance().log(
-					"Restore of '" + targetNode + "' failed due to timeout while receiving tablelist ack ",
-					LOGGING_NAME, 
-					Logger.Level.INFO);
-			return;
-		}
+		setTimeout(RESTORE_TIMEOUT);
+		msg = accept(MessageType.RESTORE_ACK, targetNode);
+
 		
 		// TODO: release lock
 		
@@ -98,5 +97,25 @@ public class RestoreCoordinator extends Worker
 		}	
 		
 		// finished
+	}
+	
+	
+	@Override
+	public void run() {
+		try
+		{
+			// try to restore
+			Restore();
+		}
+		catch(TimeoutException ex)
+		{
+			Logger.getInstance().log(
+					"Restore timed out",
+					LOGGING_NAME, 
+					Logger.Level.WARNING);
+		}
+		
+		// notify
+		notifyEndRestorationListener();
 	}
 }

@@ -6,7 +6,7 @@ package ddb.communication;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.net.SocketAddress;
+import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -24,7 +24,7 @@ import ddb.msg.Message;
 public class TcpSender {
 
 	private final static String LOGGING_NAME = "TcpSender";
-	private Map<SocketAddress, NodeInfo> nodes = new HashMap<SocketAddress, NodeInfo>();
+	private Map<InetSocketAddress, NodeInfo> nodes = new HashMap<InetSocketAddress, NodeInfo>();
 
 	/**
 	 * @generated "Singleton (com.ibm.xtools.patterns.content.gof.creational.singleton.SingletonPattern)"
@@ -49,7 +49,7 @@ public class TcpSender {
 		// end-user-code
 	}
 	
-	public void removeNode(SocketAddress address) {
+	public void removeNode(InetSocketAddress address) {
 		if(nodes.remove(address) == null)
 		{
 			Logger.getInstance().log("Request to remove unexisting node: " + address.toString(), 
@@ -58,34 +58,41 @@ public class TcpSender {
 		}
 	}
 
-	public void addNodeBySocket(Socket s) {
-		
-		SocketAddress address = s.getRemoteSocketAddress();
-		NodeInfo nodeInfo = new NodeInfo(s, false);
-		
-		if(nodes.get(address) != null)
+	public void addNodeBySocket(InetSocketAddress node, Socket s) {
+	
+		if(nodes.get(node) != null)
 		{
-			Logger.getInstance().log("Request to add already existing node: " + address.toString(), 
+			Logger.getInstance().log("Request to add already existing node: " + node.toString(), 
 					LOGGING_NAME,
 					Logger.Level.WARNING);
 		}
 		
-		nodes.put(address, nodeInfo);
+		nodes.put(node, new NodeInfo(s, false));
 	}
 	
-	public void markNodeAsServer(SocketAddress address){
+	public void AddServerNode(InetSocketAddress node)
+	{
+		NodeInfo nodeInfo = nodes.get(node);
 		
-		NodeInfo info = nodes.get(address);
-		
-		if(info != null)
+		if(nodeInfo == null)
 		{
-			info.setIsServer(true);
+			// connect to node
+			Socket socket;
+			try {
+				socket = new Socket(node.getAddress(), node.getPort());
+			} catch (IOException e) {
+				Logger.getInstance().log("Failed to add server node: " + node.toString(), 
+						LOGGING_NAME,
+						Logger.Level.WARNING);
+				return;
+			}
+			
+			nodes.put(node, new NodeInfo(socket, true));
 		}
 		else
 		{
-			Logger.getInstance().log("Request to mark unexisting node: " + address.toString(), 
-					LOGGING_NAME,
-					Logger.Level.WARNING);
+			// mark node as server
+			nodeInfo.setIsServer(true);
 		}
 	}
 	
@@ -105,16 +112,16 @@ public class TcpSender {
 		data = message.Serialize();
 		
 		// search for server nodes
-		Iterator<Map.Entry<SocketAddress, NodeInfo>> it = nodes.entrySet().iterator();
+		Iterator<Map.Entry<InetSocketAddress, NodeInfo>> it = nodes.entrySet().iterator();
 
 		while(it.hasNext())
 		{
-			Map.Entry<SocketAddress, NodeInfo> entry = it.next();
+			Map.Entry<InetSocketAddress, NodeInfo> entry = it.next();
 			NodeInfo node = entry.getValue();
 			
 			if(node.getIsServer())
 			{
-				if(!writeToNode(node.getSocket(),data))
+				if(!writeToNode(entry.getKey(), node.getSocket(), data))
 				{
 					it.remove();
 				}
@@ -129,7 +136,7 @@ public class TcpSender {
 	 * @generated 
 	 *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void sendToNode(Message message, SocketAddress to) {
+	public void sendToNode(Message message, InetSocketAddress to) {
 		// begin-user-code
 		byte[] data; 
 		
@@ -144,7 +151,7 @@ public class TcpSender {
 					Logger.Level.WARNING);
 		}
 		
-		if(!writeToNode(node.getSocket(),data))
+		if(!writeToNode(to, node.getSocket(),data))
 		{
 			nodes.remove(to);
 		}
@@ -158,7 +165,7 @@ public class TcpSender {
 	 *            an established socket to the target
 	 * @throws IOException
 	 */
-	private boolean writeToNode(Socket s, byte[] data) {
+	private boolean writeToNode(InetSocketAddress node, Socket s, byte[] data) {
 
 		try {
 			OutputStream sos = s.getOutputStream();
@@ -170,7 +177,7 @@ public class TcpSender {
 					Logger.Level.WARNING);
 			
 			// remove node from pool
-			nodes.remove(s.getRemoteSocketAddress());
+			nodes.remove(node);
 			return false;
 		}
 		

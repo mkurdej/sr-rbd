@@ -3,7 +3,7 @@
  */
 package ddb.tpc.cor;
 
-import java.net.SocketAddress;
+import java.net.InetSocketAddress;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,21 +31,21 @@ public class CoordinatorImpl extends Coordinator {
 	/** 
 	 * Lista pozytywnych&nbsp;odpowiedzi&nbsp;od&nbsp;wezlow
 	 */
-	private Set<SocketAddress> answers;
+	private Set<InetSocketAddress> answers;
 	/** 
 	 * Lista wezlo bioracych udzial w transakcji
 	 */
-	private Set<SocketAddress> nodes;
+	private Set<InetSocketAddress> nodes;
 	/**
 	 * Adres klienta, ktory zarzadal wykonania transakcji
 	 */
-	private SocketAddress clientAddress;
+	private InetSocketAddress clientAddress;
 	
 	public CoordinatorImpl() {
 		super();
 		//this.connector = DbConnectorImpl.getInstance();
 		setState(new InitState());
-		this.answers = new HashSet<SocketAddress>();
+		this.answers = new HashSet<InetSocketAddress>();
 	}
 
 	protected void setState(CoordinatorState state) {
@@ -65,7 +65,7 @@ public class CoordinatorImpl extends Coordinator {
 	 * Ustawia liste wezlow bioracych udzial w transakcji.
 	 * @param nodeList
 	 */
-	public void setNodeList(Set<SocketAddress> nodeList) {
+	public void setNodeList(Set<InetSocketAddress> nodeList) {
 		this.nodes = nodeList;
 	}
 
@@ -75,7 +75,7 @@ public class CoordinatorImpl extends Coordinator {
 	 * </p>
 	 * @param nodeName nazwa wezla
 	 */
-	private void addAnswer(SocketAddress nodeName) {
+	private void addAnswer(InetSocketAddress nodeName) {
 		this.answers.add(nodeName);
 	}
 
@@ -149,7 +149,7 @@ public class CoordinatorImpl extends Coordinator {
 	 * @param nextState Nastepny stan.
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void processAnswer(SocketAddress node, TPCMessage message, CoordinatorState nextState) {
+	public void processAnswer(InetSocketAddress node, TPCMessage message, CoordinatorState nextState) {
 		addAnswer(node);
 		if(checkAnswers()) {
 			broadcastMessage(message);
@@ -164,7 +164,7 @@ public class CoordinatorImpl extends Coordinator {
 	 * @param clientAddress
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void setClientAddress(SocketAddress clientAddress) {
+	public void setClientAddress(InetSocketAddress clientAddress) {
 		this.clientAddress = clientAddress;
 	}
 
@@ -175,7 +175,7 @@ public class CoordinatorImpl extends Coordinator {
 	 * @return
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public SocketAddress getClientAddress() {
+	public InetSocketAddress getClientAddress() {
 		return clientAddress;
 	}
 

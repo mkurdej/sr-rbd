@@ -3,7 +3,7 @@
  */
 package ddb.tpc.cor;
 
-import java.net.SocketAddress;
+import java.net.InetSocketAddress;
 
 import ddb.tpc.TPCParticipant;
 
@@ -30,5 +30,5 @@ public abstract class Coordinator extends TPCParticipant {
 	 * @param clientAddress
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public abstract void setClientAddress(SocketAddress clientAddress);
+	public abstract void setClientAddress(InetSocketAddress clientAddress);
 }

@@ -3,7 +3,7 @@
  */
 package ddb;
 
-import java.net.SocketAddress;
+import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -15,10 +15,13 @@ import ddb.communication.TcpSender;
 import ddb.communication.UdpListener;
 import ddb.msg.HelloMessage;
 import ddb.msg.Message;
+import ddb.restore.EndRestorationListener;
 import ddb.restore.RestoreCohort;
 import ddb.restore.RestoreCoordinator;
 import ddb.restore.msg.RestoreIncentive;
 import ddb.restore.msg.RestoreMessage;
+import ddb.restore.msg.RestoreTable;
+import ddb.restore.msg.RestoreTableList;
 import ddb.tpc.EndTransactionListener;
 import ddb.tpc.TPCParticipant;
 import ddb.tpc.coh.Cohort;
@@ -44,7 +47,7 @@ import ddb.util.Util;
  * @generated 
  *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
  */
-public class Dispatcher implements EndTransactionListener {
+public class Dispatcher implements EndTransactionListener, EndRestorationListener {
 
 	private final static String LOGGING_NAME = "DispatcherImpl";
 	private final static int OUT_OF_SYNC_BEATS_THRESHOLD = 4;
@@ -63,15 +66,10 @@ public class Dispatcher implements EndTransactionListener {
 	private Map<String, Coordinator> 	coordinators = new HashMap<String, Coordinator>();
 	
 	private RestoreCohort restoreCohort = new RestoreCohort();
-	private Map<String, RestoreCoordinator> restoreCoordinators = new HashMap<String, RestoreCoordinator>();
+	private Map<InetSocketAddress, RestoreCoordinator> restoreCoordinators = new HashMap<InetSocketAddress, RestoreCoordinator>();
 	
-	private Map<String, NodeSyncInfo> nodeSynchronization = new HashMap<String, NodeSyncInfo>();
-	
-	class NodeSyncInfo
-	{
-		public int BeatsOutOfSync;
-		public int LastBeat;
-	}
+	// others
+	private Map<InetSocketAddress, NodeSyncInfo> nodeSynchronization = new HashMap<InetSocketAddress, NodeSyncInfo>();
 	
 	public Dispatcher(int port)
 	{
@@ -192,7 +190,29 @@ public class Dispatcher implements EndTransactionListener {
 	
 	public void  processRestoreMessage(RestoreMessage msg) throws InterruptedException
 	{
-		restoreCohort.putMessage(msg);
+		if(msg instanceof RestoreIncentive
+			|| msg instanceof RestoreTableList
+			|| msg instanceof RestoreTable)
+		{
+			restoreCohort.putMessage(msg);
+		}
+		else
+		{
+			InetSocketAddress node = msg.getSender();
+			RestoreCoordinator coordinator =  restoreCoordinators.get(node);
+			
+			if(coordinator != null)
+			{
+				coordinator.putMessage(msg);
+			}
+			else
+			{
+				Logger.getInstance().log(
+						"No restore coordinator for node " + node.toString(), 
+						LOGGING_NAME, 
+						Logger.Level.WARNING);
+			}
+		}
 	}
 	
 	public void  processTransactionMessage(TransactionMessage msg) throws InterruptedException
@@ -211,50 +231,80 @@ public class Dispatcher implements EndTransactionListener {
 	
 	public void  processHelloMessage(HelloMessage msg)
 	{
-		SocketAddress node = msg.getSender();
+		InetSocketAddress node = msg.getSender();
 		
-		TcpSender.getInstance().tryAddNewServerNode()
-		// TODO: sprawdzanie czy wezel istnieje - nie istnieje dodanie
-		// if( !TcpSender.has(node) ) TcpSender.addNode(node);
+		TcpSender.getInstance().AddServerNode(
+			new InetSocketAddress(
+					node.getAddress(), 
+					msg.getListeningPort()
+			)
+		);
 		
-		// TODO: zliczanie jak dlugo wezel jest out of sync
-		
-		/*
 		NodeSyncInfo nsi = nodeSynchronization.get(node);
 		
+		// create entry for new nodes
 		if(nsi == null)
 		{
-			nsi = new NodeSyncInfo(0,0);
+			nsi = new NodeSyncInfo();
 			nodeSynchronization.put(node, nsi);
 		}
-		else
+		// reset counter for nodes which were unreachable for long period of time
+		else if( nsi.getMsSinceLastBeat() < OUT_OF_SYNC_RESET_TIME_MS)
 		{
-			if(System.cnsi.LastBeat < OUT_OF_SYNC_RESET_TIME_MS)
+			nsi.InSync();
+		}
+		
+		// check synchronization
+		if(DatabaseState.getInstance().checkSync(msg.getTables()))
+		{
+			nsi.InSync();
+		}	
+		else 
+		{
+			if(nsi.getBeatsOutOfSync() < OUT_OF_SYNC_BEATS_THRESHOLD)
 			{
-				// reset counter and increment by 1
+				nsi.BeatOutOfSync();
 			}
-			else if(nsi.BeatsOutOfSync >= OUT_OF_SYNC_BEATS_THRESHOLD)
+			else if(restoreCoordinators.get(node) == null)
 			{
-				RestoreCoordinator rc = new RestoreCoordinator(node);
+				// TODO: wylaczenie calej bazy
+				
+				// need to restore
+				RestoreCoordinator rc = new RestoreCoordinator(node, this);
 				restoreCoordinators.put(node, rc);
 				
-				 new Thread(rc).start();
+				new Thread(rc).start();
 			}
 		}
-		*/
-		
-		// TODO: jezeli nie byl aktywny przez dlugi okres czasu - stworzernie
-		// Restore Coordinator
 	}
 	
 	
 	public void onEndTransaction(TPCParticipant participant) {
 		// begin-user-code
-		// TODO Auto-generated method stub
+		String tid = participant.getTransactionId();
+		
+		if(cohorts.remove(tid) == null)
+		{
+			if(coordinators.remove(tid) == null)
+			{
+				Logger.getInstance().log(
+						"onEndTransaction didnt delete participant (should not happen)", 
+						LOGGING_NAME, 
+						Logger.Level.SEVERE);
+			}
+		}
 
 		// end-user-code
 	}
 
-
-
+	@Override
+	public void onEndRestoration(RestoreCoordinator coordinator) {
+		if(restoreCoordinators.remove(coordinator.getTargetNode()) != coordinator)
+		{
+			Logger.getInstance().log(
+					"onEndRestoration deleted wrong coordinator (should not happen)", 
+					LOGGING_NAME, 
+					Logger.Level.SEVERE);
+		}
+	}
 }

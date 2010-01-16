@@ -3,7 +3,7 @@
  */
 package ddb.tpc.cor;
 
-import java.net.SocketAddress;
+import java.net.InetSocketAddress;
 
 import ddb.db.SqlOperationType;
 import ddb.db.SqlParser;
@@ -39,7 +39,7 @@ public class InitState extends CoordinatorState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	@Override
-	public void onYesForCommit(SocketAddress node) {
+	public void onYesForCommit(InetSocketAddress node) {
 		// begin-user-code
 		// TODO Auto-generated method stub
 
@@ -53,7 +53,7 @@ public class InitState extends CoordinatorState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	@Override
-	public void onNoForCommit(SocketAddress node) {
+	public void onNoForCommit(InetSocketAddress node) {
 		// begin-user-code
 		// TODO Auto-generated method stub
 
@@ -67,7 +67,7 @@ public class InitState extends CoordinatorState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	@Override
-	public void onAckPreCommit(SocketAddress node) {
+	public void onAckPreCommit(InetSocketAddress node) {
 		// begin-user-code
 		// TODO Auto-generated method stub
 
