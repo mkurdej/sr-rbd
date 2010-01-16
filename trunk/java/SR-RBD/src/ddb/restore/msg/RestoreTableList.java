@@ -1,6 +1,8 @@
 package ddb.restore.msg;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import ddb.communication.DataInputStream;
 import ddb.communication.DataOutputStream;
@@ -9,42 +11,30 @@ import ddb.msg.MessageType;
 
 public class RestoreTableList extends RestoreMessage {
 
-	private TableVersion[] tables = null;
+	private List<TableVersion> tables = new LinkedList<TableVersion>();
 	
 	public RestoreTableList()
 	{
 		// empty
 	}
 	
-	public RestoreTableList(TableVersion[] tv)
-	{
-		setTables(tv);
+	private void setTables(List<TableVersion> tables) {
+		this.tables = tables;
 	}
-	
-	public TableVersion[] getTables() {
+
+	private List<TableVersion> getTables() {
 		return tables;
 	}
 	
-	public void setTables(TableVersion[] t) {
-		tables = t;
-	}
-	
-	
 	@Override
-	protected void fromBinary(DataInputStream s) throws IOException {
+	public void fromBinary(DataInputStream s) throws IOException {
+		// read count
 		int count = s.readInt();
-		tables = new TableVersion[count];
+		setTables(new LinkedList<TableVersion>());
 		
-		String name;
-		int version;
-		
+		// read contents
 		for(int i = 0; i < count; ++i)
-		{
-			name = s.readString();
-			version = s.readInt();
-			
-			tables[i] = new TableVersion(name, version);
-		}
+			getTables().add(new TableVersion(s));
 	}
 	
 	@Override
@@ -53,17 +43,13 @@ public class RestoreTableList extends RestoreMessage {
 	}
 
 	@Override
-	protected void toBinary(DataOutputStream s) throws IOException {
+	public void toBinary(DataOutputStream s) throws IOException {
 		// write length
-		s.writeInt(tables.length);
+		s.writeInt(getTables().size());
 		
 		// write tables
-		for(TableVersion tv : tables)
-		{
-			s.writeString(tv.getTableName());
-			s.writeInt(tv.getVersion());
-		}
-		
+		for(TableVersion tv : getTables())
+			tv.toBinary(s);
 	}
 
 }

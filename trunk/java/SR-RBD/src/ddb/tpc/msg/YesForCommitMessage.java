@@ -18,20 +18,18 @@ import ddb.msg.MessageType;
 public class YesForCommitMessage extends TPCMessage {
 
 	@Override
-	protected void fromBinary(DataInputStream s) throws IOException {
-		// TODO Auto-generated method stub
+	public void fromBinary(DataInputStream s) throws IOException {
+		// empty
 		
 	}
 
 	@Override
-	protected MessageType getType() {
-		// TODO Auto-generated method stub
-		return null;
+	public MessageType getType() {
+		return MessageType.TPC_YESFORCOMMIT;
 	}
 
 	@Override
-	protected void toBinary(DataOutputStream s) throws IOException {
-		// TODO Auto-generated method stub
-		
+	public void toBinary(DataOutputStream s) throws IOException {
+		// empty
 	}
 }

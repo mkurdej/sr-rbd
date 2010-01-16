@@ -5,6 +5,8 @@ package ddb.db;
 
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -71,6 +73,16 @@ public class DatabaseStateImpl implements DatabaseState {
 	@Override
 	public int getTableVersion(String tableName) {
 		return tables.get(tableName).getVersion();
+	}
+	
+	List<TableVersion> getTableVersions()
+	{
+		List<TableVersion> result = new LinkedList<TableVersion>();
+		
+		for(Map.Entry<String, TableState> e : tables.entrySet())
+			result.add(new TableVersion(e.getKey(), e.getValue().getVersion()));
+		
+		return result;
 	}
 	
 }

@@ -8,10 +8,6 @@ import ddb.msg.Message;
 import ddb.msg.MessageType;
 
 public class RestoreIncentive extends Message {
-
-	public RestoreIncentive() {
-		// empty
-	}
 	
 	@Override
 	public void fromBinary(DataInputStream s) throws IOException {

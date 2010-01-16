@@ -84,20 +84,21 @@ public class CanCommitMessage extends TPCMessage {
 	}
 
 	@Override
-	protected void fromBinary(DataInputStream s) throws IOException {
-		// TODO Auto-generated method stub
-		
+	public void fromBinary(DataInputStream s) throws IOException {
+		queryString = s.readString();
+		tableName = s.readString();
+		isCreate = s.readBoolean();
 	}
 
 	@Override
-	protected MessageType getType() {
-		// TODO Auto-generated method stub
-		return null;
+	public MessageType getType() {
+		return MessageType.TPC_CANCOMMIT;
 	}
 
 	@Override
-	protected void toBinary(DataOutputStream s) throws IOException {
-		// TODO Auto-generated method stub
-		
+	public void toBinary(DataOutputStream s) throws IOException {
+		s.writeString(queryString);
+		s.writeString(tableName);
+		s.writeBoolean(isCreate);
 	}
 }

@@ -9,7 +9,7 @@ import ddb.msg.MessageType;
 public class RestoreAck extends RestoreMessage {
 
 	@Override
-	protected void fromBinary(DataInputStream s) throws IOException {
+	public void fromBinary(DataInputStream s) throws IOException {
 		// empty
 
 	}
@@ -20,7 +20,7 @@ public class RestoreAck extends RestoreMessage {
 	}
 
 	@Override
-	protected void toBinary(DataOutputStream s) throws IOException {
+	public void toBinary(DataOutputStream s) throws IOException {
 		// empty
 	}
 

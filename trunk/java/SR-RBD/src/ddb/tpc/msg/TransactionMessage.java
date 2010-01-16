@@ -25,6 +25,17 @@ public class TransactionMessage extends Message {
 	 */
 	private String queryString;
 
+	public TransactionMessage()
+	{
+		
+	}
+	
+	public TransactionMessage(String query)
+	{
+		queryString = query;
+	}
+	
+	
 	public String getQueryString() {
 		return queryString;
 	}
