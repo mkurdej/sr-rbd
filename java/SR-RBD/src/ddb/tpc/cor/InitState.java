@@ -3,6 +3,8 @@
  */
 package ddb.tpc.cor;
 
+import java.net.SocketAddress;
+
 import ddb.db.SqlOperationType;
 import ddb.db.SqlParser;
 import ddb.db.SqlParserImpl;
@@ -25,6 +27,7 @@ public class InitState extends CoordinatorState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
+	@Override
 	public void onTimeout() {
 		coordinator.abortTransaction(new TimeoutMessage());
 	}
@@ -35,7 +38,8 @@ public class InitState extends CoordinatorState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void onYesForCommit(String node) {
+	@Override
+	public void onYesForCommit(SocketAddress node) {
 		// begin-user-code
 		// TODO Auto-generated method stub
 
@@ -48,7 +52,8 @@ public class InitState extends CoordinatorState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void onNoForCommit(String node) {
+	@Override
+	public void onNoForCommit(SocketAddress node) {
 		// begin-user-code
 		// TODO Auto-generated method stub
 
@@ -61,7 +66,8 @@ public class InitState extends CoordinatorState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void onAckPreCommit(String node) {
+	@Override
+	public void onAckPreCommit(SocketAddress node) {
 		// begin-user-code
 		// TODO Auto-generated method stub
 
@@ -74,6 +80,7 @@ public class InitState extends CoordinatorState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
+	@Override
 	public void onHaveCommitted(HaveCommittedMessage message) {
 		// begin-user-code
 		// TODO Auto-generated method stub
@@ -87,6 +94,7 @@ public class InitState extends CoordinatorState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
+	@Override
 	public void onTransaction(TransactionMessage message) {
 		coordinator.setNodeList( coordinator.getDatabaseState().getNodes() );
 		SqlParser parser = new SqlParserImpl();

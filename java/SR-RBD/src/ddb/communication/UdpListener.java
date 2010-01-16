@@ -62,7 +62,7 @@ public class UdpListener implements Runnable
                         ":" + packet.getPort() + ", size = " + size + " : " + data,
                         LOGGING_NAME, Logger.Level.INFO);
                 
-                Message m = Message.Unserialize(MessageType.fromInt(type), data);
+                Message m = Message.Unserialize(MessageType.fromInt(type), data, socket.getRemoteSocketAddress());
                 storage.put(m);
             }
         }

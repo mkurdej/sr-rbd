@@ -3,6 +3,8 @@
  */
 package ddb.tpc.cor;
 
+import java.net.SocketAddress;
+
 import ddb.msg.client.TimeoutMessage;
 import ddb.tpc.msg.DoCommitMessage;
 import ddb.tpc.msg.HaveCommittedMessage;
@@ -22,6 +24,7 @@ public class PreparedState extends CoordinatorState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
+	@Override
 	public void onTimeout() {
 		coordinator.abortTransaction(new TimeoutMessage());
 	}
@@ -32,7 +35,8 @@ public class PreparedState extends CoordinatorState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void onYesForCommit(String node) {
+	@Override
+	public void onYesForCommit(SocketAddress node) {
 		
 	}
 
@@ -42,7 +46,8 @@ public class PreparedState extends CoordinatorState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void onNoForCommit(String node) {
+	@Override
+	public void onNoForCommit(SocketAddress node) {
 		// begin-user-code
 		// TODO Auto-generated method stub
 
@@ -55,7 +60,8 @@ public class PreparedState extends CoordinatorState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void onAckPreCommit(String node) {
+	@Override
+	public void onAckPreCommit(SocketAddress node) {
 		coordinator.processAnswer(node, new DoCommitMessage(), new CommitState());
 	}
 
@@ -65,6 +71,7 @@ public class PreparedState extends CoordinatorState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
+	@Override
 	public void onHaveCommitted(HaveCommittedMessage message) {
 		// begin-user-code
 		// TODO Auto-generated method stub
@@ -78,6 +85,7 @@ public class PreparedState extends CoordinatorState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
+	@Override
 	public void onTransaction(TransactionMessage message) {
 		// begin-user-code
 		// TODO Auto-generated method stub
@@ -91,6 +99,7 @@ public class PreparedState extends CoordinatorState {
 	 * 
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
+	@Override
 	public void onErrorMessage(ErrorMessage message) {
 		// begin-user-code
 		// TODO Auto-generated method stub

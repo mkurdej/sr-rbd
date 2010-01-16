@@ -3,6 +3,7 @@
  */
 package ddb.restore;
 
+import java.net.SocketAddress;
 import java.util.Arrays;
 
 import ddb.Logger;
@@ -68,8 +69,8 @@ public class RestoreCohort extends Worker {
 		msg = accept(MessageType.RESTORE_INCENTIVE, null);
 		
 		// answer ok
-		String node = msg.getSenderAddress();
-		TcpSender.getInstance().sendTo(new RestoreAck(), node);
+		SocketAddress node = msg.getSender();
+		TcpSender.getInstance().sendToNode(new RestoreAck(), node);
 
 		// set timeout for restore process
 		setTimeout(RESTORE_TIMEOUT);
@@ -82,7 +83,7 @@ public class RestoreCohort extends Worker {
 			if(msg instanceof RestoreIncentive)
 			{
 				// deny restore since its already happening
-				TcpSender.getInstance().sendTo(new RestoreNack(), node);
+				TcpSender.getInstance().sendToNode(new RestoreNack(), node);
 			}
 			else
 			{
@@ -91,15 +92,15 @@ public class RestoreCohort extends Worker {
 		}
 		
 		// set table state as out of sync if versions dont match
-		RestoreTableList incentive = (RestoreTableList)msg;
-		int left = incentive.getTables().length;
-		for(TableVersion table : incentive.getTables())
+		RestoreTableList rtl = (RestoreTableList)msg;
+		int left = rtl.getTables().size();
+		for(TableVersion table : rtl.getTables())
 		{
 			// TODO: implement
 		}
 		
 		// send back ack to unlock database
-		TcpSender.getInstance().sendTo(new RestoreAck(), node);
+		TcpSender.getInstance().sendToNode(new RestoreAck(), node);
 		setTimeout(RESTORE_TIMEOUT);
 		
 		// read all tables
@@ -110,7 +111,7 @@ public class RestoreCohort extends Worker {
 			if(msg instanceof RestoreIncentive)
 			{
 				// deny restore since its already happening
-				TcpSender.getInstance().sendTo(new RestoreNack(), node);
+				TcpSender.getInstance().sendToNode(new RestoreNack(), node);
 			}
 			else // RestoreTable
 			{

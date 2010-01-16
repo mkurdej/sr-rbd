@@ -84,13 +84,6 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * 
 	 */
 	private DatabaseState databaseState;
-	/**
-	 * <!-- begin-UML-doc --> <!-- end-UML-doc -->
-	 * 
-	 * @generated 
-	 *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
-	 */
-	protected TcpSender tcpSender;
 
 	/**
 	 * 
@@ -348,14 +341,6 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 */
 	public String getQueryString() {
 		return queryString;
-	}
-
-	public TcpSender getTcpSender() {
-		return tcpSender;
-	}
-
-	public void setTcpSender(TcpSender tcpSender) {
-		this.tcpSender = tcpSender;
 	}
 
 	public void setConnector(DbConnector connector) {

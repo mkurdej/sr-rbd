@@ -3,10 +3,12 @@
  */
 package ddb.tpc.cor;
 
+import java.net.SocketAddress;
 import java.util.HashSet;
 import java.util.Set;
 
 import ddb.Logger;
+import ddb.communication.TcpSender;
 import ddb.db.DBException;
 import ddb.db.DatabaseTable;
 import ddb.msg.Message;
@@ -29,27 +31,21 @@ public class CoordinatorImpl extends Coordinator {
 	/** 
 	 * Lista pozytywnych&nbsp;odpowiedzi&nbsp;od&nbsp;wezlow
 	 */
-	private Set<String> answers;
+	private Set<SocketAddress> answers;
 	/** 
 	 * Lista wezlo bioracych udzial w transakcji
 	 */
-	private Set<String> nodes;
+	private Set<SocketAddress> nodes;
 	/**
 	 * Adres klienta, ktory zarzadal wykonania transakcji
 	 */
-	private String clientAddress;
-	/** 
-	 * Numer portu klienta, ktory zarzadal wykonania transakcji
-	 * <!-- end-UML-doc -->
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
-	 */
-	private int clientPort;
+	private SocketAddress clientAddress;
 	
 	public CoordinatorImpl() {
 		super();
 		//this.connector = DbConnectorImpl.getInstance();
 		setState(new InitState());
-		this.answers = new HashSet<String>();
+		this.answers = new HashSet<SocketAddress>();
 	}
 
 	protected void setState(CoordinatorState state) {
@@ -69,7 +65,7 @@ public class CoordinatorImpl extends Coordinator {
 	 * Ustawia liste wezlow bioracych udzial w transakcji.
 	 * @param nodeList
 	 */
-	public void setNodeList(Set<String> nodeList) {
+	public void setNodeList(Set<SocketAddress> nodeList) {
 		this.nodes = nodeList;
 	}
 
@@ -79,7 +75,7 @@ public class CoordinatorImpl extends Coordinator {
 	 * </p>
 	 * @param nodeName nazwa wezla
 	 */
-	private void addAnswer(String nodeName) {
+	private void addAnswer(SocketAddress nodeName) {
 		this.answers.add(nodeName);
 	}
 
@@ -99,7 +95,7 @@ public class CoordinatorImpl extends Coordinator {
 	public void broadcastMessage(TPCMessage message) {
 		this.clearAnswers();
 		message.setTransactionId(getTransactionId());
-		this.tcpSender.sendToAllNodes(message);
+		TcpSender.getInstance().sendToAllServerNodes(message);
 	}
 
 	/** 
@@ -118,7 +114,7 @@ public class CoordinatorImpl extends Coordinator {
 	 */
 	public void abortTransaction(Message messageToClient) {
 		broadcastMessage(new AbortMessage());
-		tcpSender.sendToClient(messageToClient, getClientAddress(), getClientPort());
+		TcpSender.getInstance().sendToNode(messageToClient, getClientAddress());
 		setState(new AbortState());
 		endTransaction();
 	}
@@ -153,7 +149,7 @@ public class CoordinatorImpl extends Coordinator {
 	 * @param nextState Nastepny stan.
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void processAnswer(String node, TPCMessage message, CoordinatorState nextState) {
+	public void processAnswer(SocketAddress node, TPCMessage message, CoordinatorState nextState) {
 		addAnswer(node);
 		if(checkAnswers()) {
 			broadcastMessage(message);
@@ -168,7 +164,7 @@ public class CoordinatorImpl extends Coordinator {
 	 * @param clientAddress
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void setClientAddress(String clientAddress) {
+	public void setClientAddress(SocketAddress clientAddress) {
 		this.clientAddress = clientAddress;
 	}
 
@@ -179,24 +175,8 @@ public class CoordinatorImpl extends Coordinator {
 	 * @return
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public String getClientAddress() {
+	public SocketAddress getClientAddress() {
 		return clientAddress;
-	}
-
-	/** 
-	 * Ustawia numer portu klienta, ktory zarzadal wykonania transakcji
-	 * @param port
-	 */
-	public void setClientPort(int port) {
-		this.clientPort = port;
-	}
-
-	/** 
-	 * Pobiera numer portu klienta, ktory zarzadal wykonania transakcji
-	 * @return
-	 */
-	public int getClientPort() {
-		return clientPort;
 	}
 
 	/** 
@@ -215,7 +195,7 @@ public class CoordinatorImpl extends Coordinator {
 			DatabaseTable table = this.connector.query(getQueryString());
 			ResultsetMessage msg = new ResultsetMessage();
 			msg.setResultSet(table);
-			tcpSender.sendToClient(msg, this.getClientAddress(), this.getClientPort());
+			TcpSender.getInstance().sendToNode(msg, this.getClientAddress());
 			setState(new CommitState());
 		}
 		catch(DBException ex) {
@@ -233,7 +213,7 @@ public class CoordinatorImpl extends Coordinator {
 	public final void processDBException(DBException exception) {
 		ddb.msg.client.ErrorMessage msg = new ddb.msg.client.ErrorMessage();
 		msg.setException(exception);
-		tcpSender.sendToClient(msg, this.getClientAddress(), this.getClientPort());
+		TcpSender.getInstance().sendToNode(msg, this.getClientAddress());
 	}
 
 	/** 
@@ -246,16 +226,16 @@ public class CoordinatorImpl extends Coordinator {
 		Logger.getInstance().log("NewMessage: " + message, "Coordinator", Logger.Level.INFO);
 		
 		if(message instanceof YesForCommitMessage) {
-			state.onYesForCommit(message.getSenderAddress());
+			state.onYesForCommit(message.getSender());
 		}
 		else if(message instanceof NoForCommitMessage) {
-			state.onNoForCommit(message.getSenderAddress());
+			state.onNoForCommit(message.getSender());
 		}
 		else if(message instanceof HaveCommittedMessage) {
 			state.onHaveCommitted((HaveCommittedMessage)message);
 		}
 		else if(message instanceof AckPreCommitMessage) {
-			state.onAckPreCommit(message.getSenderAddress());
+			state.onAckPreCommit(message.getSender());
 		}
 		else if(message instanceof TransactionMessage) {
 			state.onTransaction((TransactionMessage)message);

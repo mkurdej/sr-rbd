@@ -18,11 +18,11 @@ public class RestoreTableList extends RestoreMessage {
 		// empty
 	}
 	
-	private void setTables(List<TableVersion> tables) {
+	public void setTables(List<TableVersion> tables) {
 		this.tables = tables;
 	}
 
-	private List<TableVersion> getTables() {
+	public List<TableVersion> getTables() {
 		return tables;
 	}
 	
