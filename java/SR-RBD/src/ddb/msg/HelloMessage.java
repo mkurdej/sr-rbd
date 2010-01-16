@@ -19,6 +19,11 @@ public class HelloMessage extends Message
 		// empty
 	}
 	
+	public HelloMessage(List<TableVersion> tables)
+	{
+		setTables(tables);
+	}
+	
 	private void setTables(List<TableVersion> tables) {
 		this.tables = tables;
 	}
@@ -27,9 +32,6 @@ public class HelloMessage extends Message
 		return tables;
 	}
 	
-	// TODO: zaimplementowac knostrukt przyjmujacy numer wersji bazy danych
-	// TODO: dodac zmienna przechowywujaca numer wersji bazy danych
-	
 	@Override
 	public void fromBinary(DataInputStream s) throws IOException {
 		// read count
@@ -37,16 +39,8 @@ public class HelloMessage extends Message
 		setTables(new LinkedList<TableVersion>());
 		
 		// read contents
-		String name;
-		int version;
-		
 		for(int i = 0; i < count; ++i)
-		{
-			name = s.readString();
-			version = s.readInt();
-			
-			getTables().add(new TableVersion(name, version));
-		}
+			getTables().add(new TableVersion(s));
 		
 	}
 
@@ -62,9 +56,6 @@ public class HelloMessage extends Message
 		
 		// write tables
 		for(TableVersion tv : getTables())
-		{
-			s.writeString(tv.getTableName());
-			s.writeInt(tv.getVersion());
-		}
+			tv.toBinary(s);
 	}
 }

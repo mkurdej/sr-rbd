@@ -31,26 +31,28 @@ public class SuccessMessage extends ClientResponse {
 	 */
 	public void setDatabaseMessage(String message) {
 		// begin-user-code
-		// TODO Auto-generated method stub
-
+		databaseMessage = message;
 		// end-user-code
 	}
-
-	@Override
-	protected void fromBinary(DataInputStream s) throws IOException {
-		// TODO Auto-generated method stub
-		
+	
+	public String getDatabaseMessage()
+	{
+		return databaseMessage;
 	}
 
 	@Override
-	protected MessageType getType() {
-		// TODO Auto-generated method stub
-		return null;
+	public void fromBinary(DataInputStream s) throws IOException {
+		databaseMessage = s.readString();
 	}
 
 	@Override
-	protected void toBinary(DataOutputStream s) throws IOException {
-		// TODO Auto-generated method stub
+	public MessageType getType() {
+		return MessageType.CLIENT_SUCCESS;
+	}
+
+	@Override
+	public void toBinary(DataOutputStream s) throws IOException {
+		s.writeString(databaseMessage);
 		
 	}
 }

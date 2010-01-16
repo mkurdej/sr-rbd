@@ -32,8 +32,7 @@ public class ErrorMessage extends ClientResponse {
 	 */
 	public DBException getException() {
 		// begin-user-code
-		// TODO Auto-generated method stub
-		return null;
+		return exception;
 		// end-user-code
 	}
 
@@ -43,28 +42,25 @@ public class ErrorMessage extends ClientResponse {
 	 * @param exception
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void setException(DBException exception) {
+	public void setException(DBException e) {
 		// begin-user-code
-		// TODO Auto-generated method stub
-
+		exception = e;
 		// end-user-code
 	}
 
 	@Override
-	protected void fromBinary(DataInputStream s) throws IOException {
-		// TODO Auto-generated method stub
+	public void fromBinary(DataInputStream s) throws IOException {
+		exception = new DBException(s);
 		
 	}
 
 	@Override
-	protected MessageType getType() {
-		// TODO Auto-generated method stub
-		return null;
+	public MessageType getType() {
+		return MessageType.CLIENT_ERROR;
 	}
 
 	@Override
-	protected void toBinary(DataOutputStream s) throws IOException {
-		// TODO Auto-generated method stub
-		
+	public void toBinary(DataOutputStream s) throws IOException {
+		exception.toBinary(s);
 	}
 }

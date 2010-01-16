@@ -48,7 +48,7 @@ public class RestoreTable extends RestoreMessage{
 	}
 	
 	@Override
-	protected void fromBinary(DataInputStream s) throws IOException {
+	public void fromBinary(DataInputStream s) throws IOException {
 		tableVersion = s.readInt();
 		tableName = s.readString();
 		tableDump = s.readString();
@@ -60,7 +60,7 @@ public class RestoreTable extends RestoreMessage{
 	}
 
 	@Override
-	protected void toBinary(DataOutputStream s) throws IOException {
+	public void toBinary(DataOutputStream s) throws IOException {
 		s.writeInt(tableVersion);
 		s.writeString(tableName);
 		s.writeString(tableDump);

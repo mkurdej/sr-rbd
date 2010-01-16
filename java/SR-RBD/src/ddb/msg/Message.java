@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import ddb.BinarySerializable;
 import ddb.communication.DataInputStream;
 import ddb.communication.DataOutputStream;
 import ddb.communication.MessageFactory;
@@ -17,7 +18,7 @@ import ddb.communication.MessageFactory;
  * @author User
  * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
  */
-public abstract class Message {
+public abstract class Message implements BinarySerializable {
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
@@ -64,18 +65,6 @@ public abstract class Message {
 	 * @return type constant for specialized class
 	 */
 	public abstract MessageType getType();
-	
-	/**
-	 * Converts object into binary representation
-	 * @param s data storage
-	 */
-	protected abstract void toBinary(DataOutputStream s) throws IOException;
-	
-	/**
-	 * Object constructs itself from binary data
-	 * @param s data storage
-	 */
-	protected abstract void fromBinary(DataInputStream s) throws IOException;
 	
 	final public byte[] Serialize() throws IOException
 	{
