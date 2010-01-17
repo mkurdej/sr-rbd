@@ -13,6 +13,7 @@ import ddb.db.DBException;
 import ddb.db.DatabaseTable;
 import ddb.msg.Message;
 import ddb.msg.client.ResultsetMessage;
+import ddb.msg.client.TimeoutMessage;
 import ddb.tpc.msg.AbortMessage;
 import ddb.tpc.msg.AckPreCommitMessage;
 import ddb.tpc.msg.HaveCommittedMessage;
@@ -118,17 +119,6 @@ public class CoordinatorImpl extends Coordinator {
 		setState(new AbortState());
 		endTransaction();
 	}
-
-	/** 
-	 * <!-- begin-UML-doc -->
-	 * Callback&nbsp;wywolywany,&nbsp;gdy&nbsp;wystapi&nbsp;timeout
-	 * <!-- end-UML-doc -->
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
-	 */
-	public void onTimeout() {
-		state.onTimeout();
-	}
-
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <p>
@@ -239,6 +229,9 @@ public class CoordinatorImpl extends Coordinator {
 		}
 		else if(message instanceof TransactionMessage) {
 			state.onTransaction((TransactionMessage)message);
+		}
+		else if(message instanceof TimeoutMessage) {
+			state.onTimeout();
 		}
 		
 	}

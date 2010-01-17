@@ -6,6 +6,7 @@ package ddb.tpc.coh;
 import ddb.communication.TcpSender;
 import ddb.db.DBException;
 import ddb.msg.Message;
+import ddb.msg.client.TimeoutMessage;
 import ddb.tpc.TPCParticipant;
 import ddb.tpc.msg.AbortMessage;
 import ddb.tpc.msg.CanCommitMessage;
@@ -53,18 +54,6 @@ public class CohortImpl extends Cohort {
 		startTimer(TIMEOUT);
 		setState(cohstate);
 	}
-
-	/**
-	 * <!-- begin-UML-doc --> Callback wywolywany, gdy wystapi timeout <!--
-	 * end-UML-doc -->
-	 * 
-	 * @generated 
-	 *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
-	 */
-	public void onTimeout() {
-		state.onTimeout();
-	}
-
 	/**
 	 * <!-- begin-UML-doc -->
 	 * Metoda&nbsp;dokonujaca&nbsp;wykonania&nbsp;transakcji <!-- end-UML-doc
@@ -101,10 +90,7 @@ public class CohortImpl extends Cohort {
 	 *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void processDBException(DBException exception) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
+		// empty
 	}
 
 	/**
@@ -123,6 +109,8 @@ public class CohortImpl extends Cohort {
 			onDoCommit();
 		} else if (message instanceof PreCommitMessage) {
 			onPreCommit();
+		} else if(message instanceof TimeoutMessage) {
+			state.onTimeout();
 		}
 	}
 

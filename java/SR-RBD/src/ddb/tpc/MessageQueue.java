@@ -5,9 +5,6 @@ package ddb.tpc;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import ddb.Logger;
-import ddb.Logger.Level;
 import ddb.msg.Message;
 
 /** 
@@ -20,11 +17,9 @@ public class MessageQueue {
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
 	 */
-	//private LinkedList<Message> messages;
 	private BlockingQueue<Message> messages;
 	
 	public MessageQueue() {
-		//this.messages = new LinkedList<Message>();
 		this.messages = new LinkedBlockingQueue<Message>();
 	}
 	
@@ -34,10 +29,8 @@ public class MessageQueue {
 	 * @param message
 	 * @throws InterruptedException 
 	 */
-	public synchronized void putMessage(Message message) throws InterruptedException {
-		//TODO:
+	public void putMessage(Message message) throws InterruptedException {
 		messages.put(message);
-		//notify();
 	}
 
 	/** 
@@ -46,10 +39,7 @@ public class MessageQueue {
 	 * @return
 	 * @throws InterruptedException 
 	 */
-	public synchronized Message getMessage() throws InterruptedException {
-		//TODO:
-		Logger.getInstance().log("Liczba wiadomosci w kolejce: " + messages.size(), "MQ", Level.INFO);
-		//return messages.poll();
+	public Message getMessage() throws InterruptedException {
 		return messages.take();
 	}
 }
