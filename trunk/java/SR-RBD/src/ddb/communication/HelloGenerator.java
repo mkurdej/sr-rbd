@@ -6,6 +6,7 @@ package ddb.communication;
 import ddb.Logger;
 import ddb.msg.HelloMessage;
 import ddb.db.DatabaseState;
+import ddb.db.DatabaseStateImpl;
 
 
 /** 
@@ -41,7 +42,7 @@ public class HelloGenerator implements Runnable {
 	        while(true)
 	        {
 	        	Thread.sleep(BROADCAST_INTERVAL_MS);
-	        	HelloMessage hm = new HelloMessage(DatabaseState.getInstance().GetTableVersions(), listeningPort);
+	        	HelloMessage hm = new HelloMessage(DatabaseStateImpl.getInstance().getTableVersions(), listeningPort);
 	        	sender.sendToAll(hm);
 	        } 
 		}

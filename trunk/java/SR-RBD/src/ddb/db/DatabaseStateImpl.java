@@ -76,6 +76,23 @@ public class DatabaseStateImpl implements DatabaseState {
 		return result;
 	}
 	
+	public boolean checkSync(List<TableVersion> tvs) {
+		
+		// check count of tables
+		if(tvs.size() != tables.size())
+			return false;
+		
+		for(TableVersion tv : tvs)
+		{
+			TableState ts = tables.get(tv.getTableName());
+			
+			if(ts == null || ts.getVersion() > tv.getVersion())
+				return false;
+		}
+		
+		return true;
+	}
+	
 	synchronized public static DatabaseStateImpl getInstance() {
 		if(instance == null) {
 			instance = new DatabaseStateImpl();
@@ -84,9 +101,6 @@ public class DatabaseStateImpl implements DatabaseState {
 		return instance;
 	}
 
-	public boolean checkSync(List<TableVersion> tables) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	
 	
 }

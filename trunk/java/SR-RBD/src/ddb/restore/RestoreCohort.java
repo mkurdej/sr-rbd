@@ -4,7 +4,6 @@
 package ddb.restore;
 
 import java.net.InetSocketAddress;
-import java.util.Arrays;
 
 import ddb.Logger;
 import ddb.TimeoutException;
@@ -13,9 +12,8 @@ import ddb.msg.Message;
 import ddb.msg.MessageType;
 import ddb.communication.TcpSender;
 import ddb.db.DatabaseStateImpl;
-import ddb.db.DbConnector;
 import ddb.db.DbConnectorImpl;
-import ddb.db.TableVersion;
+import ddb.db.ImportTableException;
 import ddb.restore.msg.RestoreAck;
 import ddb.restore.msg.RestoreIncentive;
 import ddb.restore.msg.RestoreNack;
@@ -134,7 +132,13 @@ public class RestoreCohort extends Worker {
 		if(DatabaseStateImpl.getInstance().getTableVersion(tableName) < version)
 		{
 			// TODO: czy w dumpach jest drop table?
-			DbConnectorImpl.getInstance().importTable(tableName, version, rtm.getTableDump());
+			try {
+				DbConnectorImpl.getInstance().importTable(tableName, version, rtm.getTableDump());
+			
+			} catch (ImportTableException e) {
+				Logger.getInstance().log("ImportTableException" + e.getMessage(),
+						LOGGING_NAME, Logger.Level.WARNING);
+			}
 		}
 	}
 }
