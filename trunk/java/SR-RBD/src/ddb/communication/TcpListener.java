@@ -6,6 +6,7 @@
 package ddb.communication;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -23,12 +24,15 @@ public class TcpListener implements Runnable
 	private final static String LOGGING_NAME = "TcpListener";
 
 	protected BlockingQueue<Message> storage = null;
-	protected int listenPort;
+	
 	protected ServerSocket serverSocket = null;
+	protected InetAddress listenHost;
+	protected int listenPort;
 
-    public TcpListener(BlockingQueue<Message> queue, int port)
+    public TcpListener(BlockingQueue<Message> queue, InetAddress host, int port)
     {
     	storage = queue;
+    	listenHost = host;
     	listenPort = port;
     }
 
@@ -36,7 +40,8 @@ public class TcpListener implements Runnable
     {
         try
         {
-            serverSocket = new ServerSocket(listenPort);
+            serverSocket = new ServerSocket();
+            serverSocket.bind(new InetSocketAddress(listenHost, listenPort));
             Logger.getInstance().log("Server is listening on port " +
             		listenPort + ".", LOGGING_NAME, Logger.Level.INFO);
         }

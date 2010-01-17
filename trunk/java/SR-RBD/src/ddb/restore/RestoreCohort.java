@@ -14,6 +14,7 @@ import ddb.communication.TcpSender;
 import ddb.db.DatabaseStateImpl;
 import ddb.db.DbConnectorImpl;
 import ddb.db.ImportTableException;
+import ddb.db.TableVersion;
 import ddb.restore.msg.RestoreAck;
 import ddb.restore.msg.RestoreIncentive;
 import ddb.restore.msg.RestoreNack;
@@ -63,8 +64,19 @@ public class RestoreCohort extends Worker {
 		MessageType[] awaitingTableList = {MessageType.RESTORE_TABLELIST, MessageType.RESTORE_INCENTIVE};
 		MessageType[] awaitingTables = {MessageType.RESTORE_TABLE, MessageType.RESTORE_INCENTIVE};
 		
+		Logger.getInstance().log(
+				"Awaiting restore incentives", 
+				LOGGING_NAME, 
+				Logger.Level.INFO);
+		
 		// take RestoreIncentive ( other will get ignored )
+		clearTimeout();
 		msg = accept(MessageType.RESTORE_INCENTIVE, null);
+		
+		Logger.getInstance().log(
+				"Got incentive - responding ack", 
+				LOGGING_NAME, 
+				Logger.Level.INFO);
 		
 		// answer ok
 		InetSocketAddress node = msg.getSender();
@@ -82,6 +94,12 @@ public class RestoreCohort extends Worker {
 			{
 				// deny restore since its already happening
 				TcpSender.getInstance().sendToNode(new RestoreNack(), node);
+				
+				Logger.getInstance().log(
+						"RestoreIncentive - restoration in progress - responding nack to: " + msg.getSender().toString(),
+						LOGGING_NAME, 
+						Logger.Level.INFO);
+				
 			}
 			else
 			{
@@ -89,18 +107,32 @@ public class RestoreCohort extends Worker {
 			}
 		}
 		
+		Logger.getInstance().log(
+				"Got table list - scanning", 
+				LOGGING_NAME, 
+				Logger.Level.INFO);
+		
 		
 		// set table state as out of sync if versions dont match
 		RestoreTableList rtl = (RestoreTableList)msg;
 		int left = rtl.getTables().size();
-		/*for(TableVersion table : rtl.getTables())
+		for(TableVersion table : rtl.getTables())
 		{
 			// TODO: implement? is this really required? RestoreTableRequest
-		}*/
+			Logger.getInstance().log(
+					"Table '" + table.getTableName() + "' version " + table.getVersion(), 
+					LOGGING_NAME, 
+					Logger.Level.INFO);
+		}
 		
 		// send back ack to unlock database
 		TcpSender.getInstance().sendToNode(new RestoreAck(), node);
 		setTimeout(RESTORE_TIMEOUT);
+		
+		Logger.getInstance().log(
+				"Got table list - responding ack", 
+				LOGGING_NAME, 
+				Logger.Level.INFO);
 		
 		// read all tables
 		while(left > 0) 
@@ -109,6 +141,11 @@ public class RestoreCohort extends Worker {
 			
 			if(msg instanceof RestoreIncentive)
 			{
+				Logger.getInstance().log(
+						"RestoreIncentive - restoration in progress - responding nack to: " + msg.getSender().toString(), 
+						LOGGING_NAME, 
+						Logger.Level.INFO);
+				
 				// deny restore since its already happening
 				TcpSender.getInstance().sendToNode(new RestoreNack(), node);
 			}
@@ -117,21 +154,34 @@ public class RestoreCohort extends Worker {
 				restoreTable((RestoreTable)msg);
 				--left;
 				setTimeout(RESTORE_TIMEOUT);
+				
+				Logger.getInstance().log(
+						Integer.toString(left) + " tables left", 
+						LOGGING_NAME, 
+						Logger.Level.INFO);
 			}
 			
 		}
 		
-		clearTimeout();
+		Logger.getInstance().log(
+				"Restore complete", 
+				LOGGING_NAME, 
+				Logger.Level.INFO);
 	}
 	
 	protected void restoreTable(RestoreTable rtm)
 	{
 		String tableName = rtm.getTableName();
 		int version = rtm.getTableVersion();
+		int myversion = DatabaseStateImpl.getInstance().getTableVersion(tableName);
 		
-		if(DatabaseStateImpl.getInstance().getTableVersion(tableName) < version)
+		Logger.getInstance().log(
+				"Restore table '" + tableName + "' to version " + Integer.toString(version) + " - my is " + Integer.toString(myversion), 
+				LOGGING_NAME, 
+				Logger.Level.INFO);
+		
+		if( myversion < version)
 		{
-			// TODO: czy w dumpach jest drop table?
 			try {
 				DbConnectorImpl.getInstance().importTable(tableName, version, rtm.getTableDump());
 			
@@ -139,6 +189,13 @@ public class RestoreCohort extends Worker {
 				Logger.getInstance().log("ImportTableException" + e.getMessage(),
 						LOGGING_NAME, Logger.Level.WARNING);
 			}
+		}
+		else
+		{
+			Logger.getInstance().log(
+					"Table skipped - my version is newer", 
+					LOGGING_NAME, 
+					Logger.Level.INFO);
 		}
 	}
 }

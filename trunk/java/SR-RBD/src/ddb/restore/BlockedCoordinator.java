@@ -19,6 +19,11 @@ public class BlockedCoordinator extends Worker {
 		{
 			Message msg = accept(MessageType.TRANSACTION_MESSAGE, null);
 			TcpSender.getInstance().sendToNode(new ConflictMessage(), msg.getSender());
+		
+			Logger.getInstance().log(
+					"Client transaction forbidden", 
+					LOGGING_NAME, 
+					Logger.Level.INFO);
 		} 
 		catch (TimeoutException e) 
 		{

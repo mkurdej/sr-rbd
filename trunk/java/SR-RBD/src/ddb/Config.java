@@ -1,5 +1,7 @@
 package ddb;
 
+import java.net.InetAddress;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.*;
 import org.w3c.dom.Document;
@@ -8,16 +10,28 @@ public class Config {
 	
 	private final static String LOGGING_NAME = "Config";
 	
-	private static int port;
+	private static InetAddress tcpaddress;
+	private static int tcpPort;
+	private static int udpPort;
 	private static int maxNodes;
 	private static String database;
     private static String host;
     private static String user;
     private static String password;
     
-    public static int Port()
+    public static int TcpPort()
     {
-    	return port;
+    	return tcpPort;
+    }
+    
+    public static InetAddress TcpAddress()
+    {
+    	return tcpaddress;
+    }
+    
+    public static int UdpPort()
+    {
+    	return udpPort;
     }
     
     public static int MaxNodes()
@@ -25,9 +39,9 @@ public class Config {
     	return maxNodes;
     }
     
-    public static int MinNodes()
+    public static int MinOtherNodes()
     {
-    	return maxNodes == -1 ? Integer.MAX_VALUE : maxNodes / 2 + 1;
+    	return maxNodes == -1 ? 0 : maxNodes / 2;
     }
     
     public static String Database()
@@ -60,7 +74,9 @@ public class Config {
 	    	XPathFactory factory = XPathFactory.newInstance();
 	    	XPath xPath = factory.newXPath();
 	    
-	    	port 		= Integer.parseInt(xPath.evaluate("/config/port", inputSource));
+	    	tcpaddress 	= InetAddress.getByName(xPath.evaluate("/config/tcpaddress", inputSource));
+	    	tcpPort 	= Integer.parseInt(xPath.evaluate("/config/tcpport", inputSource));
+	    	udpPort 	= Integer.parseInt(xPath.evaluate("/config/udpport", inputSource));
 	    	maxNodes 	= Integer.parseInt(xPath.evaluate("/config/maxnodes", inputSource));
 	    	database 	= xPath.evaluate("/config/database", inputSource);
 	    	host 		= xPath.evaluate("/config/host", inputSource);

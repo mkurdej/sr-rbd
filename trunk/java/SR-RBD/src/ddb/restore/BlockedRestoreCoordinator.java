@@ -18,6 +18,11 @@ private final static String LOGGING_NAME = "BlockedRestoreCoordinator";
 		{
 			Message msg = accept(MessageType.RESTORE_INCENTIVE, null);
 			TcpSender.getInstance().sendToNode(new RestoreNack(), msg.getSender());
+		
+			Logger.getInstance().log(
+					"Restoration forbidden", 
+					LOGGING_NAME, 
+					Logger.Level.INFO);
 		} 
 		catch (TimeoutException e) 
 		{

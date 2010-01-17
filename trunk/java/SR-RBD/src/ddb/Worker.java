@@ -13,7 +13,7 @@ public abstract class Worker implements Runnable
 	private final static String LOGGING_NAME = "Worker";
 	
 	protected BlockingQueue<Message> queue = new LinkedBlockingQueue<Message>();
-	protected long timeoutTime;
+	protected long timeoutTime = -1;
 	
 	public final void setTimeout(long ms)
 	{

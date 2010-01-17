@@ -18,6 +18,12 @@ public class BlockedCohort extends Worker
 		{
 			Message msg = accept(MessageType.TPC_CANCOMMIT, null);
 			TcpSender.getInstance().sendToNode(new NoForCommitMessage(), msg.getSender());
+		
+			Logger.getInstance().log(
+					"Transaction forbidden", 
+					LOGGING_NAME, 
+					Logger.Level.INFO);
+		
 		} 
 		catch (TimeoutException e) 
 		{
