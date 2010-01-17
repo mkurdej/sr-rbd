@@ -3,6 +3,8 @@ package ddb.communication;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import ddb.Config;
+
 public class DataOutputStream extends java.io.DataOutputStream
 {
 	public DataOutputStream(OutputStream out) {
@@ -12,7 +14,7 @@ public class DataOutputStream extends java.io.DataOutputStream
 	public void writeString(String s) throws IOException {
 		
 		// transform string to bytes
-		byte[] bytes = s.getBytes();
+		byte[] bytes = s.getBytes(Config.getCharset());
 		
 		// write length
 		writeInt(bytes.length);

@@ -1,6 +1,7 @@
 package ddb;
 
 import java.net.InetAddress;
+import java.nio.charset.Charset;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.*;
@@ -18,6 +19,12 @@ public class Config {
     private static String host;
     private static String user;
     private static String password;
+    private static Charset charset = Charset.forName("ISO-8859-1");
+    
+    public static Charset getCharset()
+    {
+    	return charset;
+    }
     
     public static int TcpPort()
     {
