@@ -3,6 +3,8 @@ package ddb.communication;
 import java.io.IOException;
 import java.io.InputStream;
 
+import ddb.Config;
+
 public class DataInputStream extends java.io.DataInputStream
 {
 	public DataInputStream(InputStream in){
@@ -22,6 +24,6 @@ public class DataInputStream extends java.io.DataInputStream
 			left -= read(bytes, length - left, left);
 		
 		// convert bytes using given encoding
-		return new String(bytes);
+		return new String(bytes, Config.getCharset());
 	}
 }
