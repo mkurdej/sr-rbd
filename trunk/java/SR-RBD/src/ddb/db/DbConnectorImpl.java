@@ -19,7 +19,7 @@ public class DbConnectorImpl implements DbConnector
     private Connection connection;
     private static final String LOGGING_NAME = "DbConnector";
 
-    private static final DbConnector instance = new DbConnectorImpl();
+    private static DbConnector instance = null;
 
     private DbConnectorImpl()
     {
@@ -55,6 +55,9 @@ public class DbConnectorImpl implements DbConnector
 
     public static DbConnector getInstance()
     {
+    	if( instance == null )
+    		instance = new DbConnectorImpl();
+    	
         return instance;
     }
 
