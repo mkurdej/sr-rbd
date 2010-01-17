@@ -51,7 +51,7 @@ public class SqlParserImpl implements SqlParser
                 Pattern.CASE_INSENSITIVE);
     }
 
-    public void parse(String queryString)
+    public boolean parse(String queryString)
     {
     	operationType = SqlOperationType.UNDEFINED;
         query = queryString.trim();
@@ -76,10 +76,14 @@ public class SqlParserImpl implements SqlParser
             parseLock();
         else if(unlockRegExp.matcher(query).find())
             parseUnlock();
+        else
+        	return false;
 
         Logger.getInstance().log("[" + tableName + "] " + parsedQueryString +
                 "\t" + lockQueryString + "",
                 LOGGING_NAME, Logger.Level.INFO);
+        
+        return true;
     }
 
     public String getQueryString()

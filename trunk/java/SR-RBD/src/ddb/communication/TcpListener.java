@@ -64,7 +64,9 @@ public class TcpListener implements Runnable
         		);
                 
                 TcpWorker worker = new TcpWorker(newConnection, storage);
-                new Thread(worker).start();
+                new Thread(worker, 
+            		"TcpWorker " + newConnection.getInetAddress() + ":" + newConnection.getPort()
+        		).start();
             }
             catch (IOException ex)
             {

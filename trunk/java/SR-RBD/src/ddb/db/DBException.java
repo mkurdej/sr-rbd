@@ -26,6 +26,13 @@ public class DBException extends Exception implements BinarySerializable
 		errorMessage = e.getMessage();
 		errorCode = Integer.toString(e.getErrorCode());
 	}
+	
+	public DBException(String msg)
+	{
+		errorMessage = msg;
+		errorCode = "Parsing 1";
+	}
+	
 	public DBException(DataInputStream s) throws IOException {
 		fromBinary(s);
 	}

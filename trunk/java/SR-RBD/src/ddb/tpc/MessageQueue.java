@@ -17,11 +17,7 @@ public class MessageQueue {
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
 	 */
-	private BlockingQueue<Message> messages;
-	
-	public MessageQueue() {
-		this.messages = new LinkedBlockingQueue<Message>();
-	}
+	private BlockingQueue<Message> messages = new LinkedBlockingQueue<Message>();
 	
 	/** 
 	 * <!-- begin-UML-doc -->

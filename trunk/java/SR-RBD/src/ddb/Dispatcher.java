@@ -53,7 +53,7 @@ import ddb.util.Util;
  */
 public class Dispatcher implements EndTransactionListener, EndRestorationListener {
 
-	private final static String LOGGING_NAME = "DispatcherImpl";
+	private final static String LOGGING_NAME = "Dispatcher";
 	protected final static int OUT_OF_SYNC_BEATS_THRESHOLD = 4;
 	protected final static int OUT_OF_SYNC_RESET_TIME_MS = 60000;
 	
@@ -137,13 +137,13 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 			}
 			else
 			{
-				if(!(m instanceof HelloMessage))
-				{
+				//if(!(m instanceof HelloMessage))
+				//{
 					Logger.getInstance().log(
 							"Processing message:" + m.toString(), 
 							LOGGING_NAME, 
 							Logger.Level.INFO);
-				}
+				//}
 				
 				process(m);
 			}
@@ -267,6 +267,7 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 				cohorts.put(transactionId, coh);
 				coh.setTransactionId(transactionId);
 				coh.setCoordinatorAddress(msg.getSender());
+				coh.setDatabaseState(DatabaseStateImpl.getInstance());
 				coh.addEndTransactionListener(this);
 				coh.processMessage(msg);
 			}
@@ -379,6 +380,7 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 			coordinators.put(transactionId, coor);
 			coor.setTransactionId(transactionId);
 			coor.setClientAddress(msg.getSender());
+			coor.setDatabaseState(DatabaseStateImpl.getInstance());
 			coor.addEndTransactionListener(this);
 			
 			// give him the message

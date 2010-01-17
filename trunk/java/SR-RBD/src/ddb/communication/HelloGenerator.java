@@ -39,9 +39,10 @@ public class HelloGenerator implements Runnable {
 			// broadcast hello's
 	        while(true)
 	        {
-	        	Thread.sleep(BROADCAST_INTERVAL_MS);
 	        	HelloMessage hm = new HelloMessage(DatabaseStateImpl.getInstance().getTableVersions(), listeningPort);
 	        	sender.sendToAll(hm);
+	        	
+	        	Thread.sleep(BROADCAST_INTERVAL_MS);
 	        } 
 		}
         catch (InterruptedException e) {
