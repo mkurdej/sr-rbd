@@ -3,6 +3,7 @@
  */
 package ddb.tpc.cor;
 
+import ddb.communication.TcpSender;
 import ddb.db.SqlOperationType;
 import ddb.db.SqlParser;
 import ddb.db.SqlParserImpl;
@@ -36,7 +37,7 @@ public class InitState extends CoordinatorState {
 	 */
 	@Override
 	public void onTransaction(TransactionMessage message) {
-		coordinator.setNodeList( coordinator.getDatabaseState().getNodes() );
+		coordinator.setNodeList( TcpSender.getInstance().getAllServerNodes() );
 		SqlParser parser = new SqlParserImpl();
 		parser.parse(message.getQueryString());
 		coordinator.setQueryString( parser.getQueryString() );

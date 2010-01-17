@@ -3,8 +3,6 @@
  */
 package ddb.db;
 
-import java.net.InetSocketAddress;
-import java.util.Set;
 
 /** 
  * <!-- begin-UML-doc -->
@@ -23,16 +21,6 @@ public interface DatabaseState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void lockTable(String tableName) throws TableLockedException;
-
-	/** 
-	 * <!-- begin-UML-doc -->
-	 * Zwraca liste wezlow
-	 * <!-- end-UML-doc -->
-	 * @return
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
-	 */
-	public Set<InetSocketAddress> getNodes();
-
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <p>
