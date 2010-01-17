@@ -49,6 +49,7 @@ public class InitState extends CoordinatorState {
 			CanCommitMessage msg = new CanCommitMessage();
 			msg.setTableName(parser.getTableName());
 			msg.setQueryString(parser.getQueryString());
+			msg.setTableVersion(coordinator.getDatabaseState().getTableVersion(msg.getTableName()));
 			if(parser.getOperationType().equals(SqlOperationType.CREATE)) {
 				msg.setCreate(true);
 			}
