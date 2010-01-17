@@ -34,7 +34,10 @@ public class CanCommitMessage extends TPCMessage {
 	 * Czy transakcja dotyczy utworzenia nowej tabeli
 	 */
 	private boolean isCreate;
-	
+	/**
+	 * Numer wersji tabeli na koordynatorze
+	 */
+	private int tableVersion;
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->
@@ -88,6 +91,7 @@ public class CanCommitMessage extends TPCMessage {
 		queryString = s.readString();
 		tableName = s.readString();
 		isCreate = s.readBoolean();
+		tableVersion = s.readInt();
 	}
 
 	@Override
@@ -100,5 +104,15 @@ public class CanCommitMessage extends TPCMessage {
 		s.writeString(queryString);
 		s.writeString(tableName);
 		s.writeBoolean(isCreate);
+		s.writeInt(tableVersion);
+	}
+
+	public void setTableVersion(int tableVersion) {
+		this.tableVersion = tableVersion;
+		
+	}
+	
+	public int getTableVersion() {
+		return this.tableVersion;
 	}
 }
