@@ -5,7 +5,6 @@ package ddb.communication;
 
 import ddb.Logger;
 import ddb.msg.HelloMessage;
-import ddb.db.DatabaseState;
 import ddb.db.DatabaseStateImpl;
 
 
