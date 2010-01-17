@@ -64,5 +64,9 @@ public class TableState {
 	public void unlockTable() {
 		locked = false;
 	}
+
+	public void setVersion(int version) {
+		this.version = version;
+	}
 	
 }

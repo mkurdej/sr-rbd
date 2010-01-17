@@ -60,4 +60,10 @@ public interface DatabaseState {
 	 * @param tableName nazwa tabeli
 	 */
 	public int getTableVersion(String tableName);
+	/**
+	 * UStawia numer wersji tabeli
+	 * @param tableName nazwa tabeli
+	 * @param version numer wersji
+	 */
+	public void setTableVersion(String tableName, int version);
 }

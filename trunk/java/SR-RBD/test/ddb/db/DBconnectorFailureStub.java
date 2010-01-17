@@ -10,22 +10,4 @@ public class DBconnectorFailureStub implements DbConnector {
 		//return null;
 	}
 
-	@Override
-	public void clearDatabase() throws DBException {
-		// empty
-		
-	}
-
-	@Override
-	public String dumpTable(String tableName) throws DumpTableException {
-		// empty
-		return null;
-	}
-
-	@Override
-	public void importTable(String dump) throws ImportTableException {
-		// empty
-		
-	}
-
 }
