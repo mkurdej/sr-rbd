@@ -8,6 +8,7 @@ package ddb.db;
 import java.io.*;
 import java.sql.*;
 
+import ddb.Config;
 import ddb.Logger;
 
 /**
@@ -18,17 +19,21 @@ public class DbConnectorImpl implements DbConnector
 {
     private Connection connection;
     private static final String LOGGING_NAME = "DbConnector";
+    
 
     private static DbConnector instance = null;
+    
+    String URL_BEGIN = "jdbc:mysql";
+    String DRIVER = "com.mysql.jdbc.Driver";
 
     private DbConnectorImpl()
     {
-        String url = URL_BEGIN + "://" + HOST + "/" + DATABASE;
+        String url = URL_BEGIN + "://" + Config.Host() + "/" + Config.Database();
 
         try
         {
             Class.forName(DRIVER).newInstance();
-            connection = DriverManager.getConnection(url, USER, PASSWORD);
+            connection = DriverManager.getConnection(url, Config.User(), Config.Password());
         }
         catch (InstantiationException ex)
         {
@@ -109,8 +114,8 @@ public class DbConnectorImpl implements DbConnector
     public String dumpTable(String tableName) throws DumpTableException
     {                                        
         String output = "";                  
-        String cmd = "mysqldump -u " + USER + " -p" + PASSWORD + " " + DATABASE
-                + " " + tableName;                                             
+        String cmd = "mysqldump -u " + Config.User() + " -p" + Config.Password() + " " + 
+        				Config.Database() + " " + tableName;                                             
 
         Logger.getInstance().log(cmd, LOGGING_NAME, Logger.Level.INFO);
 
@@ -149,7 +154,8 @@ public class DbConnectorImpl implements DbConnector
 
     public void importTable(String tableName, int version, String dump) throws ImportTableException
     {                                   
-        String cmd = "mysql -u " + USER + " -p" + PASSWORD + " " + DATABASE;
+        String cmd = "mysql -u " + Config.User() + " -p" + Config.Password() + " " +
+        				Config.Database();
 
         Logger.getInstance().log(cmd, LOGGING_NAME, Logger.Level.INFO);
 
