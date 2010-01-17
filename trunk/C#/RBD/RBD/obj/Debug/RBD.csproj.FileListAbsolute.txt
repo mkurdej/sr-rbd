@@ -9,3 +9,5 @@ C:\Documents and Settings\xeonic\Pulpit\RBD\RBD\bin\Debug\RBD.exe
 C:\Documents and Settings\xeonic\Pulpit\RBD\RBD\bin\Debug\RBD.pdb
 C:\Documents and Settings\xeonic\Pulpit\RBD\RBD\obj\Debug\ResolveAssemblyReference.cache
 C:\Documents and Settings\xeonic\Pulpit\RBD\RBD\bin\Debug\MySql.Data.dll
+E:\workspace\sr-rbd\C#\RBD\RBD\obj\Debug\RBD.exe
+E:\workspace\sr-rbd\C#\RBD\RBD\obj\Debug\RBD.pdb
