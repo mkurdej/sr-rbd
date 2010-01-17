@@ -14,6 +14,7 @@ import ddb.msg.Message;
 import ddb.msg.MessageType;
 import ddb.communication.TcpSender;
 import ddb.db.DatabaseState;
+import ddb.db.DatabaseStateImpl;
 import ddb.db.DbConnectorImpl;
 import ddb.db.TableVersion;
 import ddb.restore.msg.RestoreIncentive;
@@ -77,7 +78,7 @@ public class RestoreCoordinator extends Worker
 		
 		// TODO: tutaj nie moze byc zadnych transakcji
 		// TODO: lock whole database ( all tables )
-		RestoreTableList rtl = new RestoreTableList(DatabaseState.getInstance().GetTableVersions()); 
+		RestoreTableList rtl = new RestoreTableList(DatabaseStateImpl.getInstance().getTableVersions()); 
 		TcpSender.getInstance().sendToNode(rtl, targetNode);
 		
 		// receive reply

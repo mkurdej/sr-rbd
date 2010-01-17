@@ -1,10 +1,11 @@
 package ddb.db;
 
+import java.net.InetSocketAddress;
 import java.util.HashSet;
 import java.util.Set;
 
 public class DatabaseStateStub implements DatabaseState {
-	private Set<String> nodeList;
+	private Set<InetSocketAddress> nodeList;
 	private Set<String> locked;
 	
 	public DatabaseStateStub() {
@@ -12,7 +13,7 @@ public class DatabaseStateStub implements DatabaseState {
 	}
 	
 	@Override
-	public Set<String> getNodes() {
+	public Set<InetSocketAddress> getNodes() {
 		return nodeList;
 	}
 
@@ -30,11 +31,26 @@ public class DatabaseStateStub implements DatabaseState {
 	}
 
 	
-	public void setNodeList(Set<String> nodeList) {
+	public void setNodeList(Set<InetSocketAddress> nodeList) {
 		this.nodeList = nodeList;
 	}
 	
 	public boolean isLocked(String tableName){
 		return locked.contains(tableName);
+	}
+
+	@Override
+	public void addTable(String tableName, String createStatement) {
+		
+	}
+
+	@Override
+	public int getTableVersion(String tableName) {
+		return 0;
+	}
+
+	@Override
+	public void incrementTableVersion(String tableName) {
+		
 	}
 }

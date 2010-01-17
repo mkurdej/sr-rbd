@@ -17,7 +17,10 @@ import ddb.tpc.msg.TPCMessage;
  */
 public abstract class Cohort extends TPCParticipant {
 	private boolean isCreate;
-	
+	/**
+	 * Czy transakcja dotyczy zapytania CREATE TABLE
+	 * @return
+	 */
 	public boolean isCreate() {
 		return isCreate;
 	}
@@ -25,20 +28,6 @@ public abstract class Cohort extends TPCParticipant {
 	public void setCreate(boolean isCreate) {
 		this.isCreate = isCreate;
 	}
-
-	
-	/**
-	 * <!-- begin-UML-doc --> <!-- end-UML-doc -->
-	 * 
-	 * @generated 
-	 *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
-	 */
-	public Cohort() {
-		// begin-user-code
-		// TODO Auto-generated constructor stub
-		// end-user-code
-	}
-
 	/**
 	 * <!-- begin-UML-doc --> Adres koordynator transakcji, w ktorej uczestniczy
 	 * ten kohort. <!-- end-UML-doc -->

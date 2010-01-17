@@ -16,28 +16,12 @@ import ddb.msg.MessageType;
  * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
  */
 public class HaveCommittedMessage extends TPCMessage {
-	/** 
-	 * <!-- begin-UML-doc -->
-	 * <!-- end-UML-doc -->
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
-	 */
-	private String databaseMessage; //TODO: kolejna zmienna ktora nie jest nigdzie ustawiana
 
-	/** 
-	 * <!-- begin-UML-doc -->
-	 * <!-- end-UML-doc -->
-	 * @return
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
-	 */
-	public String getDatabaseMessage() {
-		// begin-user-code
-		return databaseMessage;
-		// end-user-code
-	}
+
 
 	@Override
 	public void fromBinary(DataInputStream s) throws IOException {
-		databaseMessage = s.readString();
+		//empty
 		
 	}
 
@@ -48,6 +32,6 @@ public class HaveCommittedMessage extends TPCMessage {
 
 	@Override
 	public void toBinary(DataOutputStream s) throws IOException {
-		s.writeString(databaseMessage);
+		//empty
 	}
 }

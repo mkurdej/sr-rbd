@@ -5,13 +5,12 @@ package ddb.tpc;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import ddb.Logger;
 import ddb.Logger.Level;
-import ddb.communication.TcpSender;
 import ddb.db.DatabaseState;
 import ddb.db.DbConnector;
 import ddb.msg.Message;
+import ddb.tpc.msg.TimeoutMessage;
 
 /**
  * <!-- begin-UML-doc --> <!-- end-UML-doc -->
@@ -94,7 +93,10 @@ public abstract class TPCParticipant implements MessageRecipient,
 		this.endTransactionListeners = new HashSet<EndTransactionListener>();
 		this.timeoutGenerator = new TimeoutGenerator();
 		this.messageQueue = new MessageQueue();
-		// startThread();
+		
+		this.timeoutGenerator.setTimeoutListener(this);
+		
+		startThread();
 	}
 
 	public DatabaseState getDatabaseState() {
@@ -125,12 +127,12 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	synchronized public void processMessage(Message message) {
-		/*
-		 * try { this.messageQueue.putMessage(message); } catch
-		 * (InterruptedException e) { // TODO Auto-generated catch block
-		 * Logger.getInstance().log(e.getMessage(), "TPC", Level.SEVERE); }
-		 */
-		this.onNewMessage(message);
+		 try {
+			 this.messageQueue.putMessage(message);
+		 } catch(InterruptedException e) {
+			 Logger.getInstance().log(e.getMessage(), "TPC", Level.SEVERE);
+		 }
+		//this.onNewMessage(message);
 	}
 
 	/**
@@ -177,9 +179,7 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	synchronized private void waitForMessage() {
-		Logger.getInstance().log("waitForMessage " + Thread.currentThread(),
-				"TPC", Logger.Level.INFO);
-
+		//Logger.getInstance().log("waitForMessage " + Thread.currentThread(), "TPC", Logger.Level.INFO);
 		try {
 			Message msg = this.messageQueue.getMessage();
 			onNewMessage(msg);
@@ -345,5 +345,15 @@ public abstract class TPCParticipant implements MessageRecipient,
 
 	public void setConnector(DbConnector connector) {
 		this.connector = connector;
+	}
+	
+	/** 
+	 * <!-- begin-UML-doc -->
+	 * Callback&nbsp;wywolywany,&nbsp;gdy&nbsp;wystapi&nbsp;timeout
+	 * <!-- end-UML-doc -->
+	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
+	 */
+	public void onTimeout() {
+		processMessage(new TimeoutMessage());
 	}
 }

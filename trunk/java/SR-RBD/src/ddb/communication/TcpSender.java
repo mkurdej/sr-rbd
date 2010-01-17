@@ -34,7 +34,7 @@ public class TcpSender {
 	/**
 	 * @generated "Singleton (com.ibm.xtools.patterns.content.gof.creational.singleton.SingletonPattern)"
 	 */
-	private TcpSender() {
+	protected TcpSender() {
 		// begin-user-code
 		// empty
 		// end-user-code

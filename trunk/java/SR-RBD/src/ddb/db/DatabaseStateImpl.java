@@ -20,10 +20,11 @@ import java.util.Set;
 public class DatabaseStateImpl implements DatabaseState {
 	private Map<String, TableState> tables;
 	
-	public DatabaseStateImpl() {
+	private DatabaseStateImpl() {
 		this.tables = new HashMap<String, TableState>();
 	}
 	
+	private static DatabaseStateImpl instance;
 	
 	/** 
 	 * /* (non-Javadoc)
@@ -77,7 +78,7 @@ public class DatabaseStateImpl implements DatabaseState {
 		return tables.get(tableName).getVersion();
 	}
 	
-	List<TableVersion> getTableVersions()
+	public List<TableVersion> getTableVersions()
 	{
 		List<TableVersion> result = new LinkedList<TableVersion>();
 		
@@ -85,6 +86,14 @@ public class DatabaseStateImpl implements DatabaseState {
 			result.add(new TableVersion(e.getKey(), e.getValue().getVersion()));
 		
 		return result;
+	}
+	
+	synchronized public static DatabaseStateImpl getInstance() {
+		if(instance == null) {
+			instance = new DatabaseStateImpl();
+		}
+		
+		return instance;
 	}
 	
 }
