@@ -91,13 +91,14 @@ public class RestoreCohort extends Worker {
 			}
 		}
 		
+		
 		// set table state as out of sync if versions dont match
 		RestoreTableList rtl = (RestoreTableList)msg;
 		int left = rtl.getTables().size();
-		for(TableVersion table : rtl.getTables())
+		/*for(TableVersion table : rtl.getTables())
 		{
-			// TODO: implement
-		}
+			// TODO: implement? is this really required? RestoreTableRequest
+		}*/
 		
 		// send back ack to unlock database
 		TcpSender.getInstance().sendToNode(new RestoreAck(), node);

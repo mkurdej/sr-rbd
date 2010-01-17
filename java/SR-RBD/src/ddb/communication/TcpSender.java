@@ -49,7 +49,7 @@ public class TcpSender {
 		// end-user-code
 	}
 	
-	public void removeNode(InetSocketAddress address) {
+	public synchronized void removeNode(InetSocketAddress address) {
 		if(nodes.remove(address) == null)
 		{
 			Logger.getInstance().log("Request to remove unexisting node: " + address.toString(), 
@@ -58,7 +58,7 @@ public class TcpSender {
 		}
 	}
 
-	public void addNodeBySocket(InetSocketAddress node, Socket s) {
+	public synchronized void addNodeBySocket(InetSocketAddress node, Socket s) {
 	
 		if(nodes.get(node) != null)
 		{
@@ -70,7 +70,7 @@ public class TcpSender {
 		nodes.put(node, new NodeInfo(s, false));
 	}
 	
-	public void AddServerNode(InetSocketAddress node)
+	public synchronized void AddServerNode(InetSocketAddress node)
 	{
 		NodeInfo nodeInfo = nodes.get(node);
 		
@@ -96,7 +96,16 @@ public class TcpSender {
 		}
 	}
 	
-	
+	public synchronized int getServerNodesCount()
+	{
+		int count = 0;
+		
+		for(NodeInfo node : nodes.values())
+			if(node.getIsServer())
+				++count;
+		
+		return count;
+	}
 	
 	/**
 	 * /* (non-Javadoc) * @see TcpSender#sendToAllNodes(Message message)
@@ -104,7 +113,7 @@ public class TcpSender {
 	 * @generated 
 	 *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void sendToAllServerNodes(Message message) {
+	public synchronized void sendToAllServerNodes(Message message) {
 		// begin-user-code
 		byte[] data; 
 		
@@ -136,7 +145,7 @@ public class TcpSender {
 	 * @generated 
 	 *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void sendToNode(Message message, InetSocketAddress to) {
+	public synchronized void sendToNode(Message message, InetSocketAddress to) {
 		// begin-user-code
 		byte[] data; 
 		
