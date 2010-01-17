@@ -4,12 +4,10 @@
 package ddb.db;
 
 
-import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /** 
  * <!-- begin-UML-doc -->
@@ -51,19 +49,6 @@ public class DatabaseStateImpl implements DatabaseState {
 	public void removeTable(String tableName) {
 		tables.remove(tableName);
 	}
-	/** 
-	 * /* (non-Javadoc)
-	 *  * @see DatabaseState#getNodes()
-	 * 
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
-	 */
-	@Override
-	public Set<InetSocketAddress> getNodes() {
-		// begin-user-code
-		// TODO Auto-generated method stub
-		return null;
-		// end-user-code
-	}
 
 	/** 
 	 * /* (non-Javadoc)
@@ -97,6 +82,11 @@ public class DatabaseStateImpl implements DatabaseState {
 		}
 		
 		return instance;
+	}
+
+	public boolean checkSync(List<TableVersion> tables) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }
