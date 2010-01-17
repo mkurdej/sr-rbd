@@ -19,7 +19,7 @@ public class Main
     public static void main(String[] args) 
     {
     	
-    	if(Config.Load("./config.xml"))
+    	if(Config.Load(args.length == 0 ? "./config.xml" : args[0]))
     	{
     		// launch
         	Logger.getInstance().log("Starting node", LOGGING_NAME, Logger.Level.INFO);

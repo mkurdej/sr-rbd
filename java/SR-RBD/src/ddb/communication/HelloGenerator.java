@@ -17,7 +17,7 @@ import ddb.db.DatabaseStateImpl;
 public class HelloGenerator implements Runnable {
 	// configuration
 	private final static String LOGGING_NAME = "HelloGenerator";
-	private final static int BROADCAST_INTERVAL_MS = 2000;
+	private final static int BROADCAST_INTERVAL_MS = 5000;
 	
 	// data
 	private int listeningPort;
@@ -32,8 +32,7 @@ public class HelloGenerator implements Runnable {
 	public void run()
     {
 		Logger.getInstance().log("Running", LOGGING_NAME, Logger.Level.INFO);
-		
-		// TODO: powinien byc uzyty interfejs UdpSender, ale nie ma on odpowiednich metod
+
 		UdpSenderImpl sender = UdpSenderImpl.getInstance();
 		
 		try {

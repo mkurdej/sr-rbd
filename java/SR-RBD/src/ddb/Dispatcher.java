@@ -55,7 +55,7 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 
 	private final static String LOGGING_NAME = "DispatcherImpl";
 	protected final static int OUT_OF_SYNC_BEATS_THRESHOLD = 4;
-	protected final static int OUT_OF_SYNC_RESET_TIME_MS = 5000;
+	protected final static int OUT_OF_SYNC_RESET_TIME_MS = 60000;
 	
 	// destination for messages
 	protected BlockingQueue<Message> queue = new LinkedBlockingQueue<Message>();
@@ -77,30 +77,34 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 
 	// others
 	protected Map<InetSocketAddress, NodeSyncInfo> nodeSynchronization = new HashMap<InetSocketAddress, NodeSyncInfo>();
-	protected int isRestoring = 0;
+	protected InetSocketAddress me;
+	protected int isRestoring = 0; // TODO: remove
 	
 	
 	public Dispatcher()
 	{
-		tcp = new TcpListener(queue, Config.Port());
-		udp = new UdpListener(queue);
-		hello = new HelloGenerator(Config.Port());
+		tcp = new TcpListener(queue, Config.TcpAddress(), Config.TcpPort());
+		udp = new UdpListener(queue, Config.UdpPort());
+		hello = new HelloGenerator(Config.TcpPort());
 	}
 	
 	public void Initialize()
 	{
+		// assign self identifier
+		me = new InetSocketAddress(Config.TcpAddress(), Config.TcpPort());
+		
 		// install threads for managing communication
-		new Thread(tcp).start();
-        new Thread(udp).start();
-        new Thread(hello).start();
+		new Thread(tcp, "TPC_LISTENER").start();
+        new Thread(udp, "UDP_LISTENER").start();
+        new Thread(hello, "HELLO_SENDER").start();
         
         // install restore thread
-        new Thread(restoreCohort).start();
+        new Thread(restoreCohort, "RESTORE_COHORT").start();
         
         // install blocked threads
-        new Thread(blockedCohort).start();
-        new Thread(blockedCoordinator).start();
-        new Thread(blockedRestoreCoordinator).start();
+        new Thread(blockedCohort, "BLOCKED_COHORT").start();
+        new Thread(blockedCoordinator, "BLOCKED_COORDINATOR").start();
+        new Thread(blockedRestoreCoordinator, "BLOCKER_RESTORE_COORDINATOR").start();
 	}
 	
 	public void Run() throws InterruptedException
@@ -114,12 +118,33 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 		{
 			Message m = queue.take();
 			
-			if(TcpSender.getInstance().getServerNodesCount() < Config.MinNodes())
+			int count = TcpSender.getInstance().getServerNodesCount();
+			
+			if( count < Config.MinOtherNodes())
 			{
+				
+				Logger.getInstance().log(
+					"Brainsplit mode due to " 
+						+ Integer.toString(count) 
+						+ " of " 
+						+ Config.MinOtherNodes() 
+						+ " seen - message: " 
+						+ m.toString(), 
+					LOGGING_NAME, 
+					Logger.Level.WARNING);
+				
 				brainsplit(m);
 			}
 			else
 			{
+				if(!(m instanceof HelloMessage))
+				{
+					Logger.getInstance().log(
+							"Processing message:" + m.toString(), 
+							LOGGING_NAME, 
+							Logger.Level.INFO);
+				}
+				
 				process(m);
 			}
 		}
@@ -152,29 +177,48 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 		if(msg instanceof CanCommitMessage) 
 		{
 			// forbid new transactions
+			Logger.getInstance().log(
+					"Sending message to blocked cohort: " + msg.toString(), 
+					LOGGING_NAME, 
+					Logger.Level.INFO);
+			
 			blockedCohort.putMessage(msg);
 		}
 		else if(msg instanceof TransactionMessage)
 		{
 			// forbid new transactions
+			Logger.getInstance().log(
+					"Sending message to blocked coordinator: " + msg.toString(), 
+					LOGGING_NAME, 
+					Logger.Level.INFO);
+			
 			blockedCoordinator.putMessage(msg);
 		}
 		else if(msg instanceof RestoreIncentive)
 		{
 			// forbid new restoration
+			Logger.getInstance().log(
+					"Sending message to blocked restore coordinator: " + msg.toString(), 
+					LOGGING_NAME, 
+					Logger.Level.INFO);
+			
 			blockedRestoreCoordinator.putMessage(msg);
 		}
 		else if(msg instanceof HelloMessage)
 		{
 			HelloMessage hm = (HelloMessage)msg;
 			
+			InetSocketAddress node = new InetSocketAddress(
+					hm.getSender().getAddress(), 
+					hm.getListeningPort()
+			);
+			
+			if(node.equals(me))
+				return;
+			
+			
 			// try to add new node
-			TcpSender.getInstance().AddServerNode(
-					new InetSocketAddress(
-							hm.getSender().getAddress(), 
-							hm.getListeningPort()
-					)
-				);
+			TcpSender.getInstance().AddServerNode(node);
 		}
 		else
 		{
@@ -193,6 +237,11 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 		{
 			if(isRestoring > 0)
 			{
+				Logger.getInstance().log(
+						"Sending message to blocked cohort due to restoring in progress: " + msg.toString(), 
+						LOGGING_NAME, 
+						Logger.Level.INFO);
+				
 				blockedCohort.putMessage(msg);
 			}
 			else
@@ -208,6 +257,11 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 					return;
 				}
 				
+				Logger.getInstance().log(
+						"Creating new cohort with tid " + transactionId + " : " + msg.toString(), 
+						LOGGING_NAME, 
+						Logger.Level.INFO);
+				
 				// create cohort and start his job
 				Cohort coh = new CohortImpl();
 				cohorts.put(transactionId, coh);
@@ -221,6 +275,11 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 				|| msg instanceof DoCommitMessage
 				|| msg instanceof AbortMessage) 
 		{
+			Logger.getInstance().log(
+					"Dispatching to cohort with tid " + transactionId + " : " + msg.toString(), 
+					LOGGING_NAME, 
+					Logger.Level.INFO);
+			
 			// check if cohort exists
 			Cohort cohort = cohorts.get(transactionId);
 			
@@ -240,6 +299,11 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 				|| msg instanceof AckPreCommitMessage
 				|| msg instanceof HaveCommittedMessage) 
 		{
+			Logger.getInstance().log(
+					"Dispatching to coordinator with tid " + transactionId + " : " + msg.toString(), 
+					LOGGING_NAME, 
+					Logger.Level.INFO);
+			
 			// send to COORDINATOR
 			Coordinator coordinator = coordinators.get(transactionId);
 			
@@ -262,6 +326,12 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 			|| msg instanceof RestoreTableList
 			|| msg instanceof RestoreTable)
 		{
+			
+			Logger.getInstance().log(
+					"Dispatching to restore cohort: " + msg.toString(), 
+					LOGGING_NAME, 
+					Logger.Level.INFO);
+			
 			restoreCohort.putMessage(msg);
 		}
 		else
@@ -271,6 +341,11 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 			
 			if(coordinator != null)
 			{
+				Logger.getInstance().log(
+						"Dispatching to restore coordinator for node - " + node.toString() + " : " + msg.toString(), 
+						LOGGING_NAME, 
+						Logger.Level.INFO);
+				
 				coordinator.putMessage(msg);
 			}
 			else
@@ -291,8 +366,15 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 		}
 		else
 		{
-			// create COORDINATOR
 			String transactionId = Util.generateGUID();
+			
+			Logger.getInstance().log(
+					"Creating coordinator with tid - " + transactionId + " : " + msg.toString(), 
+					LOGGING_NAME, 
+					Logger.Level.INFO);
+			
+			
+			// create COORDINATOR
 			Coordinator coor = new CoordinatorImpl();
 			coordinators.put(transactionId, coor);
 			coor.setTransactionId(transactionId);
@@ -306,14 +388,20 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 	
 	public void processHelloMessage(HelloMessage msg)
 	{
-		InetSocketAddress node = msg.getSender();
-		
-		TcpSender.getInstance().AddServerNode(
-			new InetSocketAddress(
-					node.getAddress(), 
-					msg.getListeningPort()
-			)
+		InetSocketAddress node = new InetSocketAddress(
+				msg.getSender().getAddress(), 
+				msg.getListeningPort()
 		);
+		
+		if(node.equals(me))
+			return;
+		
+		Logger.getInstance().log(
+				"Processing hello from - " + node.toString() + " : " + msg.toString(), 
+				LOGGING_NAME, 
+				Logger.Level.INFO);
+		
+		TcpSender.getInstance().AddServerNode(node);
 		
 		NodeSyncInfo nsi = nodeSynchronization.get(node);
 		
@@ -326,6 +414,11 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 		// reset counter for nodes which were unreachable for long period of time
 		else if( nsi.getMsSinceLastBeat() < OUT_OF_SYNC_RESET_TIME_MS)
 		{
+			Logger.getInstance().log(
+					"Node was inactive for too long - " + nsi.getMsSinceLastBeat() + " - reseting nsi - " + node.toString() + " : " + msg.toString(), 
+					LOGGING_NAME, 
+					Logger.Level.INFO);
+			
 			nsi.InSync();
 		}
 		
@@ -338,10 +431,22 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 		{
 			if(nsi.getBeatsOutOfSync() < OUT_OF_SYNC_BEATS_THRESHOLD)
 			{
+				Logger.getInstance().log(
+						"Node out of sync " + nsi.getBeatsOutOfSync() + " times - " + node.toString() + " : " + msg.toString(), 
+						LOGGING_NAME, 
+						Logger.Level.INFO);
+				
+				
 				nsi.BeatOutOfSync();
 			}
 			else if(restoreCoordinators.get(node) == null)
 			{
+				Logger.getInstance().log(
+						"Node out of sync detected creating restorator - " + node.toString() + " : " + msg.toString(), 
+						LOGGING_NAME, 
+						Logger.Level.INFO);
+				
+				
 				// need to restore
 				RestoreCoordinator rc = new RestoreCoordinator(node);
 				restoreCoordinators.put(node, rc);
@@ -366,6 +471,11 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 						Logger.Level.SEVERE);
 			}
 		}
+		
+		Logger.getInstance().log(
+				"Transaction ended - tid: " + tid, 
+				LOGGING_NAME, 
+				Logger.Level.INFO);
 
 		// end-user-code
 	}
@@ -398,5 +508,10 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 					LOGGING_NAME, 
 					Logger.Level.WARNING);
 		}
+		
+		Logger.getInstance().log(
+				"Restoration ended for node: " + node.toString(), 
+				LOGGING_NAME, 
+				Logger.Level.INFO);
 	}
 }

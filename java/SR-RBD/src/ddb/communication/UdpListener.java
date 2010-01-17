@@ -25,22 +25,22 @@ import ddb.msg.MessageType;
  */
 public class UdpListener implements Runnable
 {
-    public static final int LISTEN_PORT = 1502;
     private static final int DATAGRAM_SIZE = 100;
     private static final String LOGGING_NAME = "UdpListener";
-    
+    protected int listenPort;
     protected BlockingQueue<Message> storage = null;
     
-    public UdpListener(BlockingQueue<Message> queue)
+    public UdpListener(BlockingQueue<Message> queue, int port)
     {
     	storage = queue;
+    	listenPort = port;
     }
 
     public void run()
     {
         try
         {
-            DatagramSocket socket = new DatagramSocket(LISTEN_PORT);
+            DatagramSocket socket = new DatagramSocket(listenPort);
             while(true)
             {
                 byte[] buffer = new byte[DATAGRAM_SIZE];
@@ -55,21 +55,14 @@ public class UdpListener implements Runnable
                 
                 byte[] data = new byte[size];
                 System.arraycopy(buffer, 8, data, 0, size);
-                
- 
-                
-                Logger.getInstance().log("Broadcast from " +
-                        packet.getAddress().getHostAddress().toString() +
-                        ":" + packet.getPort() + ", size = " + size + " : " + data,
-                        LOGGING_NAME, Logger.Level.INFO);
-                
+                          
                 Message m = Message.Unserialize(MessageType.fromInt(type), data, (InetSocketAddress)packet.getSocketAddress());
                 storage.put(m);
             }
         }
         catch (SocketException ex)
         {
-            Logger.getInstance().log("Could not listen on port " + LISTEN_PORT,
+            Logger.getInstance().log("Could not listen on port " + listenPort,
                     LOGGING_NAME, Logger.Level.SEVERE);
         }
         catch (IOException ex)

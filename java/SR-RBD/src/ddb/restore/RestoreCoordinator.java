@@ -67,6 +67,12 @@ public class RestoreCoordinator extends Worker
 		Message msg;
 		MessageType[] incentiveReply = { MessageType.RESTORE_ACK, MessageType.RESTORE_NACK };
 		
+		Logger.getInstance().log(
+				"Starting restoration - sending incentive : " + targetNode.toString(), 
+				LOGGING_NAME, 
+				Logger.Level.INFO);
+		
+		
 		// send restore incentive
 		TcpSender.getInstance().sendToNode(new RestoreIncentive(), targetNode);
 		
@@ -75,23 +81,49 @@ public class RestoreCoordinator extends Worker
 		msg = accept(incentiveReply, targetNode);
 
 		if(msg instanceof RestoreNack)
+		{
+			Logger.getInstance().log(
+					"Restore rejected by node : " + targetNode.toString(), 
+					LOGGING_NAME, 
+					Logger.Level.INFO);
+			
 			return;
+		}
+		
+		Logger.getInstance().log(
+				"Restore accepted by node, sending tables' versions : " + targetNode.toString(), 
+				LOGGING_NAME, 
+				Logger.Level.INFO);
 			
 		// TODO: tutaj nie moze byc zadnych transakcji
 		// TODO: lock whole database ( all tables )
 		RestoreTableList rtl = new RestoreTableList(DatabaseStateImpl.getInstance().getTableVersions()); 
 		TcpSender.getInstance().sendToNode(rtl, targetNode);
 		
+		Logger.getInstance().log(
+				"Awaiting ack : " + targetNode.toString(), 
+				LOGGING_NAME, 
+				Logger.Level.INFO);
+		
 		// receive reply
 		setTimeout(RESTORE_TIMEOUT);
 		msg = accept(MessageType.RESTORE_ACK, targetNode);
 
+		Logger.getInstance().log(
+				"Got ack, trasfering tables : " + targetNode.toString(), 
+				LOGGING_NAME, 
+				Logger.Level.INFO);
 		
 		// TODO: release lock
 		
 		// send all tables
 		for(TableVersion tv : rtl.getTables())
 		{
+			Logger.getInstance().log(
+					"Transfering table '" + tv.getTableName() + "' version " + Integer.toString(tv.getVersion()) + " : " + targetNode.toString(), 
+					LOGGING_NAME, 
+					Logger.Level.INFO);
+			
 			String dump;
 			try {
 				dump = DbConnectorImpl.getInstance().dumpTable(tv.getTableName());

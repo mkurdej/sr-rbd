@@ -27,7 +27,9 @@ public class TcpSender {
 
 	private final static String LOGGING_NAME = "TcpSender";
 	private Map<InetSocketAddress, NodeInfo> nodes = new HashMap<InetSocketAddress, NodeInfo>();
-
+	
+	
+	
 	/**
 	 * @generated "Singleton (com.ibm.xtools.patterns.content.gof.creational.singleton.SingletonPattern)"
 	 */
@@ -61,10 +63,14 @@ public class TcpSender {
 					LOGGING_NAME,
 					Logger.Level.WARNING);
 		}
+		
+		Logger.getInstance().log("Node disconnected legally " + address.toString(), 
+				LOGGING_NAME,
+				Logger.Level.INFO);
 	}
 
-	public synchronized void addNodeBySocket(InetSocketAddress node, Socket s) {
-	
+	public synchronized void addNodeBySocket(InetSocketAddress node, Socket s) 
+	{
 		if(nodes.get(node) != null)
 		{
 			Logger.getInstance().log("Request to add already existing node: " + node.toString(), 

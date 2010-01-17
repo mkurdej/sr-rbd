@@ -34,6 +34,20 @@ public abstract class Message implements BinarySerializable {
 		return sender;
 	}
 	
+	@Override
+	public String toString()
+	{
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append("[");
+		builder.append(getType());
+		builder.append(" from ");
+		builder.append(sender.toString());
+		builder.append("]");
+		
+		return builder.toString();
+	}
+	
 	/**
 	 * 
 	 * @return type constant for specialized class
@@ -53,10 +67,12 @@ public abstract class Message implements BinarySerializable {
 			ByteArrayOutputStream envelope = new ByteArrayOutputStream();
 			DataOutputStream envelopeStream = new DataOutputStream(envelope);
 			
+			byte[] bytes = data.toByteArray();
+			
 			// size + type + data
-			envelopeStream.write(data.size());
-			envelopeStream.write(getType().ordinal());
-			envelopeStream.write(data.toByteArray());
+			envelopeStream.writeInt(bytes.length);
+			envelopeStream.writeInt(getType().ordinal());
+			envelopeStream.write(bytes);
 			
 			return envelope.toByteArray();
 			

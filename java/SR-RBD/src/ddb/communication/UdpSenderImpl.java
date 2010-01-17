@@ -5,17 +5,14 @@
 
 package ddb.communication;
 
-import java.io.ByteArrayOutputStream;
-
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import ddb.Config;
+import ddb.Logger;
 import ddb.msg.Message;
 
 /** 
@@ -25,30 +22,26 @@ import ddb.msg.Message;
  * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
  */
 public class UdpSenderImpl implements UdpSender {
-	/** 
-	 * /* (non-Javadoc)
-	 *  * @see UdpSender#sendToAll(Object msg)
-	 * 
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
-	 */
-	public void sendToAll(Object msg) {
-		// begin-user-code
-		// TODO Auto-generated method stub
-
-		// end-user-code
-	}
 
 	/** 
 	 * @generated "Singleton (com.ibm.xtools.patterns.content.gof.creational.singleton.SingletonPattern)"
 	 */
+	private final static String LOGGING_NAME = "UdpSenderImpl";
 	private static UdpSenderImpl instance = null;
+	protected DatagramSocket socket;
 
 	/** 
 	 * @generated "Singleton (com.ibm.xtools.patterns.content.gof.creational.singleton.SingletonPattern)"
 	 */
 	private UdpSenderImpl() {
 		// begin-user-code
-
+		try {
+			socket = new DatagramSocket();
+		} catch (SocketException ex) {
+			Logger.getInstance().log("SocketException in constructor: " + ex.getMessage(), 
+					LOGGING_NAME, 
+					Logger.Level.SEVERE);
+		}
 		// end-user-code
 	}
 
@@ -65,30 +58,24 @@ public class UdpSenderImpl implements UdpSender {
 	}
 
 	public synchronized void sendToAll(Message msg) {
-		String s = msg.toString();
+		
+		
 		try {
-			// TODO use Util.intToByteArray
-			// TODO String.length() and byte[].length can differ!
-			DatagramSocket socket = new DatagramSocket();
-			ByteArrayOutputStream baos = new ByteArrayOutputStream(4);
-			DataOutputStream das = new DataOutputStream(baos);
-			das.writeInt(s.length());
+			byte[] data = msg.Serialize();
 
-			StringBuilder toSend = new StringBuilder();
-			toSend.append(baos.toString());
-			toSend.append(s);
-
-			DatagramPacket packet = new DatagramPacket(toSend.toString()
-					.getBytes(), toSend.length());
-			packet.setAddress(InetAddress.getByName("255.255.255.255"));
-			packet.setPort(UdpListener.LISTEN_PORT);
+			DatagramPacket packet = new DatagramPacket(
+				data, 
+				data.length, 
+				InetAddress.getByName("255.255.255.255"),
+				Config.UdpPort()
+			);
+			
 			socket.send(packet);
+			
 		} catch (SocketException ex) {
-			Logger.getLogger(UdpSenderImpl.class.getName()).log(Level.SEVERE,
-					null, ex);
+			Logger.getInstance().log("SocketException: " + ex.getMessage(), LOGGING_NAME, Logger.Level.WARNING);
 		} catch (IOException ex) {
-			Logger.getLogger(UdpSenderImpl.class.getName()).log(Level.SEVERE,
-					null, ex);
+			Logger.getInstance().log("IOException: " + ex.getMessage(), LOGGING_NAME, Logger.Level.WARNING);
 		}
 	}
 }

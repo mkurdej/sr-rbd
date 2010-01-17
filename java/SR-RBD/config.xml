@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
-	<port>112233</port>
+	<tcpaddress>192.168.1.2</tcpaddress>
+	<tcpport>9999</tcpport>
+	<udpport>9999</udpport>
 	<maxnodes>-1</maxnodes>
-	<database>sr</database>
-	<host>sr</host>
-	<user>sr</user>
+	<database>sr1</database>
+	<host>localhost</host>
+	<user>sr1</user>
 	<password>sr</password>
 </config>
