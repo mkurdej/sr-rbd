@@ -13,15 +13,14 @@ import ddb.Worker;
 import ddb.msg.Message;
 import ddb.msg.MessageType;
 import ddb.communication.TcpSender;
-import ddb.db.DatabaseState;
 import ddb.db.DatabaseStateImpl;
 import ddb.db.DbConnectorImpl;
+import ddb.db.DumpTableException;
 import ddb.db.TableVersion;
 import ddb.restore.msg.RestoreIncentive;
 import ddb.restore.msg.RestoreNack;
 import ddb.restore.msg.RestoreTable;
 import ddb.restore.msg.RestoreTableList;
-import ddb.tpc.EndTransactionListener;
 
 
 
@@ -63,7 +62,7 @@ public class RestoreCoordinator extends Worker
 		return targetNode;
 	}
 	
-	public void Restore() throws TimeoutException
+	public void Restore() throws TimeoutException, InterruptedException
 	{
 		Message msg;
 		MessageType[] incentiveReply = { MessageType.RESTORE_ACK, MessageType.RESTORE_NACK };
@@ -75,7 +74,9 @@ public class RestoreCoordinator extends Worker
 		setTimeout(RESTORE_TIMEOUT);
 		msg = accept(incentiveReply, targetNode);
 
-		
+		if(msg instanceof RestoreNack)
+			return;
+			
 		// TODO: tutaj nie moze byc zadnych transakcji
 		// TODO: lock whole database ( all tables )
 		RestoreTableList rtl = new RestoreTableList(DatabaseStateImpl.getInstance().getTableVersions()); 
@@ -91,10 +92,21 @@ public class RestoreCoordinator extends Worker
 		// send all tables
 		for(TableVersion tv : rtl.getTables())
 		{
-			String dump = DbConnectorImpl.getInstance().dumpTable(tv.getTableName());
-			RestoreTable rt = new RestoreTable(tv.getVersion(), tv.getTableName(), dump);
+			String dump;
+			try {
+				dump = DbConnectorImpl.getInstance().dumpTable(tv.getTableName());
+				RestoreTable rt = new RestoreTable(tv.getVersion(), tv.getTableName(), dump);
+				TcpSender.getInstance().sendToNode(rt, targetNode);
 			
-			TcpSender.getInstance().sendToNode(rt, targetNode);
+			} catch (DumpTableException e) {
+				Logger.getInstance().log(
+						"DumpTableException " + e.getMessage(),
+						LOGGING_NAME, 
+						Logger.Level.WARNING);
+				
+				RestoreTable rt = new RestoreTable(-1, tv.getTableName(), "");
+				TcpSender.getInstance().sendToNode(rt, targetNode);
+			}
 		}	
 		
 		// finished
@@ -112,6 +124,11 @@ public class RestoreCoordinator extends Worker
 		{
 			Logger.getInstance().log(
 					"Restore timed out",
+					LOGGING_NAME, 
+					Logger.Level.WARNING);
+		} catch (InterruptedException e) {
+			Logger.getInstance().log(
+					"InterruptedException",
 					LOGGING_NAME, 
 					Logger.Level.WARNING);
 		}

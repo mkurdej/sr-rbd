@@ -13,6 +13,11 @@ public class RestoreTableList extends RestoreMessage {
 
 	private List<TableVersion> tables = new LinkedList<TableVersion>();
 	
+	public RestoreTableList()
+	{
+		
+	}
+	
 	public RestoreTableList(List<TableVersion> list)
 	{
 		this.tables = list;

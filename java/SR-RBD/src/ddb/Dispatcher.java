@@ -13,6 +13,7 @@ import ddb.communication.HelloGenerator;
 import ddb.communication.TcpListener;
 import ddb.communication.TcpSender;
 import ddb.communication.UdpListener;
+import ddb.db.DatabaseStateImpl;
 import ddb.msg.HelloMessage;
 import ddb.msg.Message;
 import ddb.restore.BlockedCohort;
@@ -329,7 +330,7 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 		}
 		
 		// check synchronization
-		if(DatabaseState.getInstance().checkSync(msg.getTables()))
+		if(DatabaseStateImpl.getInstance().checkSync(msg.getTables()))
 		{
 			nsi.InSync();
 		}	
