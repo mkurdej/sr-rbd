@@ -36,6 +36,9 @@ public class DatabaseStateImpl implements DatabaseState {
 		tables.get(tableName).lockTable();
 	}
 
+	public void setTableVersion(String tableName, int version) {
+		tables.get(tableName).setVersion(version);
+	}
 	
 	public void incrementTableVersion(String tableName) {
 		tables.get(tableName).incrementVersion();
