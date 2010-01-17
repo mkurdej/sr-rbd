@@ -40,6 +40,10 @@ import javax.swing.SwingWorker;
  */
 public class ConsoleView extends FrameView {
 
+    private static int SLEEP_MIN = 2000;
+    private static int SLEEP_MAX = 6000;
+    private static int SOCKET_TIMEOUT = 10000;
+    private static int ATTEMPTS_THRESHOLD = 5;
 
     protected class ConsoleWorker extends SwingWorker<Boolean, Boolean>
     {
@@ -52,6 +56,9 @@ public class ConsoleView extends FrameView {
             progressBar.setVisible(true);
             progressBar.setIndeterminate(false);
             progressBar.setValue(10);
+
+            boolean retry = true;
+            int attempts = 0;
 
             try {
                 do
@@ -74,6 +81,8 @@ public class ConsoleView extends FrameView {
 
                     Message result = Message.Unserialize(MessageType.fromInt(type), data, (InetSocketAddress)socket.getRemoteSocketAddress());
 
+                    retry = false;
+                    ++attempts;
                     if(result instanceof ResultsetMessage)
                     {
                          logTextArea.append("RESULT: ");
@@ -101,14 +110,14 @@ public class ConsoleView extends FrameView {
                         logTextArea.append("Transaction timed out - waiting for a random time\n");
                         Thread.sleep(getSleepTime());
                         logTextArea.append("Transaction timed out - resending\n");
-                        continue; // resend
+                        retry = true; // resend
                     }
                     else if(result instanceof ConflictMessage)
                     {
                         logTextArea.append("Transaction conflict - waiting for a random time\n");
                         Thread.sleep(getSleepTime());
                         logTextArea.append("Transaction conflict - resending\n");
-                        continue; // resend
+                        retry = true; // resend
                     }
                     else
                     {
@@ -117,7 +126,7 @@ public class ConsoleView extends FrameView {
                         logTextArea.append("\n");
                     }
                 }
-                while(false);
+                while(retry && attempts < ATTEMPTS_THRESHOLD);
 
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(getFrame(), "IOException " + ex.getMessage());
@@ -127,6 +136,11 @@ public class ConsoleView extends FrameView {
             } catch(InterruptedException ex)
             {
                 JOptionPane.showMessageDialog(getFrame(), "InterruptedException " + ex.getMessage());
+            }
+
+            if(attempts >= ATTEMPTS_THRESHOLD)
+            {
+                JOptionPane.showMessageDialog(getFrame(), "Request failed due to too many attempts");
             }
 
             progressBar.setValue(0);
@@ -140,10 +154,6 @@ public class ConsoleView extends FrameView {
         }
 
     }
-
-    private static int SLEEP_MIN = 1000;
-    private static int SLEEP_MAX = 3000;
-    private static int SOCKET_TIMEOUT = 10000;
 
     public ConsoleView(SingleFrameApplication app) {
         super(app);
@@ -375,7 +385,7 @@ public class ConsoleView extends FrameView {
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 538, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 538, Short.MAX_VALUE)
                 .addContainerGap())
         );
         mainPanelLayout.setVerticalGroup(
@@ -463,10 +473,13 @@ public class ConsoleView extends FrameView {
             //socket.setSoTimeout(SOCKET_TIMEOUT); // TODO: uncomment
          } catch(NumberFormatException ex) {
             JOptionPane.showMessageDialog(getFrame(), "Invalid port number: " + ex.getMessage());
-        } catch (UnknownHostException ex) {
+            return;
+         } catch (UnknownHostException ex) {
             JOptionPane.showMessageDialog(getFrame(), "UnknownHostException: " + ex.getMessage());
+            return;
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(getFrame(), "IOException: " + ex.getMessage());
+            return;
         }
 
         connectButton.setEnabled(false);

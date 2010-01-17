@@ -24,6 +24,16 @@ public class ErrorMessage extends ClientResponse {
 	 */
 	private DBException exception;
 
+	public ErrorMessage()
+	{
+		// empty
+	}
+	
+	public ErrorMessage(String msg)
+	{
+		exception = new DBException(msg);
+	}
+	
 	/** 
 	 * <!-- begin-UML-doc -->
 	 * <!-- end-UML-doc -->

@@ -63,17 +63,11 @@ public class UdpSenderImpl implements UdpSender {
 		try {
 			byte[] data = msg.Serialize();
 
-			DatagramPacket packet = new DatagramPacket(
-				data, 
-				data.length, 
-				InetAddress.getByName("255.255.255.255"),
-				Config.UdpPort()
-			);
-			
+			DatagramPacket packet = new DatagramPacket(data, data.length);
+			packet.setAddress(InetAddress.getByName("255.255.255.255"));
+			packet.setPort(Config.UdpPort());
 			socket.send(packet);
 			
-		} catch (SocketException ex) {
-			Logger.getInstance().log("SocketException: " + ex.getMessage(), LOGGING_NAME, Logger.Level.WARNING);
 		} catch (IOException ex) {
 			Logger.getInstance().log("IOException: " + ex.getMessage(), LOGGING_NAME, Logger.Level.WARNING);
 		}

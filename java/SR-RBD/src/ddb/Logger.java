@@ -6,6 +6,7 @@ package ddb;
 
 import java.text.DecimalFormat;
 import java.util.Calendar;
+import java.util.Formatter;
 import java.util.GregorianCalendar;
 
 /**
@@ -19,7 +20,6 @@ public class Logger
 
     public enum Level
     {
-
         INFO, WARNING, SEVERE
     };
 
@@ -56,19 +56,20 @@ public class Logger
         return timeString;
     }
 
-    private void info(String msg, String who, String time)
+    private void printLog(String msg, String who, String level)
     {
-        System.out.println(time + " [" + who + "] (INFO):  " + msg);
-    }
+    	StringBuilder sb = new StringBuilder();
+    	Formatter formatter = new Formatter(sb);
 
-    private void warning(String msg, String who, String time)
-    {
-        System.out.println(time + " [" + who + "] (WARNING):  " + msg);
-    }
+    	formatter.format("%1$s <%2$3s> (%4$s) [%3$-15s] : %5$S", 
+			timestamp(), 
+			Thread.currentThread().getId(), 
+			who, 
+			level,
+			msg
+		);
 
-    private void severe(String msg, String who, String time)
-    {
-        System.out.println(time + " [" + who + "] (SEVERE):  " + msg);
+    	System.out.println(formatter.toString());
     }
 
     synchronized public void log(String msg, String who, Level level)
@@ -76,15 +77,16 @@ public class Logger
         switch (level)
         {
             case INFO:
-                info(msg, who, timestamp());
-                break;
-            case SEVERE:
-                severe(msg, who, timestamp());
-                System.exit(1);
+            	printLog(msg, who, "INFO");
                 break;
             case WARNING:
-                warning(msg, who, timestamp());
+            	printLog(msg, who, "WARNING");
                 break;
+            case SEVERE:
+            	printLog(msg, who, "SEVERE");
+                System.exit(1);
+                break;
+            
         }
     }
 }

@@ -126,12 +126,14 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * @generated 
 	 *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	synchronized public void processMessage(Message message) {
-		 try {
+	public void processMessage(Message message) {
+		 
+		try {
 			 this.messageQueue.putMessage(message);
 		 } catch(InterruptedException e) {
 			 Logger.getInstance().log(e.getMessage(), "TPC", Level.SEVERE);
-		 }
+		 } 
+				 
 		//this.onNewMessage(message);
 	}
 
@@ -178,16 +180,14 @@ public abstract class TPCParticipant implements MessageRecipient,
 	 * @generated 
 	 *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	synchronized private void waitForMessage() {
-		//Logger.getInstance().log("waitForMessage " + Thread.currentThread(), "TPC", Logger.Level.INFO);
+	private void waitForMessage() {
+			
 		try {
 			Message msg = this.messageQueue.getMessage();
 			onNewMessage(msg);
 		} catch (InterruptedException e) {
-			Logger.getInstance()
-					.log(e.getMessage(), "TPC", Logger.Level.SEVERE);
+			Logger.getInstance().log(e.getMessage(), "TPC", Logger.Level.SEVERE);
 		}
-
 	}
 
 	/**

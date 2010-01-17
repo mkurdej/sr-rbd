@@ -63,7 +63,9 @@ public class DatabaseStateImpl implements DatabaseState {
 
 	@Override
 	public int getTableVersion(String tableName) {
-		return tables.get(tableName).getVersion();
+		
+		TableState ts = tables.get(tableName);
+		return ts == null ? 0 : ts.getVersion();
 	}
 	
 	public List<TableVersion> getTableVersions()
