@@ -41,7 +41,7 @@ public class UdpSenderImpl implements UdpSender {
 	/** 
 	 * @generated "Singleton (com.ibm.xtools.patterns.content.gof.creational.singleton.SingletonPattern)"
 	 */
-	private static final UdpSenderImpl instance = new UdpSenderImpl();
+	private static UdpSenderImpl instance = null;
 
 	/** 
 	 * @generated "Singleton (com.ibm.xtools.patterns.content.gof.creational.singleton.SingletonPattern)"
@@ -57,6 +57,9 @@ public class UdpSenderImpl implements UdpSender {
 	 */
 	public static UdpSenderImpl getInstance() {
 		// begin-user-code
+		if(instance == null)
+			instance = new UdpSenderImpl();
+		
 		return instance;
 		// end-user-code
 	}

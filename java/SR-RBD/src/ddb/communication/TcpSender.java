@@ -31,7 +31,7 @@ public class TcpSender {
 	/**
 	 * @generated "Singleton (com.ibm.xtools.patterns.content.gof.creational.singleton.SingletonPattern)"
 	 */
-	private static final TcpSender instance = new TcpSender();
+	private static TcpSender instance = null;
 
 	/**
 	 * @generated "Singleton (com.ibm.xtools.patterns.content.gof.creational.singleton.SingletonPattern)"
@@ -47,6 +47,9 @@ public class TcpSender {
 	 */
 	public static TcpSender getInstance() {
 		// begin-user-code
+		if(instance == null)
+			instance = new TcpSender();
+		
 		return instance;
 		// end-user-code
 	}

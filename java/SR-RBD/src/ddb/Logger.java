@@ -15,7 +15,7 @@ import java.util.GregorianCalendar;
 public class Logger
 {
 
-    private final static Logger instance = new Logger();
+    private static Logger instance = null;
 
     public enum Level
     {
@@ -29,6 +29,9 @@ public class Logger
 
     synchronized public static Logger getInstance()
     {
+    	if( instance == null )
+    		instance = new Logger();
+    	
         return instance;
     }
 

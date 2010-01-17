@@ -22,7 +22,7 @@ public class DatabaseStateImpl implements DatabaseState {
 		this.tables = new HashMap<String, TableState>();
 	}
 	
-	private static DatabaseStateImpl instance;
+	private static DatabaseStateImpl instance = null;
 	
 	/** 
 	 * /* (non-Javadoc)
