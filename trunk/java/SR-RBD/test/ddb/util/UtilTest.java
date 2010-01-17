@@ -10,17 +10,6 @@ import org.junit.Test;
 
 public class UtilTest {
 
-	@Test
-	public void testIntToByteArray() {
-		assertArrayEquals(
-				new byte[] { (byte) 0, (byte) 0, (byte) 0, (byte) 0 }, Util
-						.intToByteArray(0));
-		assertArrayEquals(new byte[] { (byte) 0, (byte) 0, (byte) 91,
-				(byte) 160 }, Util.intToByteArray(91 * 256 + 160));
-		assertArrayEquals(new byte[] { (byte) 123, (byte) 5, (byte) 23,
-				(byte) 65 }, Util.intToByteArray(123 * 256 * 256 * 256 + 5
-				* 256 * 256 + 23 * 256 + 65));
-	}
 	
 	@Test
 	public void testGetMACAddress() {

@@ -16,18 +16,6 @@ import java.util.Random;
 public class Util {
 
 	/**
-	 * TODO network order / host order
-	 * 
-	 * @param value
-	 *            to convert into an array of bytes
-	 * @return byte array representing <b>value</b>
-	 */
-	public static final byte[] intToByteArray(int value) {
-		return new byte[] { (byte) (value >>> 24), (byte) (value >>> 16),
-				(byte) (value >>> 8), (byte) value };
-	}
-
-	/**
 	 * Private constructor to prevent instantiating the class
 	 */
 	private Util() {
