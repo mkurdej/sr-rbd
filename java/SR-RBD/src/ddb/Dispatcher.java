@@ -79,11 +79,11 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 	protected int isRestoring = 0;
 	
 	
-	public Dispatcher(int port)
+	public Dispatcher()
 	{
-		tcp = new TcpListener(queue, port);
+		tcp = new TcpListener(queue, Config.Port());
 		udp = new UdpListener(queue);
-		hello = new HelloGenerator(port);
+		hello = new HelloGenerator(Config.Port());
 	}
 	
 	public void Initialize()
@@ -113,7 +113,7 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 		{
 			Message m = queue.take();
 			
-			if(TcpSender.getInstance().getServerNodesCount() < Config.ServerNodesMin())
+			if(TcpSender.getInstance().getServerNodesCount() < Config.MinNodes())
 			{
 				brainsplit(m);
 			}
