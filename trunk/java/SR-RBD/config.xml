@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<port>112233</port>
+	<maxnodes>-1</maxnodes>
+	<database>sr</database>
+	<host>sr</host>
+	<user>sr</user>
+	<password>sr</password>
+</config>

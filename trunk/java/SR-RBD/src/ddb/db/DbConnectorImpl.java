@@ -16,13 +16,6 @@ import ddb.Logger;
  */
 public class DbConnectorImpl implements DbConnector
 {
-    private static final String DRIVER = "com.mysql.jdbc.Driver";
-    private static final String URL_BEGIN = "jdbc:mysql";
-    private static final String DATABASE = "sr";
-    private static final String HOST = "localhost";
-    private static final String USER = "sr";
-    private static final String PASSWORD = "sr";
-
     private Connection connection;
     private static final String LOGGING_NAME = "DbConnector";
 
