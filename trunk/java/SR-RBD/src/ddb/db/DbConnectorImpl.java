@@ -151,7 +151,7 @@ public class DbConnectorImpl implements DbConnector
         return output;
     }                 
 
-    public void importTable(String dump) throws ImportTableException
+    public void importTable(String tableName, int version, String dump) throws ImportTableException
     {                                   
         String cmd = "mysql -u " + USER + " -p" + PASSWORD + " " + DATABASE;
 
@@ -171,6 +171,7 @@ public class DbConnectorImpl implements DbConnector
                     LOGGING_NAME, Logger.Level.WARNING);
             throw new ImportTableException(e);
         }
+        DatabaseStateImpl.getInstance().setTableVersion(tableName, version);
     }
 
 }

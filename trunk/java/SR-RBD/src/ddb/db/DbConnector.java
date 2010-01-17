@@ -20,5 +20,5 @@ public interface DbConnector {
 	public DatabaseTable query(String queryString) throws DBException;
     public void clearDatabase() throws DBException;
     public String dumpTable(String tableName) throws DumpTableException;
-    public void importTable(String dump) throws ImportTableException;
+    public void importTable(String tableName, int version, String dump) throws ImportTableException;
 }
