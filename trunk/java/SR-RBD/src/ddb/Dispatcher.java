@@ -14,6 +14,7 @@ import ddb.communication.TcpListener;
 import ddb.communication.TcpSender;
 import ddb.communication.UdpListener;
 import ddb.db.DatabaseStateImpl;
+import ddb.db.DbConnectorImpl;
 import ddb.msg.HelloMessage;
 import ddb.msg.Message;
 import ddb.restore.BlockedCohort;
@@ -268,6 +269,7 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 				coh.setTransactionId(transactionId);
 				coh.setCoordinatorAddress(msg.getSender());
 				coh.setDatabaseState(DatabaseStateImpl.getInstance());
+				coh.setConnector(DbConnectorImpl.getInstance());
 				coh.addEndTransactionListener(this);
 				coh.processMessage(msg);
 			}
@@ -381,6 +383,7 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 			coor.setTransactionId(transactionId);
 			coor.setClientAddress(msg.getSender());
 			coor.setDatabaseState(DatabaseStateImpl.getInstance());
+			coor.setConnector(DbConnectorImpl.getInstance());
 			coor.addEndTransactionListener(this);
 			
 			// give him the message
@@ -414,7 +417,7 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 			nodeSynchronization.put(node, nsi);
 		}
 		// reset counter for nodes which were unreachable for long period of time
-		else if( nsi.getMsSinceLastBeat() < OUT_OF_SYNC_RESET_TIME_MS)
+		else if( nsi.getMsSinceLastBeat() > OUT_OF_SYNC_RESET_TIME_MS)
 		{
 			Logger.getInstance().log(
 					"Node was inactive for too long - " + nsi.getMsSinceLastBeat() + " - reseting nsi - " + node.toString() + " : " + msg.toString(), 
@@ -431,7 +434,7 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 		}	
 		else 
 		{
-			if(nsi.getBeatsOutOfSync() < OUT_OF_SYNC_BEATS_THRESHOLD)
+			if(nsi.getBeatsOutOfSync() > OUT_OF_SYNC_BEATS_THRESHOLD)
 			{
 				Logger.getInstance().log(
 						"Node out of sync " + nsi.getBeatsOutOfSync() + " times - " + node.toString() + " : " + msg.toString(), 
