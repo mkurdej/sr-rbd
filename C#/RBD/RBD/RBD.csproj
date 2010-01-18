@@ -67,6 +67,7 @@
     <Compile Include="TimeoutException.cs" />
     <Compile Include="TPC\EndTransactionListener.cs" />
     <Compile Include="TPC\LessTableVersionException.cs" />
+    <Compile Include="TPC\MessageQueue.cs" />
     <Compile Include="TPC\MessageRecipient.cs" />
     <Compile Include="TPC\Msg\AbortMessage.cs" />
     <Compile Include="TPC\Msg\AckPreCommitMessage.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="TPC\Msg\TPCMessage.cs" />
     <Compile Include="TPC\Msg\TransactionMessage.cs" />
     <Compile Include="TPC\Msg\YesForCommitMessage.cs" />
+    <Compile Include="TPC\TimeoutGenerator.cs" />
     <Compile Include="TPC\TimeoutListener.cs" />
     <Compile Include="TPC\TPCParticipant.cs" />
     <Compile Include="Util\BlockingQueue.cs" />
