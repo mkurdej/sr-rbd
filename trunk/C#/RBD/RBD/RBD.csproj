@@ -47,8 +47,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BinarySerializable.cs" />
+    <Compile Include="Communication\DataInputStream.cs" />
+    <Compile Include="Communication\DataOutputStream.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Dispatcher.cs" />
+    <Compile Include="Msg\InvalidMessageTypeException.cs" />
     <Compile Include="NodeSyncInfo.cs" />
     <Compile Include="TimeoutException.cs" />
     <Compile Include="Util\BlockingQueue.cs" />
@@ -69,6 +72,7 @@
     <Compile Include="Communication\UdpListener.cs" />
     <Compile Include="Communication\UdpSender.cs" />
     <Compile Include="Communication\UdpSenderImpl.cs" />
+    <Compile Include="Util\Util.cs" />
     <Compile Include="Worker.cs" />
   </ItemGroup>
   <ItemGroup>

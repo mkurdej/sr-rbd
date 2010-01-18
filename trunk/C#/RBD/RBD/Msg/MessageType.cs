@@ -5,17 +5,17 @@ using System.Text;
 
 namespace RBD
 {
-    enum MessageType
+    public enum MessageType
     {
         RESTORE_INCENTIVE,
-        RESTORE_ACK,      
-        RESTORE_NACK,     
+        RESTORE_ACK,
+        RESTORE_NACK,
         RESTORE_TABLELIST,
-        RESTORE_TABLE,    
-        TPC_ABORT,        
-        TPC_PRECOMMIT,    
-        TPC_ACKPRECOMMIT, 
-        TPC_CANCOMMIT,    
+        RESTORE_TABLE,
+        TPC_ABORT,
+        TPC_PRECOMMIT,
+        TPC_ACKPRECOMMIT,
+        TPC_CANCOMMIT,
         TPC_YESFORCOMMIT,
         TPC_DOCOMMIT,
         TPC_HAVECOMMITED,
@@ -30,5 +30,12 @@ namespace RBD
         HELLO_MESSAGE
     };
 
-    //TODO - fromInt
+    //public static MessageType fromInt(int type) throws InvalidMessageTypeException 
+    //{
+    //    if(type < 0 || type >=  MessageType.values().length)
+    //        throw new InvalidMessageTypeException(type);
+
+    //    return MessageType.values()[type];
+    //}
+
 }

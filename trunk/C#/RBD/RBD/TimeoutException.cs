@@ -7,7 +7,8 @@ using System.Text;
 
 namespace RBD
 {
-    class TimeoutException : Exception
+    [Serializable]
+    public class TimeoutException : Exception
     {
         public TimeoutException()
             : base("Timed out")

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace RBD
 {
-    class NodeSyncInfo
+    public class NodeSyncInfo
     {
         private int BeatsOutOfSync;
         //private long LastBeat; // time in miliseconds

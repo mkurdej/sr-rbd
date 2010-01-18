@@ -7,7 +7,7 @@ using System.Text;
 
 namespace RBD
 {
-    class Dispatcher
+    public class Dispatcher
     {
         //public class Dispatcher implements EndTransactionListener, EndRestorationListener {
 
