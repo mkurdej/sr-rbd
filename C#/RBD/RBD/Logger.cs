@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace RBD
 {
-    class Logger
+    public class Logger
     {
 
         private static Logger instance = null;

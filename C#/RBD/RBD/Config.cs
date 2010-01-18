@@ -7,7 +7,7 @@ using System.Text;
 
 namespace RBD
 {
-    class Config
+    public class Config
     {
 
         //    private final static String LOGGING_NAME = "Config";
@@ -20,12 +20,18 @@ namespace RBD
         //    private static String host;
         //    private static String user;
         //    private static String password;
-        //    private static Charset charset = Charset.forName("ISO-8859-1");
+        private static Encoding encoding = Encoding.GetEncoding("ISO-8859-1");
 
-        //    public static Charset getCharset()
-        //    {
-        //        return charset;
-        //    }
+        //public static Charset getCharset()
+        public static Encoding getCharset()
+        {
+            return GetEncoding();
+        }
+
+        public static Encoding GetEncoding()
+        {
+            return encoding;
+        }
 
         //    public static int TcpPort()
         //    {
@@ -72,37 +78,37 @@ namespace RBD
         //        return password;
         //    }
 
-            public static bool Load(String path)
+        public static bool Load(String path)
         {
-        //        try
-        //        {
-        //            Document inputSource = DocumentBuilderFactory.newInstance().
-        //                newDocumentBuilder().parse(path);    
+            //        try
+            //        {
+            //            Document inputSource = DocumentBuilderFactory.newInstance().
+            //                newDocumentBuilder().parse(path);    
 
-        //            XPathFactory factory = XPathFactory.newInstance();
-        //            XPath xPath = factory.newXPath();
+            //            XPathFactory factory = XPathFactory.newInstance();
+            //            XPath xPath = factory.newXPath();
 
-        //            tcpaddress 	= InetAddress.getByName(xPath.evaluate("/config/tcpaddress", inputSource));
-        //            tcpPort 	= Integer.parseInt(xPath.evaluate("/config/tcpport", inputSource));
-        //            udpPort 	= Integer.parseInt(xPath.evaluate("/config/udpport", inputSource));
-        //            maxNodes 	= Integer.parseInt(xPath.evaluate("/config/maxnodes", inputSource));
-        //            database 	= xPath.evaluate("/config/database", inputSource);
-        //            host 		= xPath.evaluate("/config/host", inputSource);
-        //            user 		= xPath.evaluate("/config/user", inputSource);
-        //            password 	= xPath.evaluate("/config/password", inputSource);
-        //        }
-        //        catch(Exception ex)
-        //        {
-        //            Logger.getInstance().log(
-        //                "Config parsing error " + ex.toString(), 
-        //                LOGGING_NAME, 
-        //                Logger.Level.WARNING);
+            //            tcpaddress 	= InetAddress.getByName(xPath.evaluate("/config/tcpaddress", inputSource));
+            //            tcpPort 	= Integer.parseInt(xPath.evaluate("/config/tcpport", inputSource));
+            //            udpPort 	= Integer.parseInt(xPath.evaluate("/config/udpport", inputSource));
+            //            maxNodes 	= Integer.parseInt(xPath.evaluate("/config/maxnodes", inputSource));
+            //            database 	= xPath.evaluate("/config/database", inputSource);
+            //            host 		= xPath.evaluate("/config/host", inputSource);
+            //            user 		= xPath.evaluate("/config/user", inputSource);
+            //            password 	= xPath.evaluate("/config/password", inputSource);
+            //        }
+            //        catch(Exception ex)
+            //        {
+            //            Logger.getInstance().log(
+            //                "Config parsing error " + ex.toString(), 
+            //                LOGGING_NAME, 
+            //                Logger.Level.WARNING);
 
-        //            return false;
-        //        }
+            //            return false;
+            //        }
 
-                return true;
-            }
+            return true;
+        }
 
 
     }

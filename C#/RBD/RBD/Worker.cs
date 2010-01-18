@@ -6,7 +6,7 @@ using System.Text;
 namespace RBD
 {
     //public abstract class Worker implements Runnable
-    class Worker
+    public abstract class Worker
     {
         private const String LOGGING_NAME = "Worker";
 

@@ -9,7 +9,7 @@ namespace RBD
 {
     public interface BinarySerializable
     {
-        //public void fromBinary(DataInputStream s); //throws IOException;
-        //public void toBinary(DataOutputStream s); // throws IOException;
+        //void fromBinary(Communication.DataInputStream s); //throws IOException;
+        //void toBinary(Communication.DataOutputStream s); // throws IOException;
     }
 }
