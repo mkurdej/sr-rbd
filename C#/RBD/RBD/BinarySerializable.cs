@@ -1,15 +1,17 @@
-﻿// +-
+﻿// +
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using RBD.Communication;
+
 namespace RBD
 {
     public interface BinarySerializable
     {
-        //void fromBinary(Communication.DataInputStream s); //throws IOException;
-        //void toBinary(Communication.DataOutputStream s); // throws IOException;
+        void FromBinary(DataInputStream dis); //throws IOException;
+        void ToBinary(DataOutputStream dos); // throws IOException;
     }
 }
