@@ -219,7 +219,7 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 			
 			
 			// try to add new node
-			TcpSender.getInstance().AddServerNode(node);
+			TcpSender.getInstance().AddServerNode(node, queue);
 		}
 		else
 		{
@@ -406,7 +406,7 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 				LOGGING_NAME, 
 				Logger.Level.INFO);
 		
-		TcpSender.getInstance().AddServerNode(node);
+		TcpSender.getInstance().AddServerNode(node, queue);
 		
 		NodeSyncInfo nsi = nodeSynchronization.get(node);
 		
