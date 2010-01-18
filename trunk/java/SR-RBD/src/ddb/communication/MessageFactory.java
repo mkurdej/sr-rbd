@@ -34,7 +34,7 @@ public class MessageFactory {
 		case TPC_ABORT:				return new ddb.tpc.msg.AbortMessage();
 		case TPC_PRECOMMIT:			return new ddb.tpc.msg.PreCommitMessage();
 		case TPC_ACKPRECOMMIT:		return new ddb.tpc.msg.AckPreCommitMessage();
-		case TPC_CANCOMMIT:			return new ddb.tpc.msg.PreCommitMessage();
+		case TPC_CANCOMMIT:			return new ddb.tpc.msg.CanCommitMessage();
 		case TPC_YESFORCOMMIT:		return new ddb.tpc.msg.YesForCommitMessage();
 		case TPC_DOCOMMIT:			return new ddb.tpc.msg.DoCommitMessage();
 		case TPC_HAVECOMMITED:		return new ddb.tpc.msg.HaveCommittedMessage();
