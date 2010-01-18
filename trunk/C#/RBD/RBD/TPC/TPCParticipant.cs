@@ -183,7 +183,7 @@ namespace RBD.TPC
             ParameterizedThreadStart ts = new ParameterizedThreadStart(TPCParticipant.ThreadBody);
             Thread thread = new Thread(ts);
             thread.Name = "TPC_THREAD";
-            thread.Start();
+            thread.Start(this);
             //    new Thread(new Runnable() {
             //        @Override
             //        public void run() {
