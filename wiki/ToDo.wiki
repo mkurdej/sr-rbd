@@ -31,4 +31,5 @@ Wszystko jedno...
 
 
 = Różne implementacje =
-  * - ujednolicić wartości enum MessageType !!! (wszędzie ta sama kolejność i te same stałe)
+  * - ujednolicić wartości enum MessageType (wszędzie ta sama kolejność i te same stałe)
+  * - serializować TransactionId (w TPCMessage), klasy potomne powinny wywoływać metodę klasy bazowej
