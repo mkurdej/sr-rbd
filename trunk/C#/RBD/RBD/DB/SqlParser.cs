@@ -7,7 +7,7 @@ using System.Text;
 
 namespace RBD.DB
 {
-    interface SqlParser
+    public interface SqlParser
     {
         bool parse(String queryString);
         String getQueryString();

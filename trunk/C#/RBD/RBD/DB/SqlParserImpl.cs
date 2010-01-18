@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace RBD.DB
 {
-    class SqlParserImpl : SqlParser
+    public class SqlParserImpl : SqlParser
     {
         const String LOGGING_NAME = "SqlParser";
 

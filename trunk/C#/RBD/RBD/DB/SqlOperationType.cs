@@ -7,5 +7,5 @@ using System.Text;
 
 namespace RBD.DB
 {
-    enum SqlOperationType { SELECT, UPDATE, DELETE, CREATE, INSERT, LOCK, UNLOCK, UNDEFINED };
+    public enum SqlOperationType { SELECT, UPDATE, DELETE, CREATE, INSERT, LOCK, UNLOCK, UNDEFINED };
 }

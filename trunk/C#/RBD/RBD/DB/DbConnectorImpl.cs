@@ -8,7 +8,7 @@ using MySql.Data.MySqlClient;
 
 namespace RBD.DB
 {
-    class DbConnectorImpl : DbConnector
+    public class DbConnectorImpl : DbConnector
     {
         static DbConnector instance = new DbConnectorImpl();
         const String LOGGING_NAME = "SqlConnector";

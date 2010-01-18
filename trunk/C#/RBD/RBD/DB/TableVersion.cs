@@ -9,7 +9,7 @@ using RBD.Communication;
 
 namespace RBD.DB
 {
-    class TableVersion : BinarySerializable
+    public class TableVersion : BinarySerializable
     {
         public String Name { get; set; }
         public int Version { get; set; }
