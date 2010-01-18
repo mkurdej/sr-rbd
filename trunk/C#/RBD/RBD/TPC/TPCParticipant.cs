@@ -15,9 +15,7 @@ namespace RBD.TPC
     {
         public const int TIMEOUT = 5000;
 
-        private String transactionId;
-
-        //private MessageQueue messageQueue;
+        public String transactionId { get; set; }
 
         /**
          * <!-- begin-UML-doc --> Nazwa tabeli, na ktorej wykonywana jest
@@ -26,9 +24,11 @@ namespace RBD.TPC
          * @generated 
          *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
          */
-        private String tableName;
+        public String tableName { get; set; }
 
-        //private TimeoutGenerator timeoutGenerator;
+        private TimeoutGenerator timeoutGenerator;
+
+        private MessageQueue messageQueue;
 
         protected volatile bool stopped = false;
 
@@ -50,23 +50,12 @@ namespace RBD.TPC
         public TPCParticipant()
         {
             this.endTransactionListeners = new HashSet<EndTransactionListener>();
-            //this.timeoutGenerator = new TimeoutGenerator();
-            //this.messageQueue = new MessageQueue();
+            this.timeoutGenerator = new TimeoutGenerator();
+            this.messageQueue = new MessageQueue();
 
-            //this.timeoutGenerator.setTimeoutListener(this);
+            this.timeoutGenerator.setTimeoutListener(this);
 
-            //startThread();
-        }
-
-        /**
-         * <!-- begin-UML-doc --> Ustawia id transakcji. <!-- end-UML-doc -->
-         * 
-         * @generated 
-         *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
-         */
-        public void setTransactionId(String transactionId)
-        {
-            this.transactionId = transactionId;
+            startThread();
         }
 
         /**
@@ -80,52 +69,13 @@ namespace RBD.TPC
          */
         public void processMessage(Message message)
         {
-
             //try {
-            //this.messageQueue.putMessage(message);
+            this.messageQueue.putMessage(message);
             //} catch(InterruptedException e) {
             //    Logger.getInstance().log(e.getMessage(), "TPC", Level.SEVERE);
             //} 
 
             ////this.onNewMessage(message);
-        }
-
-        /**
-         * <!-- begin-UML-doc --> Pobiera&nbsp;id transakcji. <!-- end-UML-doc -->
-         * 
-         * @return
-         * @generated 
-         *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
-         */
-        public String getTransactionId()
-        {
-            return this.transactionId;
-        }
-
-        /**
-         * <!-- begin-UML-doc --> Ustawia tabele, ktorej dotyczy transakcja. <!--
-         * end-UML-doc -->
-         * 
-         * @param tableName
-         * @generated 
-         *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
-         */
-        public void setTableName(String tableName)
-        {
-            this.tableName = tableName;
-        }
-
-        /**
-         * <!-- begin-UML-doc --> Pobiera&nbsp;tabele, ktorej dotyczy transakcja.
-         * <!-- end-UML-doc -->
-         * 
-         * @return
-         * @generated 
-         *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
-         */
-        public String getTableName()
-        {
-            return this.tableName;
         }
 
         /**
@@ -140,8 +90,8 @@ namespace RBD.TPC
         {
 
             //try {
-            //    Message msg = this.messageQueue.getMessage();
-            //    onNewMessage(msg);
+            Message msg = this.messageQueue.getMessage();
+            onNewMessage(msg);
             //} catch (InterruptedException e) {
             //    Logger.getInstance().log(e.getMessage(), "TPC", Logger.Level.SEVERE);
             //}
@@ -160,7 +110,7 @@ namespace RBD.TPC
          */
         protected void startTimer(long miliseconds)
         {
-            //this.timeoutGenerator.startTimer(miliseconds);
+            this.timeoutGenerator.startTimer(miliseconds);
         }
 
         /**
@@ -171,7 +121,7 @@ namespace RBD.TPC
          */
         protected void stopTimer()
         {
-            //this.timeoutGenerator.stopTimer();
+            this.timeoutGenerator.stopTimer();
         }
 
         /**
@@ -221,7 +171,7 @@ namespace RBD.TPC
          * @generated 
          *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
          */
-        //private void startThread() {
+        private void startThread() {
         //    new Thread(new Runnable() {
         //        @Override
         //        public void run() {
@@ -233,7 +183,7 @@ namespace RBD.TPC
         //            }
         //        }
         //    }, "TPC_THREAD").start();
-        //}
+        }
 
         /**
          * <!-- begin-UML-doc --> Konczy prace watku. <!-- end-UML-doc -->
