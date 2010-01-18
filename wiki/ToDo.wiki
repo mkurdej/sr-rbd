@@ -28,3 +28,7 @@ Wszystko jedno...
   * + Numer tabeli przy CanCommitMessage
   * - Parsowanie wiadomosci
   * - MD5 na konkatenacje numerow wersji tabel
+
+
+= Różne implementacje =
+  * - ujednolicić wartości enum MessageType !!! (wszędzie ta sama kolejność i te same stałe)
