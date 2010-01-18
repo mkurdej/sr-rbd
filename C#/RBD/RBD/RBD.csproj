@@ -51,6 +51,7 @@
     <Compile Include="Communication\DataOutputStream.cs" />
     <Compile Include="Communication\MessageFactory.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="DB\DatabaseState.cs" />
     <Compile Include="DB\DBException.cs" />
     <Compile Include="Msg\Client\ResultSetMessage.cs" />
     <Compile Include="Msg\Client\SuccessMessage.cs" />
@@ -64,6 +65,9 @@
     <Compile Include="Msg\InvalidMessageTypeException.cs" />
     <Compile Include="NodeSyncInfo.cs" />
     <Compile Include="TimeoutException.cs" />
+    <Compile Include="TPC\EndTransactionListener.cs" />
+    <Compile Include="TPC\LessTableVersionException.cs" />
+    <Compile Include="TPC\MessageRecipient.cs" />
     <Compile Include="TPC\Msg\AbortMessage.cs" />
     <Compile Include="TPC\Msg\AckPreCommitMessage.cs" />
     <Compile Include="TPC\Msg\CanCommitMessage.cs" />
@@ -76,6 +80,8 @@
     <Compile Include="TPC\Msg\TPCMessage.cs" />
     <Compile Include="TPC\Msg\TransactionMessage.cs" />
     <Compile Include="TPC\Msg\YesForCommitMessage.cs" />
+    <Compile Include="TPC\TimeoutListener.cs" />
+    <Compile Include="TPC\TPCParticipant.cs" />
     <Compile Include="Util\BlockingQueue.cs" />
     <Compile Include="DB\DatabaseTable.cs" />
     <Compile Include="Logger.cs" />

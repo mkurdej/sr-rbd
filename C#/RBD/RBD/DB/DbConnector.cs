@@ -5,7 +5,7 @@ using System.Text;
 
 namespace RBD.DB
 {
-    interface DbConnector
+    public interface DbConnector
     {
         DatabaseTable query(String queryString);
         void clearDatabase();

@@ -6,7 +6,7 @@ using MySql.Data.MySqlClient;
 
 namespace RBD.DB
 {
-    class DatabaseTable
+    public class DatabaseTable
     {
         public DatabaseTable(MySqlDataReader recordSet)
         {
