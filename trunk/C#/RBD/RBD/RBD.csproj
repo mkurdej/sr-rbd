@@ -46,9 +46,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BinarySerializable.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="Dispatcher.cs" />
+    <Compile Include="NodeSyncInfo.cs" />
+    <Compile Include="TimeoutException.cs" />
     <Compile Include="Util\BlockingQueue.cs" />
     <Compile Include="DB\DatabaseTable.cs" />
-    <Compile Include="Util\Logger.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Msg\Message.cs" />
     <Compile Include="Msg\MessageType.cs" />
     <Compile Include="Program.cs" />
@@ -64,6 +69,7 @@
     <Compile Include="Communication\UdpListener.cs" />
     <Compile Include="Communication\UdpSender.cs" />
     <Compile Include="Communication\UdpSenderImpl.cs" />
+    <Compile Include="Worker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\app.manifest" />
