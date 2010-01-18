@@ -12,7 +12,7 @@ namespace RBD
 {
     class Program
     {
-        private const String LOGGING_NAME = "Config";
+        const String LOGGING_NAME = "Config";
         static void Main(string[] args)
         {
             if (Config.Load(args.Length == 0 ? "./config.xml" : args[0]))

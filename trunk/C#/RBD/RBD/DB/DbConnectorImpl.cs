@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using MySql.Data.MySqlClient;
 
-namespace RBD
+namespace RBD.DB
 {
     class DbConnectorImpl : DbConnector
     {

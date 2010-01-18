@@ -11,7 +11,7 @@ namespace RBD
     public class Logger
     {
 
-        private static Logger instance = null;
+        static Logger instance = null;
 
         public enum Level
         {

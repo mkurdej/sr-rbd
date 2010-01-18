@@ -1,10 +1,12 @@
-﻿using System;
+﻿// ?
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace RBD
+namespace RBD.DB
 {
     class SqlParserImpl : SqlParser
     {
@@ -42,9 +44,9 @@ namespace RBD
                 RegexOptions.IgnoreCase); 
         }
 
-        public void parse(string queryString)
+        public bool parse(string queryString)
         {
-            operationType = SqlOperationType.Undefined;
+            operationType = SqlOperationType.UNDEFINED;
             query = queryString.Trim();
             parsedQueryString = "";
             tableName = "";
@@ -67,14 +69,17 @@ namespace RBD
                 parseLock();
             else if (unlockRegExp.Matches(query).Count > 0)
                 parseUnlock();
+            else
+                return false;
 
             Logger.getInstance().log("[" + tableName + "] " + parsedQueryString +
                 "\t" + lockQueryString, LOGGING_NAME, Logger.Level.INFO);
+            return true;
         }
 
         void parseSelect()
         {
-            operationType = SqlOperationType.Select;
+            operationType = SqlOperationType.SELECT;
             MatchCollection matchList = selectRegExp.Matches(query);
             if (matchList.Count > 0)
             {
@@ -87,7 +92,7 @@ namespace RBD
 
         void parseInsert()
         {
-            operationType = SqlOperationType.Insert;
+            operationType = SqlOperationType.INSERT;
             MatchCollection matchList = insertRegExp.Matches(query);
             if (matchList.Count > 0)
             {
@@ -102,7 +107,7 @@ namespace RBD
 
         void parseUpdate()
         {
-            operationType = SqlOperationType.Update;
+            operationType = SqlOperationType.UPDATE;
             MatchCollection matchList = updateRegExp.Matches(query);
             if (matchList.Count > 0)
             {
@@ -138,7 +143,7 @@ namespace RBD
         
         void parseDelete()
         {
-            operationType = SqlOperationType.Delete;
+            operationType = SqlOperationType.DELETE;
             MatchCollection matchList = deleteRegExp.Matches(query);
             if (matchList.Count > 0)
             {
@@ -172,7 +177,7 @@ namespace RBD
         
         void parseCreate()
         {
-            operationType = SqlOperationType.Create;
+            operationType = SqlOperationType.CREATE;
             MatchCollection matchList = createRegExp.Matches(query);
             if (matchList.Count > 0)
             {
@@ -187,7 +192,7 @@ namespace RBD
         
         void parseLock()
         {
-            operationType = SqlOperationType.Lock;
+            operationType = SqlOperationType.LOCK;
             MatchCollection matchList = lockRegExp.Matches(query);
             if (matchList.Count > 0)
             {
@@ -221,7 +226,7 @@ namespace RBD
         
         void parseUnlock()
         {
-            operationType = SqlOperationType.Unlock;
+            operationType = SqlOperationType.UNLOCK;
             MatchCollection matchList = unlockRegExp.Matches(query);
             if (matchList.Count > 0)
             {

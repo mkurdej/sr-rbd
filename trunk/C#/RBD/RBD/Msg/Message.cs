@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace RBD
+namespace RBD.Msg
 {
     public abstract class Message : BinarySerializable
     {

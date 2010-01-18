@@ -9,9 +9,9 @@ namespace RBD
 {
     public class NodeSyncInfo
     {
-        private int BeatsOutOfSync;
-        //private long LastBeat; // time in miliseconds
-        private DateTime LastBeat;
+        int BeatsOutOfSync;
+        //long LastBeat; // time in miliseconds
+        DateTime LastBeat;
 
         public NodeSyncInfo()
         {
