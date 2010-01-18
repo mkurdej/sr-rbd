@@ -1,33 +1,68 @@
-﻿using System;
+﻿// +--
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Net;
+using System.IO;
+
+using RBD.Communication;
 
 namespace RBD.Msg
 {
+    [Serializable]
     public abstract class Message : BinarySerializable
     {
+        public enum MessageType
+        {
+            RESTORE_INCENTIVE,
+            RESTORE_ACK,
+            RESTORE_NACK,
+            RESTORE_TABLELIST,
+            RESTORE_TABLE,
+            TPC_ABORT,
+            TPC_PRECOMMIT,
+            TPC_ACKPRECOMMIT,
+            TPC_CANCOMMIT,
+            TPC_YESFORCOMMIT,
+            TPC_DOCOMMIT,
+            TPC_HAVECOMMITED,
+            TPC_NOFORCOMMIT,
+            TPC_ERROR,
+            TRANSACTION_MESSAGE,
+            CLIENT_SUCCESS,
+            CLIENT_CONFLICT,
+            CLIENT_ERROR,
+            CLIENT_RESULTSET,
+            CLIENT_TIMEOUT,
+            HELLO_MESSAGE
+        };
 
-        private const string LOGGING_NAME = "Message";
+        public static MessageType FromInt(int type) //throws InvalidMessageTypeException 
+        {
+            if (type < 0 || type >= Enum.GetValues(typeof(MessageType)).Length)
+                throw new InvalidMessageTypeException(type);
 
-        //private InetSocketAddress sender;
+            return (MessageType)type;
+        }
+        /// //////////////////////////////////////////////////////////
+        /// interface
+        public abstract void ToBinary(DataOutputStream dos);
+        public abstract void FromBinary(DataInputStream dis);
+        /// //////////////////////////////////////////////////////////
 
-        //public void setSender(InetSocketAddress sender)
-        //{
-        //    this.sender = sender;
-        //}
+        const string LOGGING_NAME = "Message";
 
-        //public InetSocketAddress getSender()
-        //{
-        //    return sender;
-        //}
+        //InetSocketAddress sender;
+        public IPEndPoint Sender { get; set; }
 
         override public String ToString()
         {
             StringBuilder builder = new StringBuilder();
 
             builder.Append("[");
-            builder.Append(getType());
+            builder.Append(GetMessageType());
             builder.Append(" from ");
             //builder.Append(sender.toString());
             builder.Append("]");
@@ -39,103 +74,51 @@ namespace RBD.Msg
          * 
          * @return type constant for specialized class
          */
-        public abstract MessageType getType();
+        public abstract MessageType GetMessageType();
 
         //final
-        //public byte[] Serialize()
-        //{
-        //    try
-        //    {
-        //        // serialize data
-        //        ByteArrayOutputStream data = new ByteArrayOutputStream();
-        //        DataOutputStream dataStream = new DataOutputStream(data);
-        //        toBinary(dataStream);
+        public byte[] Serialize()
+        {
+            MemoryStream ms = new MemoryStream();
+            DataOutputStream dataStream = new DataOutputStream(ms);
+            ToBinary(dataStream);
 
-        //        // wrap data in envelope ( byte[][] would be more efficient, but this is more convinient )
-        //        // btw where is writev() in case of sending this through udp in java?!
-        //        ByteArrayOutputStream envelope = new ByteArrayOutputStream();
-        //        DataOutputStream envelopeStream = new DataOutputStream(envelope);
+            // wrap data in envelope ( byte[][] would be more efficient, but this is more convinient )
+            MemoryStream envelopeMs = new MemoryStream();
+            DataOutputStream envelopeDataStream = new DataOutputStream(ms);
 
-        //        byte[] bytes = data.toByteArray();
+            byte[] bytes = ms.ToArray();
 
-        //        // size + type + data
-        //        envelopeStream.writeInt(bytes.length);
-        //        envelopeStream.writeInt(getType().ordinal());
-        //        envelopeStream.write(bytes);
+            // size + type + data
+            envelopeDataStream.Write((int)bytes.Length);
+            envelopeDataStream.Write((int)GetMessageType());
+            envelopeDataStream.Write(bytes);
 
-        //        return envelope.toByteArray();
+            return envelopeMs.ToArray();
+            //catch (IOException ex)
+            //{
+            //    // should never happen due to stream is wrapped around ByteArrayOutputStream 
+            //    Logger.getInstance().log("Serialization failure: " + ex.getMessage(),
+            //            LOGGING_NAME,
+            //            Logger.Level.SEVERE);
 
-        //    }
-        //    catch (IOException ex)
-        //    {
-        //        // should never happen due to stream is wrapped around ByteArrayOutputStream 
-        //        Logger.getInstance().log("Serialization failure: " + ex.getMessage(),
-        //                LOGGING_NAME,
-        //                Logger.Level.SEVERE);
+            //    return null;
+            //}
+        }
 
-        //        return null;
-        //    }
-        //}
+        static public Message Unserialize(MessageType type, byte[] bytes, IPEndPoint sender) //throws IOException
+        {
+            // create message object of given type
+            Message result = MessageFactory.create(type);
 
-        //static public Message Unserialize(MessageType type, byte[] bytes, InetSocketAddress sender) //throws IOException
-        //{
-        //    // create message object of given type
-        //    Message result = MessageFactory.create(type);
+            // unserialize it
+            MemoryStream data = new MemoryStream(bytes);
+            DataInputStream dataStream = new DataInputStream(data);
+            result.FromBinary(dataStream);
 
-        //    // unserialize it
-        //    ByteArrayInputStream data = new ByteArrayInputStream(bytes);
-        //    DataInputStream dataStream = new DataInputStream(data);
-        //    result.fromBinary(dataStream);
-
-        //    // mark sender
-        //    result.setSender(sender);
-
-        //    return result;
-        //}
+            // mark sender
+            result.Sender = sender;
+            return result;
+        }
     }
 }
-
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Net;
-//using System.IO;
-//using System.Net.Sockets;
-//using System.Runtime.Serialization;
-//using System.Runtime.Serialization.Formatters;
-//using System.Runtime.Serialization.Formatters.Binary;
-
-//namespace RBD
-//{
-//    [Serializable]
-//    class Message
-//    {
-//        static String LOGGING_NAME = "Message";
-
-//        IPAddress sender;
-
-//        public void setSender(IPAddress newSender)
-//        {
-//            sender = newSender;
-//        }
-
-//        public byte[] Serialize()
-//        {
-//            MemoryStream stream = new MemoryStream();
-//            StreamWriter streamWriter = new StreamWriter(stream);
-
-//            //TODO - nie wiem, jak to zserializowac, zeby potem gadalo z reszta...
-//        }
-
-//        static public Message Unserialize(MessageType type, byte[] bytes, IPAddress sender)
-//        {
-//            Message result = MessageFactory.create(type);
-//            MemoryStream stream = new MemoryStream(bytes);
-//            StreamReader streamReader = new StreamReader(stream);
-//            result.fromBinary(streamReader);
-//            result.setSender(sender);
-//            return result;
-//        }
-//    }
-//}

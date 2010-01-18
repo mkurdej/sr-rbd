@@ -49,8 +49,11 @@
     <Compile Include="BinarySerializable.cs" />
     <Compile Include="Communication\DataInputStream.cs" />
     <Compile Include="Communication\DataOutputStream.cs" />
+    <Compile Include="Communication\MessageFactory.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="DB\TableVersion.cs" />
     <Compile Include="Dispatcher.cs" />
+    <Compile Include="Msg\HelloMessage.cs" />
     <Compile Include="Msg\InvalidMessageTypeException.cs" />
     <Compile Include="NodeSyncInfo.cs" />
     <Compile Include="TimeoutException.cs" />
@@ -58,7 +61,6 @@
     <Compile Include="DB\DatabaseTable.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Msg\Message.cs" />
-    <Compile Include="Msg\MessageType.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MainListener.cs" />
