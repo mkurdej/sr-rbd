@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
 
 import ddb.Logger;
 import ddb.msg.Message;
@@ -81,7 +82,7 @@ public class TcpSender {
 		nodes.put(node, new NodeInfo(s, false));
 	}
 	
-	public synchronized void AddServerNode(InetSocketAddress node)
+	public synchronized void AddServerNode(InetSocketAddress node, BlockingQueue<Message> storage)
 	{
 		NodeInfo nodeInfo = nodes.get(node);
 		
@@ -91,6 +92,12 @@ public class TcpSender {
 			Socket socket;
 			try {
 				socket = new Socket(node.getAddress(), node.getPort());
+				
+				TcpWorker worker = new TcpWorker(socket, storage);
+                new Thread(worker, 
+            		"TcpWorker " + socket.getInetAddress() + ":" + socket.getPort()
+        		).start();
+				
 			} catch (IOException e) {
 				Logger.getInstance().log("Failed to add server node: " + node.toString(), 
 						LOGGING_NAME,

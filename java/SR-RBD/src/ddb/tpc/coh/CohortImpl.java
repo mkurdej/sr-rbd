@@ -38,6 +38,7 @@ public class CohortImpl extends Cohort {
 	 */
 	@Override
 	public void replyToCoordinator(TPCMessage message) {
+		message.setTransactionId(getTransactionId());
 		TcpSender.getInstance().sendToNode(message, getCoordinatorAddress());
 	}
 
