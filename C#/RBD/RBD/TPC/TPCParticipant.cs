@@ -1,9 +1,10 @@
-﻿// +-- TODO startThread
+﻿// +- TODO exceptions + logging, check
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 using RBD.DB;
 using RBD.Msg;
@@ -15,6 +16,13 @@ namespace RBD.TPC
     {
         public const int TIMEOUT = 5000;
 
+        /**
+         * <!-- begin-UML-doc --> Identyfikator obecnie wykonywanej
+         * transakcji. <!-- end-UML-doc -->
+         * 
+         * @generated 
+         *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
+         */
         public String transactionId { get; set; }
 
         /**
@@ -170,18 +178,33 @@ namespace RBD.TPC
          * @generated 
          *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
          */
-        private void startThread() {
-        //    new Thread(new Runnable() {
-        //        @Override
-        //        public void run() {
-        //            Logger.getInstance().log(
-        //                    "startThread " + Thread.currentThread(), "TPC",
-        //                    Level.INFO);
-        //            while (!stopped) {
-        //                waitForMessage();
-        //            }
-        //        }
-        //    }, "TPC_THREAD").start();
+        private void startThread()
+        {
+            ParameterizedThreadStart ts = new ParameterizedThreadStart(TPCParticipant.ThreadBody);
+            Thread thread = new Thread(ts);
+            thread.Name = "TPC_THREAD";
+            thread.Start();
+            //    new Thread(new Runnable() {
+            //        @Override
+            //        public void run() {
+            //            Logger.getInstance().log(
+            //                    "startThread " + Thread.currentThread(), "TPC",
+            //                    Level.INFO);
+            //            while (!stopped) {
+            //                waitForMessage();
+            //            }
+            //        }
+            //    }, "TPC_THREAD").start();
+        }
+
+        static void ThreadBody(object o)
+        {
+            TPCParticipant tpcp = (TPCParticipant)o;
+            Logger.getInstance().log("startThread " + Thread.CurrentThread.Name, "TPC", Logger.Level.INFO);
+            while (!tpcp.stopped)
+            {
+                tpcp.waitForMessage();
+            }
         }
 
         /**
