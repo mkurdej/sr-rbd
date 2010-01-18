@@ -1,4 +1,5 @@
-﻿using System;
+﻿// +-
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,29 +12,32 @@ namespace RBD
 {
     class Program
     {
+        private const String LOGGING_NAME = "Config";
         static void Main(string[] args)
         {
-            /*
-            Thread mainListenerThread = new Thread(MainListener.getInstance().listen);
-            mainListenerThread.Start();
-            Thread udpListenerThread = new Thread(UdpListener.getInstance().listen);
-            udpListenerThread.Start();
-            UdpSender udpSender = UdpSenderImpl.getInstance();
-            SqlConnector sqlConnector = SqlConnectorImpl.getInstance();
-            sqlConnector.query("SELECT * FROM blah");
-            SqlParser sqlParser = new SqlParserImpl();
-            ((SqlParserImpl)sqlParser).test();
-            while(true)
+            if (Config.Load(args.Length == 0 ? "./config.xml" : args[0]))
             {
-                udpSender.sendToAll(new Message());
-                Thread.Sleep(5000);
+                // launch
+                Logger.getInstance().log("Starting node", LOGGING_NAME, Logger.Level.INFO);
+                Dispatcher dispatcher = new Dispatcher();
+
+                Logger.getInstance().log("Running dispatcher", LOGGING_NAME, Logger.Level.INFO);
+
+                //try
+                //{
+                dispatcher.Run();
+                //}
+                //catch (InterruptedException e)
+                //{
+                //    Logger.getInstance().log("InterruptedException" + e.getMessage(), LOGGING_NAME, Logger.Level.SEVERE);
+                //}
             }
-             */
-            DbConnector sqlConnector = DbConnectorImpl.getInstance();
-            Console.Write(sqlConnector.dumpTable("blah"));
-            sqlConnector.importTable(@"DROP TABLE IF EXISTS `blah234`;CREATE TABLE `blah234` (`id` varchar(123) DEFAULT NULL)ENGINE=MyISAM DEFAULT CHARSET=utf8;LOCK TABLES `blah234` WRITE;UNLOCK TABLES;");
-            Thread.Sleep(10000);
-            
+            else
+            {
+                Logger.getInstance().log("Error while reading config", LOGGING_NAME, Logger.Level.INFO);
+            }
+
+            Logger.getInstance().log("Closing node", LOGGING_NAME, Logger.Level.INFO);
         }
     }
 }
