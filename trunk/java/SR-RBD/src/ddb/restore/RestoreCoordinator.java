@@ -3,7 +3,7 @@
  */
 package ddb.restore;
 
-import java.net.InetSocketAddress;
+import java.net.InetAddress;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,9 +36,9 @@ public class RestoreCoordinator extends Worker
 	private static final int RESTORE_TIMEOUT = 1000;
 	
 	private Set<EndRestorationListener> endRestorationListeners = new HashSet<EndRestorationListener>();
-	private InetSocketAddress targetNode;
+	private InetAddress targetNode;
 
-	public RestoreCoordinator(InetSocketAddress node)
+	public RestoreCoordinator(InetAddress node)
 	{
 		targetNode = node;
 	}
@@ -57,7 +57,7 @@ public class RestoreCoordinator extends Worker
 		}
 	}
 	
-	public InetSocketAddress getTargetNode()
+	public InetAddress getTargetNode()
 	{
 		return targetNode;
 	}

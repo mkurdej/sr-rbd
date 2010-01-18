@@ -3,7 +3,7 @@
  */
 package ddb.restore;
 
-import java.net.InetSocketAddress;
+import java.net.InetAddress;
 
 import ddb.Logger;
 import ddb.TimeoutException;
@@ -79,7 +79,7 @@ public class RestoreCohort extends Worker {
 				Logger.Level.INFO);
 		
 		// answer ok
-		InetSocketAddress node = msg.getSender();
+		InetAddress node = msg.getSender();
 		TcpSender.getInstance().sendToNode(new RestoreAck(), node);
 
 		// set timeout for restore process

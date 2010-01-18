@@ -3,7 +3,7 @@
  */
 package ddb.tpc.coh;
 
-import java.net.InetSocketAddress;
+import java.net.InetAddress;
 
 import ddb.tpc.TPCParticipant;
 import ddb.tpc.msg.TPCMessage;
@@ -35,7 +35,7 @@ public abstract class Cohort extends TPCParticipant {
 	 * @generated 
 	 *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	protected InetSocketAddress coordinatorAddress;
+	protected InetAddress coordinatorAddress;
 
 	/**
 	 * <!-- begin-UML-doc --> <!-- end-UML-doc -->
@@ -54,7 +54,7 @@ public abstract class Cohort extends TPCParticipant {
 	 * @generated 
 	 *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void setCoordinatorAddress(InetSocketAddress address) {
+	public void setCoordinatorAddress(InetAddress address) {
 		this.coordinatorAddress = address;
 	}
 
@@ -68,7 +68,7 @@ public abstract class Cohort extends TPCParticipant {
 	 * @generated 
 	 *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public InetSocketAddress getCoordinatorAddress() {
+	public InetAddress getCoordinatorAddress() {
 		return this.coordinatorAddress;
 	}
 

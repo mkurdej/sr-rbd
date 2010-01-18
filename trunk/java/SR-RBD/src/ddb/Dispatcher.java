@@ -3,7 +3,7 @@
  */
 package ddb;
 
-import java.net.InetSocketAddress;
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -74,11 +74,11 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 	protected BlockedCohort blockedCohort = new BlockedCohort();
 	protected BlockedCoordinator blockedCoordinator = new BlockedCoordinator();
 	protected BlockedRestoreCoordinator blockedRestoreCoordinator = new BlockedRestoreCoordinator();
-	protected Map<InetSocketAddress, RestoreCoordinator> restoreCoordinators = new HashMap<InetSocketAddress, RestoreCoordinator>();
+	protected Map<InetAddress, RestoreCoordinator> restoreCoordinators = new HashMap<InetAddress, RestoreCoordinator>();
 
 	// others
-	protected Map<InetSocketAddress, NodeSyncInfo> nodeSynchronization = new HashMap<InetSocketAddress, NodeSyncInfo>();
-	protected InetSocketAddress me;
+	protected Map<InetAddress, NodeSyncInfo> nodeSynchronization = new HashMap<InetAddress, NodeSyncInfo>();
+	protected InetAddress me;
 	protected int isRestoring = 0; // TODO: remove
 	
 	
@@ -92,7 +92,7 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 	public void Initialize()
 	{
 		// assign self identifier
-		me = new InetSocketAddress(Config.TcpAddress(), Config.TcpPort());
+		me = Config.TcpAddress();
 		
 		// install threads for managing communication
 		new Thread(tcp, "TPC_LISTENER").start();
@@ -208,18 +208,13 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 		else if(msg instanceof HelloMessage)
 		{
 			HelloMessage hm = (HelloMessage)msg;
-			
-			InetSocketAddress node = new InetSocketAddress(
-					hm.getSender().getAddress(), 
-					hm.getListeningPort()
-			);
+			InetAddress node = hm.getSender();
 			
 			if(node.equals(me))
 				return;
 			
-			
 			// try to add new node
-			TcpSender.getInstance().AddServerNode(node, queue);
+			TcpSender.getInstance().AddServerNode(node,hm.getListeningPort(),  queue);
 		}
 		else
 		{
@@ -339,7 +334,7 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 		}
 		else
 		{
-			InetSocketAddress node = msg.getSender();
+			InetAddress node = msg.getSender();
 			RestoreCoordinator coordinator =  restoreCoordinators.get(node);
 			
 			if(coordinator != null)
@@ -393,10 +388,7 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 	
 	public void processHelloMessage(HelloMessage msg)
 	{
-		InetSocketAddress node = new InetSocketAddress(
-				msg.getSender().getAddress(), 
-				msg.getListeningPort()
-		);
+		InetAddress node = msg.getSender();
 		
 		if(node.equals(me))
 			return;
@@ -406,7 +398,7 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 				LOGGING_NAME, 
 				Logger.Level.INFO);
 		
-		TcpSender.getInstance().AddServerNode(node, queue);
+		TcpSender.getInstance().AddServerNode(node, msg.getListeningPort(), queue);
 		
 		NodeSyncInfo nsi = nodeSynchronization.get(node);
 		
@@ -488,7 +480,7 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 	@Override
 	public synchronized void onEndRestoration(RestoreCoordinator coordinator) {
 		
-		InetSocketAddress node = coordinator.getTargetNode();
+		InetAddress node = coordinator.getTargetNode();
 		
 		NodeSyncInfo nsi = nodeSynchronization.get(node);
 		

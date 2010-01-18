@@ -3,7 +3,7 @@
  */
 package ddb.tpc.cor;
 
-import java.net.InetSocketAddress;
+import java.net.InetAddress;
 
 import ddb.msg.client.TimeoutMessage;
 import ddb.tpc.msg.DoCommitMessage;
@@ -34,7 +34,7 @@ public class PreparedState extends CoordinatorState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	@Override
-	public void onAckPreCommit(InetSocketAddress node) {
+	public void onAckPreCommit(InetAddress node) {
 		coordinator.processAnswer(node, new DoCommitMessage(), new CommitState());
 	}
 }
