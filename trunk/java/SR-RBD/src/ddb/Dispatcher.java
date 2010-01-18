@@ -138,13 +138,13 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 			}
 			else
 			{
-				//if(!(m instanceof HelloMessage))
-				//{
+				if(!(m instanceof HelloMessage))
+				{
 					Logger.getInstance().log(
 							"Processing message:" + m.toString(), 
 							LOGGING_NAME, 
 							Logger.Level.INFO);
-				//}
+				}
 				
 				process(m);
 			}
