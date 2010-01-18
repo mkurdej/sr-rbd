@@ -1,4 +1,4 @@
-﻿// +--
+﻿// + TODO check
 
 using System;
 using System.Collections.Generic;
@@ -64,7 +64,7 @@ namespace RBD.Msg
             builder.Append("[");
             builder.Append(GetMessageType());
             builder.Append(" from ");
-            //builder.Append(sender.toString());
+            builder.Append(Sender.ToString());
             builder.Append("]");
 
             return builder.ToString();
@@ -95,15 +95,6 @@ namespace RBD.Msg
             envelopeDataStream.Write(bytes);
 
             return envelopeMs.ToArray();
-            //catch (IOException ex)
-            //{
-            //    // should never happen due to stream is wrapped around ByteArrayOutputStream 
-            //    Logger.getInstance().log("Serialization failure: " + ex.getMessage(),
-            //            LOGGING_NAME,
-            //            Logger.Level.SEVERE);
-
-            //    return null;
-            //}
         }
 
         static public Message Unserialize(MessageType type, byte[] bytes, IPEndPoint sender) //throws IOException

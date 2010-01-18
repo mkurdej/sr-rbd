@@ -1,4 +1,4 @@
-﻿// +-
+﻿// + TODO check
 
 using System;
 using System.Collections.Generic;
@@ -27,14 +27,14 @@ namespace RBD.Msg
             ListeningPort = port;
         }
 
-        override public void FromBinary(DataInputStream s)
-        {//throws IOException {
+        override public void FromBinary(DataInputStream s) //throws IOException
+        {
             // read port
             ListeningPort = s.ReadInt32();
 
             // read count
             int count = s.ReadInt32();
-            Tables = (IList<TableVersion>)new ArrayList();  // TODO check -- nie znam odpowiednika LinkedList w C#
+            Tables = (IList<TableVersion>)new ArrayList();  // TODO check -- nie jestem pewny czy jest to odpowiednik LinkedList z Javy
 
             // read contents
             while (count-- > 0)
@@ -42,21 +42,22 @@ namespace RBD.Msg
 
         }
 
-        override public Message.MessageType GetMessageType()
+        override public MessageType GetMessageType()
         {
-            return Message.MessageType.HELLO_MESSAGE;
+            return MessageType.HELLO_MESSAGE;
         }
 
-        override public void ToBinary(DataOutputStream s) {//throws IOException {
-		// write port
-		s.Write((int)ListeningPort);
-		
-		// write length
-        s.Write((int)Tables.Count);
-		
-		// write tables
-		foreach(TableVersion tv in Tables)
-			tv.ToBinary(s);
-	}
+        override public void ToBinary(DataOutputStream s) //throws IOException
+        {
+            // write port
+            s.Write((int)ListeningPort);
+
+            // write length
+            s.Write((int)Tables.Count);
+
+            // write tables
+            foreach (TableVersion tv in Tables)
+                tv.ToBinary(s);
+        }
     }
 }

@@ -51,8 +51,15 @@
     <Compile Include="Communication\DataOutputStream.cs" />
     <Compile Include="Communication\MessageFactory.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="DB\DBException.cs" />
+    <Compile Include="Msg\Client\ResultSetMessage.cs" />
+    <Compile Include="Msg\Client\SuccessMessage.cs" />
     <Compile Include="DB\TableVersion.cs" />
     <Compile Include="Dispatcher.cs" />
+    <Compile Include="Msg\Client\ClientResponse.cs" />
+    <Compile Include="Msg\Client\ConflictMessage.cs" />
+    <Compile Include="Msg\Client\ErrorMessage.cs" />
+    <Compile Include="Msg\Client\TimeoutMessage.cs" />
     <Compile Include="Msg\HelloMessage.cs" />
     <Compile Include="Msg\InvalidMessageTypeException.cs" />
     <Compile Include="NodeSyncInfo.cs" />
