@@ -108,7 +108,9 @@
     <None Include="Properties\app.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Restore\" />
+    <Folder Include="Restore\Msg\" />
+    <Folder Include="TPC\Coh\" />
+    <Folder Include="TPC\Cor\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
