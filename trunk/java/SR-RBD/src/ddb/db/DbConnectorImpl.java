@@ -37,22 +37,22 @@ public class DbConnectorImpl implements DbConnector
         }
         catch (InstantiationException ex)
         {
-            Logger.getInstance().log("Can't connect to the database: " + ex.getMessage(),
+            Logger.getInstance().log("InstantiationException Can't connect to the database: " + ex.getMessage(),
                     LOGGING_NAME, Logger.Level.SEVERE);
         }
         catch (IllegalAccessException ex)
         {
-            Logger.getInstance().log("Can't connect to the database: " + ex.getMessage(),
+            Logger.getInstance().log("IllegalAccessException Can't connect to the database: " + ex.getMessage(),
                     LOGGING_NAME, Logger.Level.SEVERE);
         }
         catch (ClassNotFoundException ex)
         {
-            Logger.getInstance().log("Can't connect to the database: " + ex.getMessage(),
+            Logger.getInstance().log("ClassNotFoundException Can't connect to the database: " + ex.getMessage(),
                     LOGGING_NAME, Logger.Level.SEVERE);
         }
         catch (SQLException ex)
         {
-            Logger.getInstance().log("Can't connect to the database: " + ex.getMessage(),
+            Logger.getInstance().log("SQLException Can't connect to the database: " + ex.getMessage(),
                     LOGGING_NAME, Logger.Level.SEVERE);
 
         }
