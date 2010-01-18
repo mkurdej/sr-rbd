@@ -10,17 +10,17 @@ namespace RBD
     public class Config
     {
 
-        //    private final static String LOGGING_NAME = "Config";
+        //    const String LOGGING_NAME = "Config";
 
-        //    private static InetAddress tcpaddress;
-        //    private static int tcpPort;
-        //    private static int udpPort;
-        //    private static int maxNodes;
-        //    private static String database;
-        //    private static String host;
-        //    private static String user;
-        //    private static String password;
-        private static Encoding encoding = Encoding.GetEncoding("ISO-8859-1");
+        //    static InetAddress tcpaddress;
+        //    static int tcpPort;
+        //    static int udpPort;
+        //    static int maxNodes;
+        //    static String database;
+        //    static String host;
+        //    static String user;
+        //    static String password;
+        static Encoding encoding = Encoding.GetEncoding("ISO-8859-1");
 
         //public static Charset getCharset()
         public static Encoding getCharset()

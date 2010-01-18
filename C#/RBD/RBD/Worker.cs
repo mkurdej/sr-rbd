@@ -8,7 +8,7 @@ namespace RBD
     //public abstract class Worker implements Runnable
     public abstract class Worker
     {
-        private const String LOGGING_NAME = "Worker";
+        const String LOGGING_NAME = "Worker";
 
         //protected BlockingQueue<Message> queue = new LinkedBlockingQueue<Message>();
         protected long timeoutTime = -1;

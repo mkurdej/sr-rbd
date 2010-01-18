@@ -6,7 +6,7 @@ using System.Threading;
 using System.Linq;
 using System.Text;
 
-namespace RBD
+namespace RBD.Util
 {
     public class BlockingQueue<T>
     {

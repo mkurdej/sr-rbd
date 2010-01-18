@@ -1,9 +1,11 @@
-﻿using System;
+﻿// +
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace RBD
+namespace RBD.DB
 {
-    enum SqlOperationType { Undefined, Select, Insert, Update, Delete, Create, Lock, Unlock };
+    enum SqlOperationType { SELECT, UPDATE, DELETE, CREATE, INSERT, LOCK, UNLOCK, UNDEFINED };
 }
