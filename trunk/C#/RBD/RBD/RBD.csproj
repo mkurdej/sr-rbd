@@ -64,6 +64,18 @@
     <Compile Include="Msg\InvalidMessageTypeException.cs" />
     <Compile Include="NodeSyncInfo.cs" />
     <Compile Include="TimeoutException.cs" />
+    <Compile Include="TPC\Msg\AbortMessage.cs" />
+    <Compile Include="TPC\Msg\AckPreCommitMessage.cs" />
+    <Compile Include="TPC\Msg\CanCommitMessage.cs" />
+    <Compile Include="TPC\Msg\DoCommitMessage.cs" />
+    <Compile Include="TPC\Msg\ErrorMessage.cs" />
+    <Compile Include="TPC\Msg\HaveCommittedMessage.cs" />
+    <Compile Include="TPC\Msg\NoForCommitMessage.cs" />
+    <Compile Include="TPC\Msg\PreCommitMessage.cs" />
+    <Compile Include="TPC\Msg\TimeoutMessage.cs" />
+    <Compile Include="TPC\Msg\TPCMessage.cs" />
+    <Compile Include="TPC\Msg\TransactionMessage.cs" />
+    <Compile Include="TPC\Msg\YesForCommitMessage.cs" />
     <Compile Include="Util\BlockingQueue.cs" />
     <Compile Include="DB\DatabaseTable.cs" />
     <Compile Include="Logger.cs" />
@@ -89,7 +101,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Restore\" />
-    <Folder Include="TPC\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

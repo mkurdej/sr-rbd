@@ -9,7 +9,15 @@ namespace RBD
 {
     public class NodeSyncInfo
     {
-        int BeatsOutOfSync;
+        int vBeatsOutOfSync;
+        public int BeatsOutOfSync
+        {
+            get
+            {
+                return vBeatsOutOfSync;
+            }
+        }
+
         //long LastBeat; // time in miliseconds
         DateTime LastBeat;
 
@@ -20,21 +28,16 @@ namespace RBD
 
         public void InSync()
         {
-            BeatsOutOfSync = 0;
+            vBeatsOutOfSync = 0;
             //LastBeat = System.currentTimeMillis();
             LastBeat = DateTime.Now;
         }
 
         public void BeatOutOfSync()
         {
-            ++BeatsOutOfSync;
+            ++vBeatsOutOfSync;
             //LastBeat = System.currentTimeMillis();
             LastBeat = DateTime.Now;
-        }
-
-        public int getBeatsOutOfSync()
-        {
-            return BeatsOutOfSync;
         }
 
         public long getMsSinceLastBeat()
