@@ -10,7 +10,6 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.util.concurrent.BlockingQueue;
 
@@ -56,7 +55,7 @@ public class UdpListener implements Runnable
                 byte[] data = new byte[size];
                 System.arraycopy(buffer, 8, data, 0, size);
                           
-                Message m = Message.Unserialize(MessageType.fromInt(type), data, (InetSocketAddress)packet.getSocketAddress());
+                Message m = Message.Unserialize(MessageType.fromInt(type), data, packet.getAddress());
                 storage.put(m);
             }
         }
