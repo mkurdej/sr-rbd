@@ -1,4 +1,4 @@
-﻿// +--
+﻿// +-- TODO startThread
 
 using System;
 using System.Collections.Generic;
@@ -88,7 +88,6 @@ namespace RBD.TPC
          */
         private void waitForMessage()
         {
-
             //try {
             Message msg = this.messageQueue.getMessage();
             onNewMessage(msg);
