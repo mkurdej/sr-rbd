@@ -1,4 +1,4 @@
-﻿// + TODO check
+﻿// + TODO check, wartości enuma !
 
 using System;
 using System.Collections.Generic;
@@ -16,6 +16,7 @@ namespace RBD.Msg
     {
         public enum MessageType
         {
+            // TODO trzeba zachować te same wartości we wszystkich implementacjach
             RESTORE_INCENTIVE,
             RESTORE_ACK,
             RESTORE_NACK,
@@ -30,6 +31,7 @@ namespace RBD.Msg
             TPC_HAVECOMMITED,
             TPC_NOFORCOMMIT,
             TPC_ERROR,
+            TPC_TIMEOUTMESSAGE, // TODO dodany w C#
             TRANSACTION_MESSAGE,
             CLIENT_SUCCESS,
             CLIENT_CONFLICT,
