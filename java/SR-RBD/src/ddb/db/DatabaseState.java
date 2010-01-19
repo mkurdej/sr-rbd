@@ -42,7 +42,7 @@ public interface DatabaseState {
 	 * @param tableName nazwa tabeli
 	 * @param createStatement zapytanei tworzace tabele
 	 */
-	public void addTable(String tableName, String createStatement);
+	public void addTable(String tableName);
 	/**
 	 * Pobiera numer wersji tabeli
 	 * @param tableName nazwa tabeli

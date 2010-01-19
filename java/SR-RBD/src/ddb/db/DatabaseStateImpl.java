@@ -9,6 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import ddb.Logger;
+
 /** 
  * <!-- begin-UML-doc -->
  * <!-- end-UML-doc -->
@@ -17,6 +19,7 @@ import java.util.Map;
  */
 public class DatabaseStateImpl implements DatabaseState {
 	private Map<String, TableState> tables;
+	private final static String LOGGING_NAME = "DatabaseStateImpl";
 	
 	private DatabaseStateImpl() {
 		this.tables = new HashMap<String, TableState>();
@@ -31,23 +34,27 @@ public class DatabaseStateImpl implements DatabaseState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void lockTable(String tableName) throws TableLockedException {
-		tables.get(tableName).lockTable();
+		getTableByName(tableName).lockTable();
 	}
 
 	public void setTableVersion(String tableName, int version) {
-		tables.get(tableName).setVersion(version);
+		getTableByName(tableName).setVersion(version);
 	}
 	
 	public void incrementTableVersion(String tableName) {
-		tables.get(tableName).incrementVersion();
+		getTableByName(tableName).incrementVersion();
 	}
 	
-	public void addTable(String tableName, String createStatement) {
-		tables.put(tableName, new TableState(tableName, createStatement));
-	}
-	
-	public void removeTable(String tableName) {
-		tables.remove(tableName);
+	@Override
+	public void addTable(String tableName) 
+	{
+		if( tables.get(tableName) != null )
+		{
+			Logger.getInstance().log("Adding table that exists", LOGGING_NAME, Logger.Level.WARNING);
+			return;
+		}
+		
+		tables.put(tableName, new TableState(tableName));
 	}
 
 	/** 
@@ -57,15 +64,27 @@ public class DatabaseStateImpl implements DatabaseState {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void unlockTable(String tableName) {
-		tables.get(tableName).unlockTable();
+		getTableByName(tableName).unlockTable();
 	}
 
 
 	@Override
 	public int getTableVersion(String tableName) {
 		
+		return getTableByName(tableName).getVersion();
+	}
+	
+	protected TableState getTableByName(String tableName)
+	{
 		TableState ts = tables.get(tableName);
-		return ts == null ? 0 : ts.getVersion();
+		
+		if( ts == null )
+		{
+			ts = new TableState(tableName);
+			tables.put(tableName, ts);
+		}
+		
+		return ts;
 	}
 	
 	public List<TableVersion> getTableVersions()
@@ -86,9 +105,9 @@ public class DatabaseStateImpl implements DatabaseState {
 		
 		for(TableVersion tv : tvs)
 		{
-			TableState ts = tables.get(tv.getTableName());
+			TableState ts = getTableByName(tv.getTableName());
 			
-			if(ts == null || ts.getVersion() > tv.getVersion())
+			if(ts.getVersion() > tv.getVersion())
 				return false;
 		}
 		
@@ -102,7 +121,4 @@ public class DatabaseStateImpl implements DatabaseState {
 		
 		return instance;
 	}
-
-	
-	
 }

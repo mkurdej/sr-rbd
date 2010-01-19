@@ -21,29 +21,20 @@ public class TableState {
 	/**
 	 * Zapytanie tworzace tabele
 	 */
-	private String createStatement;
+	
 	/**
 	 * 
 	 * @param name nazwa tabeli
 	 * @param createStatement zapytanie tworzace tabele
 	 */
-	public TableState(String name, String createStatement) {
+	public TableState(String name) {
 		this.name = name;
-		this.createStatement = createStatement;
 		this.version = 0;
 		this.locked = false;
 	}
 	
 	public String getName() {
 		return this.name;
-	}
-	
-	public String getCreateStatement() {
-		return this.createStatement;
-	}
-	
-	public void setCreateStatement(String createStatement) {
-		this.createStatement = createStatement;
 	}
 	
 	public int getVersion() {
