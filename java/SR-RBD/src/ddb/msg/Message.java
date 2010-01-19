@@ -42,7 +42,10 @@ public abstract class Message implements BinarySerializable {
 		builder.append("[");
 		builder.append(getType());
 		builder.append(" from ");
-		builder.append(sender.toString());
+		if(sender != null)
+			builder.append(sender.toString());
+		else
+			builder.append("self");
 		builder.append("]");
 		
 		return builder.toString();
