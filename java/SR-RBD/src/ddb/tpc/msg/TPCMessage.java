@@ -3,6 +3,10 @@
  */
 package ddb.tpc.msg;
 
+import java.io.IOException;
+
+import ddb.communication.DataInputStream;
+import ddb.communication.DataOutputStream;
 import ddb.msg.Message;
 
 /** 
@@ -25,5 +29,16 @@ public abstract class TPCMessage extends Message {
 	 */
 	public void setTransactionId(String transactionId) {
 		this.transactionId = transactionId;
+	}
+	
+	@Override
+	public void fromBinary(DataInputStream s) throws IOException {
+		transactionId = s.readString();
+		
+	}
+
+	@Override
+	public void toBinary(DataOutputStream s) throws IOException {
+		s.writeString(transactionId);
 	}
 }

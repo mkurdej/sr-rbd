@@ -50,6 +50,7 @@ public class ErrorMessage extends TPCMessage {
 
 	@Override
 	public void fromBinary(DataInputStream s) throws IOException {
+		super.fromBinary(s);
 		exception = new DBException(s);
 	}
 
@@ -60,6 +61,7 @@ public class ErrorMessage extends TPCMessage {
 
 	@Override
 	public void toBinary(DataOutputStream s) throws IOException {
+		super.toBinary(s);
 		exception.toBinary(s);	
 	}
 }
