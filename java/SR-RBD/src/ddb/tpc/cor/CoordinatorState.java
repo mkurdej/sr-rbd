@@ -63,7 +63,10 @@ abstract public class CoordinatorState implements TimeoutListener {
 	 * @param message
 	 */
 	public void onErrorMessage(ErrorMessage message) {
-		Logger.getInstance().log("Nie oczekiwano wiadomosci: ErrorMessage", LOGGER_NAME, Level.WARNING);
+		ddb.msg.client.ErrorMessage reply = new ddb.msg.client.ErrorMessage();
+		reply.setException(message.getException());
+		
+		coordinator.abortTransaction(reply);
 	}
 	
 	public void onTimeout() {

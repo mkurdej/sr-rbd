@@ -242,6 +242,8 @@ public class CoordinatorImpl extends Coordinator {
 		}
 		else if(message instanceof TimeoutMessage) {
 			state.onTimeout();
+		} else if(message instanceof ddb.tpc.msg.ErrorMessage) {
+			state.onErrorMessage((ddb.tpc.msg.ErrorMessage)message);
 		}
 		
 	}
