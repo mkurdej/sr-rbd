@@ -85,7 +85,7 @@ public class ConsoleView extends FrameView {
                     ++attempts;
                     if(result instanceof ResultsetMessage)
                     {
-                         logTextArea.append("RESULT: ");
+                         logTextArea.append("RESULT:\n");
                          logTextArea.append(((ResultsetMessage)result).getResult());
                          logTextArea.append("\n");
                     }
@@ -129,13 +129,13 @@ public class ConsoleView extends FrameView {
                 while(retry && attempts < ATTEMPTS_THRESHOLD);
 
             } catch (IOException ex) {
-                JOptionPane.showMessageDialog(getFrame(), "IOException " + ex.getMessage());
+                JOptionPane.showMessageDialog(getFrame(), "IOException " + ex.toString());
             } catch (InvalidMessageTypeException ex)
             {
-                JOptionPane.showMessageDialog(getFrame(), "InvalidMessageTypeException " + ex.getMessage());
+                JOptionPane.showMessageDialog(getFrame(), "InvalidMessageTypeException " + ex.toString());
             } catch(InterruptedException ex)
             {
-                JOptionPane.showMessageDialog(getFrame(), "InterruptedException " + ex.getMessage());
+                JOptionPane.showMessageDialog(getFrame(), "InterruptedException " + ex.toString());
             }
 
             if(attempts >= ATTEMPTS_THRESHOLD)
