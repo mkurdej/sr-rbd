@@ -70,6 +70,6 @@ abstract public class CoordinatorState implements TimeoutListener {
 	}
 	
 	public void onTimeout() {
-		// empty
+		coordinator.abortTransaction(new ddb.msg.client.TimeoutMessage());
 	}
 }

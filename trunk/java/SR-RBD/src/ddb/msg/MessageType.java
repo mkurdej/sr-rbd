@@ -22,7 +22,8 @@ public enum MessageType {
 	CLIENT_ERROR,
 	CLIENT_RESULTSET,
 	CLIENT_TIMEOUT,
-	HELLO_MESSAGE;
+	HELLO_MESSAGE,
+	TIMEOUT_MESSAGE;
 
 	public static MessageType fromInt(int type) throws InvalidMessageTypeException 
 	{
