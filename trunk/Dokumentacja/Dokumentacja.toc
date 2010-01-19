@@ -4,7 +4,7 @@
 \contentsline {chapter}{\numberline {2}Architektura}{3}
 \contentsline {section}{\numberline {2.1}Warstwa komunikacyjna}{3}
 \contentsline {section}{\numberline {2.2}Warstwa logiki aplikacyjnej}{3}
-\contentsline {section}{\numberline {2.3}Warstwa dost\IeC {\k e}pu do danych}{3}
+\contentsline {section}{\numberline {2.3}Warstwa dost\IeC {\k e}pu do danych}{4}
 \contentsline {chapter}{\numberline {3}Tr\IeC {\'o}jfazowe zatwierdzanie transakcji}{6}
 \contentsline {section}{\numberline {3.1}Model automatowy}{6}
 \contentsline {subsubsection}{Serwer (Coordinator)}{6}
