@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Arch Linux) (format=pdflatex 2010.1.19)  19 JAN 2010 16:21
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Arch Linux) (format=pdflatex 2010.1.19)  19 JAN 2010 16:39
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -456,12 +456,11 @@ LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
 
 ]
 Rozdzia\l  2.
-<architektura.png, id=20, 1307.9453pt x 684.4394pt>
-File: architektura.png Graphic file (type png)
- <use architektura.png>
 [3
 
-]
+] <architektura.png, id=23, 1307.9453pt x 684.4394pt>
+File: architektura.png Graphic file (type png)
+ <use architektura.png>
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
@@ -476,13 +475,13 @@ File: 3PC-klient.png Graphic file (type png)
 [6
 
  <./3PC-serwer.png (PNG copy)>]
-LaTeX Font Info:    Try loading font information for OT4+cmtt on input line 82.
+LaTeX Font Info:    Try loading font information for OT4+cmtt on input line 85.
 
 
 (/usr/share/texmf-dist/tex/latex/polski/ot4cmtt.fd
 File: ot4cmtt.fd 2008/02/24 v1.2.1 Font defs for fonts PL (MW)
 )
-Overfull \hbox (10.37398pt too wide) in paragraph at lines 82--83
+Overfull \hbox (10.37398pt too wide) in paragraph at lines 85--86
 []\OT4/cmr/m/n/10.95 Pewien klient ini-cjuje se-kwen-cj¦ trój-fa-zo-wego za-twi
 er-dze-nia za po-moc¡ pa-kietu []\OT4/cmtt/m/n/10.95 Transaction\OT4/cmr/m/n/10
 .95 .
@@ -504,7 +503,7 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 File: restore_node_not_in_sync.png Graphic file (type png)
 
 <use restore_node_not_in_sync.png>
-Overfull \hbox (22.22743pt too wide) in paragraph at lines 108--109
+Overfull \hbox (22.22743pt too wide) in paragraph at lines 111--112
  [][] 
  []
 
@@ -643,7 +642,7 @@ essage.png (PNG copy)>] [23 <./sekwencje/HaveCommittedMessage.png (PNG copy)>]
 Here is how much of TeX's memory you used:
  2503 strings out of 493847
  32027 string characters out of 3153979
- 85911 words of memory out of 3000000
+ 84911 words of memory out of 3000000
  5725 multiletter control sequences out of 15000+200000
  13228 words of font info for 37 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
@@ -658,7 +657,7 @@ l/plr10.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plsl10.pfb></usr/share
 /public/pl/plss12.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plss17.pfb><
 /usr/share/texmf-dist/fonts/type1/public/pl/plti10.pfb></usr/share/texmf-dist/f
 onts/type1/public/pl/pltt10.pfb>
-Output written on Dokumentacja.pdf (24 pages, 923179 bytes).
+Output written on Dokumentacja.pdf (24 pages, 924112 bytes).
 PDF statistics:
  145 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

@@ -41,8 +41,7 @@ Kluczowymi algorytmami rozproszonymi dla tego projetu były:
 	\item trójfazowe zatwierdzanie transakcji (ang. \emph{Three Phase Commit})
 	\item autorski pomysł synchronizacji dynamicznie dołączanych węzłów
 \end{itemize}
-Oba algorytmy zostaną szczegółowo omówione w dalszej części dokumentacji.
-
+Oba algorytmy zostaną szczegółowo omówione w dalszej części dokumentacji. Dodatkowo, aby łatwiej można było wgłębić się w niektóre części kodu - przedstawiono również diagramy sekwencji.
 \chapter{Architektura}
 Całe rozwiązanie składa się z kilku części. Ogólnie podzielić projekt można na następujące warstwy:
 \begin{itemize}
@@ -56,10 +55,14 @@ W skład warstwy komunikacyjnej wchodzą klasy służące do nasłuchiwania na w
 Ostatecznie po przetworzeniu wiadomości musi nastąpić pewna reakcja obiawiająca się wysłaniem konkretnego pakietu. I tu używane są klasy TCP i UDP sender, które wysyłają wcześniej przygotowaną wiadomość. Tu warto jeszcze wspomnieć o Hello generatorze, który okresowo wysyła heartbeats (i tylko on korzysta z protokołu UDP). Ważny jest tu TCP sender, który przechowuje pulę połączeń, ewentualnie nawiązuje nowe.
 
 \section{Warstwa logiki aplikacyjnej}
-Dispatcher odpowiada za klasyfikację wiadomości i odpowiednią reakcję. Reakcja ta obiawia się utworzeniem odpowiedniej klasy roboczej, która będzie odpowiadała za przechodzenie po grafie stanów automatu trójfazowego zatwierdzania transakcji, lub synchronizacji węzłów. W zależności od tego, czy węzeł w danym momencie koordynuje transakcję, czy realizuje polecenia z innych węzłów tworzone są instancje obiektów Cohort lub Coordinator - podobnie dla synchronizacji (przedrostek Restore).
+Dispatcher odpowiada za klasyfikację wiadomości i odpowiednią reakcję. Reakcja ta obiawia się utworzeniem odpowiedniej klasy roboczej, która będzie odpowiadała za przechodzenie po grafie stanów automatu trójfazowego zatwierdzania transakcji, lub synchronizacji węzłów. W zależności od tego, czy węzeł w danym momencie koordynuje transakcję, czy realizuje polecenia z innych węzłów tworzone są instancje obiektów Cohort lub Coordinator - podobnie dla synchronizacji (przedrostek Restore). W obu przypadkach użyto wzorca projektowego ,,Stan''.
+
+Każda z klas nadzorująca daną sesję, kontroluje czas spędzony w oczekiwaniu i ewentualnie powiadamia o upłynięciu limitu czasu na odpowiedź.
 
 \section{Warstwa dostępu do danych}
 W tej warstwie znajdują się wszelkie klasy, które mają na celu manipulować właściwymi danymi przechowywanymi w bazie. Klasą, która po części jest logiką aplikacyjną jest Database state. Ma ona na celu przechowywać aktualne blokady i stan bazy danych. Oprócz tego występują dwie inne pomocnicze klasy - Database connector i SQL parser, które mają na celu parsować i zapytania i umożliwiać dialog z właściwą bazą danych.
+
+Każde z zapytań jest wstępnie iterpretowane przez SQL parsera, a następnie w zależności od zapytania, klasy cohort'ów wykonują odpowiednie akcje, jak np. blokowanie bazy. Podczas parsowania zapytania oprócz tabeli i rodzaju zapytania generowane jest również zapytanie uwzględniające dodatkowową kolumnę dla blokowania wierszy. Każde zapytanie wykonuje się odpowiednio zmodyfikowane o tą właśnie kolumne. Tu czynione jest założenie, że baza danych jest wstępnie założona i przygotowana do nawiązywania połączeń przez węzeł, na którym się znajduje.
 \begin{figure}[h]
 \centering
 \includegraphics[width=22cm,angle=90]{architektura.png}
