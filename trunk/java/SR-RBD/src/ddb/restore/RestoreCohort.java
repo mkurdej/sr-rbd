@@ -193,7 +193,7 @@ public class RestoreCohort extends Worker {
 		else
 		{
 			Logger.getInstance().log(
-					"Table skipped - my version is newer", 
+					"Table skipped - my version is newer or equal", 
 					LOGGING_NAME, 
 					Logger.Level.INFO);
 		}
