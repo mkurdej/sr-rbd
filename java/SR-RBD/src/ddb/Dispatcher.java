@@ -90,6 +90,9 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 	
 	public void Initialize()
 	{
+		// set queue for self writing
+		TcpSender.getInstance().setQueue(queue);
+		
 		// assign self identifier
 		me = new InetSocketAddress(Config.TcpAddress(), Config.TcpPort());
 		

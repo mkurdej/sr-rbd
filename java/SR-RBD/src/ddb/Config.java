@@ -48,7 +48,7 @@ public class Config {
     
     public static int MinOtherNodes()
     {
-    	return maxNodes == -1 ? 0 : maxNodes / 2;
+    	return maxNodes == -1 ? 0 : maxNodes / 2 + 1;
     }
     
     public static String Database()

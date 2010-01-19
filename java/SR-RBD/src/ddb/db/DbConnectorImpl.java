@@ -73,8 +73,8 @@ public class DbConnectorImpl implements DbConnector
         try
         {
         	statement = connection.createStatement();
-			statement.execute(queryString);
-			result = new DatabaseTable(statement.getResultSet());
+        	statement.execute(queryString);
+        	result = new DatabaseTable(statement.getResultSet());
 		} 
         catch (SQLException e) 
         {
