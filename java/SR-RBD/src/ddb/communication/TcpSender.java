@@ -6,7 +6,7 @@ package ddb.communication;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -27,7 +27,7 @@ import ddb.msg.Message;
 public class TcpSender {
 
 	private final static String LOGGING_NAME = "TcpSender";
-	private Map<InetAddress, NodeInfo> nodes = new HashMap<InetAddress, NodeInfo>();
+	private Map<InetSocketAddress, NodeInfo> nodes = new HashMap<InetSocketAddress, NodeInfo>();
 	
 	
 	
@@ -57,7 +57,7 @@ public class TcpSender {
 		// end-user-code
 	}
 	
-	public synchronized void removeNode(InetAddress address) {
+	public synchronized void removeNode(InetSocketAddress address) {
 		if(nodes.remove(address) == null)
 		{
 			Logger.getInstance().log("Request to remove unexisting node: " + address.toString(), 
@@ -70,12 +70,8 @@ public class TcpSender {
 				Logger.Level.INFO);
 	}
 
-	public synchronized void addNodeBySocket(InetAddress node, Socket s) 
+	public synchronized void addNodeBySocket(InetSocketAddress node, Socket s) 
 	{
-		Logger.getInstance().log("addNodeBySocket Adding node: " + node.toString(), 
-				LOGGING_NAME,
-				Logger.Level.INFO);
-		
 		if(nodes.get(node) != null)
 		{
 			Logger.getInstance().log("Request to add already existing node: " + node.toString(), 
@@ -86,24 +82,15 @@ public class TcpSender {
 		nodes.put(node, new NodeInfo(s, false));
 	}
 	
-	public synchronized void AddServerNode(InetAddress node, int port, BlockingQueue<Message> storage)
+	public synchronized void AddServerNode(InetSocketAddress node, BlockingQueue<Message> storage)
 	{
-		Logger.getInstance().log("AddServerNode Adding node: " + node.toString(), 
-				LOGGING_NAME,
-				Logger.Level.INFO);
-		
-		
 		NodeInfo nodeInfo = nodes.get(node);
 		
 		if(nodeInfo == null)
 		{
+			// connect to node
 			try {
-				// connect to node
-				Socket socket = new Socket(node, port);
-				
-				Logger.getInstance().log("AddServerNode Creating worker thread: " + node.toString(), 
-						LOGGING_NAME,
-						Logger.Level.INFO);
+				Socket socket = new Socket(node.getAddress(), node.getPort());
 				
 				TcpWorker worker = new TcpWorker(socket, storage);
                 new Thread(worker, 
@@ -139,11 +126,11 @@ public class TcpSender {
 		return count;
 	}
 	
-	public synchronized List<InetAddress> getAllServerNodes()
+	public synchronized List<InetSocketAddress> getAllServerNodes()
 	{
-		List<InetAddress> result = new LinkedList<InetAddress>();
+		List<InetSocketAddress> result = new LinkedList<InetSocketAddress>();
 		
-		for(Map.Entry<InetAddress, NodeInfo> e : nodes.entrySet())
+		for(Map.Entry<InetSocketAddress, NodeInfo> e : nodes.entrySet())
 		{
 			if(e.getValue().getIsServer())
 			{
@@ -168,11 +155,11 @@ public class TcpSender {
 		data = message.Serialize();
 		
 		// search for server nodes
-		Iterator<Map.Entry<InetAddress, NodeInfo>> it = nodes.entrySet().iterator();
+		Iterator<Map.Entry<InetSocketAddress, NodeInfo>> it = nodes.entrySet().iterator();
 
 		while(it.hasNext())
 		{
-			Map.Entry<InetAddress, NodeInfo> entry = it.next();
+			Map.Entry<InetSocketAddress, NodeInfo> entry = it.next();
 			NodeInfo node = entry.getValue();
 			
 			if(node.getIsServer())
@@ -192,7 +179,7 @@ public class TcpSender {
 	 * @generated 
 	 *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public synchronized void sendToNode(Message message, InetAddress to) {
+	public synchronized void sendToNode(Message message, InetSocketAddress to) {
 		// begin-user-code
 		byte[] data; 
 		
@@ -221,7 +208,7 @@ public class TcpSender {
 	 *            an established socket to the target
 	 * @throws IOException
 	 */
-	private boolean writeToNode(InetAddress node, Socket s, byte[] data) {
+	private boolean writeToNode(InetSocketAddress node, Socket s, byte[] data) {
 
 		try {
 			OutputStream sos = s.getOutputStream();

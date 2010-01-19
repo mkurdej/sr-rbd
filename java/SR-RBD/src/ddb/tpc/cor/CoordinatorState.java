@@ -3,7 +3,7 @@
  */
 package ddb.tpc.cor;
 
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 
 import ddb.Logger;
 import ddb.Logger.Level;
@@ -29,21 +29,21 @@ abstract public class CoordinatorState implements TimeoutListener {
 	/** 
 	 * @param node
 	 */
-	public void onYesForCommit(InetAddress node) {
+	public void onYesForCommit(InetSocketAddress node) {
 		Logger.getInstance().log("Nie oczekiwano wiadomosci: YesForCommit", LOGGER_NAME, Level.WARNING);
 	}
 
 	/** 
 	 * @param node
 	 */
-	public void onNoForCommit(InetAddress node) {
+	public void onNoForCommit(InetSocketAddress node) {
 		Logger.getInstance().log("Nie oczekiwano wiadomosci: NoForCommit", LOGGER_NAME, Level.WARNING);
 	}
 
 	/** 
 	 * @param node
 	 */
-	public void onAckPreCommit(InetAddress node)  {
+	public void onAckPreCommit(InetSocketAddress node)  {
 		Logger.getInstance().log("Nie oczekiwano wiadomosci: AckPreCommit", LOGGER_NAME, Level.WARNING);
 	}
 
