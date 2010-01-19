@@ -24,7 +24,11 @@ public class DatabaseTable implements Serializable
      * @param resultSet wynik zapytania, który jest w całości ładowany do pamięci.
      */
     public DatabaseTable(ResultSet resultSet) throws SQLException {
-        ResultSetMetaData metaData = resultSet.getMetaData();
+        
+    	if(resultSet == null)
+    		return;
+    	
+    	ResultSetMetaData metaData = resultSet.getMetaData();
         tableName = metaData.getTableName(1);
 
         for(int i=1; i <= metaData.getColumnCount(); i++){

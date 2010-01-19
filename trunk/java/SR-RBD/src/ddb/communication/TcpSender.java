@@ -28,7 +28,7 @@ public class TcpSender {
 
 	private final static String LOGGING_NAME = "TcpSender";
 	private Map<InetSocketAddress, NodeInfo> nodes = new HashMap<InetSocketAddress, NodeInfo>();
-	
+	protected BlockingQueue<Message> queue;
 	
 	
 	/**
@@ -40,9 +40,7 @@ public class TcpSender {
 	 * @generated "Singleton (com.ibm.xtools.patterns.content.gof.creational.singleton.SingletonPattern)"
 	 */
 	protected TcpSender() {
-		// begin-user-code
-		// empty
-		// end-user-code
+		
 	}
 
 	/**
@@ -55,6 +53,11 @@ public class TcpSender {
 		
 		return instance;
 		// end-user-code
+	}
+	
+	public void setQueue(BlockingQueue<Message> q)
+	{
+		queue = q;
 	}
 	
 	public synchronized void removeNode(InetSocketAddress address) {
@@ -123,7 +126,8 @@ public class TcpSender {
 			if(node.getIsServer())
 				++count;
 		
-		return count;
+		// add self
+		return count + 1;
 	}
 	
 	public synchronized List<InetSocketAddress> getAllServerNodes()
@@ -169,6 +173,15 @@ public class TcpSender {
 					it.remove();
 				}
 			}
+		}
+		
+		// write to self
+		try {
+			queue.put(message);
+		} catch (InterruptedException e) {
+			Logger.getInstance().log("InterruptedException Cannot send to self" , 
+					LOGGING_NAME,
+					Logger.Level.SEVERE);
 		}
 		// end-user-code
 	}
