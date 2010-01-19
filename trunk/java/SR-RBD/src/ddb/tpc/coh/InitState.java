@@ -55,7 +55,7 @@ public class InitState extends CohortState {
 			//	this.cohort.getDatabaseState().addTable(cohort.getTableName(), cohort.getQueryString());
 			//}
 		} catch (Exception e) {
-			Logger.getInstance().log(e.getMessage(), "KOHORT", Level.WARNING);
+			Logger.getInstance().log(e.toString(), "KOHORT", Level.WARNING);
 			this.cohort.replyToCoordinator(new NoForCommitMessage());
 			this.cohort.endTransaction();
 			this.cohort.setState(new AbortState());

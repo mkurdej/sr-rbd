@@ -291,7 +291,8 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 		else if (msg instanceof YesForCommitMessage
 				|| msg instanceof NoForCommitMessage
 				|| msg instanceof AckPreCommitMessage
-				|| msg instanceof HaveCommittedMessage) 
+				|| msg instanceof HaveCommittedMessage
+				|| msg instanceof ddb.tpc.msg.ErrorMessage) 
 		{
 			Logger.getInstance().log(
 					"Dispatching to coordinator with tid " + transactionId + " : " + msg.toString(), 
@@ -361,17 +362,6 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 				"Creating coordinator with tid - " + transactionId + " : " + msg.toString(), 
 				LOGGING_NAME, 
 				Logger.Level.INFO);
-		
-		
-		// create self COHORT
-		Cohort coh = new CohortImpl();
-		cohorts.put(transactionId, coh);
-		coh.setTransactionId(transactionId);
-		coh.setCoordinatorAddress(msg.getSender());
-		coh.setDatabaseState(DatabaseStateImpl.getInstance());
-		coh.setConnector(DbConnectorImpl.getInstance());
-		coh.addEndTransactionListener(this);
-		coh.processMessage(msg);
 		
 		// create COORDINATOR
 		Coordinator coor = new CoordinatorImpl();
