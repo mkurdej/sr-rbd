@@ -179,6 +179,19 @@ public class TcpSender {
 		// begin-user-code
 		byte[] data; 
 		
+		if(to == null)
+		{
+			// write to self
+			try {
+				queue.put(message);
+			} catch (InterruptedException e) {
+				Logger.getInstance().log("InterruptedException Cannot send to self" , 
+						LOGGING_NAME,
+						Logger.Level.SEVERE);
+			}
+		}
+		
+		
 		// serialize
 		data = message.Serialize();
 		NodeInfo node = nodes.get(to);
