@@ -189,6 +189,8 @@ public class TcpSender {
 						LOGGING_NAME,
 						Logger.Level.SEVERE);
 			}
+			
+			return;
 		}
 		
 		
