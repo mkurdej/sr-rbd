@@ -1,0 +1,17 @@
+\select@language {polish}
+\select@language {polish}
+\contentsline {chapter}{\numberline {1}Wprowadzenie}{2}
+\contentsline {chapter}{\numberline {2}Architektura}{3}
+\contentsline {section}{\numberline {2.1}Warstwa komunikacyjna}{3}
+\contentsline {section}{\numberline {2.2}Warstwa logiki aplikacyjnej}{3}
+\contentsline {section}{\numberline {2.3}Warstwa dost\IeC {\k e}pu do danych}{3}
+\contentsline {chapter}{\numberline {3}Tr\IeC {\'o}jfazowe zatwierdzanie transakcji}{6}
+\contentsline {section}{\numberline {3.1}Model automatowy}{6}
+\contentsline {subsubsection}{Serwer (Coordinator)}{6}
+\contentsline {subsubsection}{Klient (Cohort)}{7}
+\contentsline {section}{\numberline {3.2}Opis s\IeC {\l }owny}{7}
+\contentsline {subsubsection}{Serwer (Coordinator)}{7}
+\contentsline {subsubsection}{Klient (Cohort)}{7}
+\contentsline {chapter}{\numberline {4}Dynamiczne dodawanie nowych w\IeC {\k e}z\IeC {\l }\IeC {\'o}w}{8}
+\contentsline {chapter}{\numberline {5}Diagramy sekwencji}{13}
+\contentsline {section}{\numberline {5.1}Wiadomo\IeC {\'s}ci}{13}
