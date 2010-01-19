@@ -61,6 +61,16 @@ public class CoordinatorImpl extends Coordinator {
 	private void clearAnswers() {
 		this.answers.clear();
 	}
+	
+	public int getAnswerCount()
+	{
+		return this.answers.size();
+	}
+	
+	public int getNodesCount()
+	{
+		return this.nodes;
+	}
 
 	/** 
 	 * Ustawia liste wezlow bioracych udzial w transakcji.
