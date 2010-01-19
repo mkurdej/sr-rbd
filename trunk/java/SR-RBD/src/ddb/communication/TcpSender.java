@@ -9,8 +9,6 @@ import java.net.Socket;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
@@ -128,21 +126,6 @@ public class TcpSender {
 		
 		// add self
 		return count + 1;
-	}
-	
-	public synchronized List<InetSocketAddress> getAllServerNodes()
-	{
-		List<InetSocketAddress> result = new LinkedList<InetSocketAddress>();
-		
-		for(Map.Entry<InetSocketAddress, NodeInfo> e : nodes.entrySet())
-		{
-			if(e.getValue().getIsServer())
-			{
-				result.add(e.getKey());
-			}
-		}
-		
-		return result;
 	}
 	
 	/**
