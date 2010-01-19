@@ -5,7 +5,6 @@ package ddb.tpc.cor;
 
 import java.net.InetSocketAddress;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import ddb.Logger;
@@ -37,7 +36,7 @@ public class CoordinatorImpl extends Coordinator {
 	/** 
 	 * Lista wezlo bioracych udzial w transakcji
 	 */
-	private List<InetSocketAddress> nodes;
+	private int nodes;
 	/**
 	 * Adres klienta, ktory zarzadal wykonania transakcji
 	 */
@@ -67,8 +66,8 @@ public class CoordinatorImpl extends Coordinator {
 	 * Ustawia liste wezlow bioracych udzial w transakcji.
 	 * @param nodeList
 	 */
-	public void setNodeList(List<InetSocketAddress> nodeList) {
-		this.nodes = nodeList;
+	public void setNodeCount(int nodeCount) {
+		this.nodes = nodeCount;
 	}
 
 	/** 
@@ -86,7 +85,7 @@ public class CoordinatorImpl extends Coordinator {
 	 * @return
 	 */
 	private boolean checkAnswers() {
-		return this.answers.size() == this.nodes.size();
+		return this.answers.size() == this.nodes;
 	}
 
 	/** 
