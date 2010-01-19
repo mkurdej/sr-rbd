@@ -363,6 +363,16 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 				Logger.Level.INFO);
 		
 		
+		// create self COHORT
+		Cohort coh = new CohortImpl();
+		cohorts.put(transactionId, coh);
+		coh.setTransactionId(transactionId);
+		coh.setCoordinatorAddress(msg.getSender());
+		coh.setDatabaseState(DatabaseStateImpl.getInstance());
+		coh.setConnector(DbConnectorImpl.getInstance());
+		coh.addEndTransactionListener(this);
+		coh.processMessage(msg);
+		
 		// create COORDINATOR
 		Coordinator coor = new CoordinatorImpl();
 		coordinators.put(transactionId, coor);
