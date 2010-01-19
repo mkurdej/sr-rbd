@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Arch Linux) (format=pdflatex 2010.1.19)  19 JAN 2010 16:39
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Arch Linux) (format=pdflatex 2010.1.19)  19 JAN 2010 16:48
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -573,56 +573,77 @@ File: sekwencje/CorCoordinatorStates.png Graphic file (type png)
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<sekwencje/CanCommitMessage1.png, id=68, 922.19531pt x 439.6425pt>
+<sekwencje/TransactionMessage1.png, id=68, 947.03813pt x 436.63126pt>
+File: sekwencje/TransactionMessage1.png Graphic file (type png)
+
+<use sekwencje/TransactionMessage1.png>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<sekwencje/TransactionMessage2.png, id=69, 825.83531pt x 514.17094pt>
+File: sekwencje/TransactionMessage2.png Graphic file (type png)
+
+<use sekwencje/TransactionMessage2.png>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<sekwencje/TransactionMessage3.png, id=70, 656.4525pt x 155.83218pt>
+File: sekwencje/TransactionMessage3.png Graphic file (type png)
+
+<use sekwencje/TransactionMessage3.png>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<sekwencje/CanCommitMessage1.png, id=71, 922.19531pt x 439.6425pt>
 File: sekwencje/CanCommitMessage1.png Graphic file (type png)
 
 <use sekwencje/CanCommitMessage1.png>
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<sekwencje/CanCommitMessage2.png, id=69, 964.35281pt x 286.06876pt>
+<sekwencje/CanCommitMessage2.png, id=72, 964.35281pt x 286.06876pt>
 File: sekwencje/CanCommitMessage2.png Graphic file (type png)
 
 <use sekwencje/CanCommitMessage2.png>
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<sekwencje/YesForCommit.png, id=70, 934.24031pt x 284.56313pt>
+<sekwencje/YesForCommit.png, id=73, 934.24031pt x 284.56313pt>
 File: sekwencje/YesForCommit.png Graphic file (type png)
 
 <use sekwencje/YesForCommit.png>
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<sekwencje/NoForCommit.png, id=71, 621.07031pt x 265.74281pt>
+<sekwencje/NoForCommit.png, id=74, 621.07031pt x 265.74281pt>
 File: sekwencje/NoForCommit.png Graphic file (type png)
 
 <use sekwencje/NoForCommit.png>
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<sekwencje/PreCommitMessage.png, id=72, 965.85844pt x 408.77719pt>
+<sekwencje/PreCommitMessage.png, id=75, 965.85844pt x 408.77719pt>
 File: sekwencje/PreCommitMessage.png Graphic file (type png)
 
 <use sekwencje/PreCommitMessage.png>
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<sekwencje/AckDoCommitMessage.png, id=73, 927.465pt x 411.03563pt>
+<sekwencje/AckDoCommitMessage.png, id=76, 927.465pt x 411.03563pt>
 File: sekwencje/AckDoCommitMessage.png Graphic file (type png)
 
 <use sekwencje/AckDoCommitMessage.png>
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<sekwencje/DoCommitMessage.png, id=74, 506.6428pt x 238.64156pt>
+<sekwencje/DoCommitMessage.png, id=77, 506.6428pt x 238.64156pt>
 File: sekwencje/DoCommitMessage.png Graphic file (type png)
 
 <use sekwencje/DoCommitMessage.png>
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<sekwencje/HaveCommittedMessage.png, id=75, 1000.48781pt x 395.22656pt>
+<sekwencje/HaveCommittedMessage.png, id=78, 1000.48781pt x 395.22656pt>
 File: sekwencje/HaveCommittedMessage.png Graphic file (type png)
 
 <use sekwencje/HaveCommittedMessage.png>
@@ -632,18 +653,20 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 [13
 
 ] [14 <./sekwencje/TPC.png (PNG copy)>] [15 <./sekwencje/CohCohordStates.png (P
-NG copy)> <./sekwencje/CorCoordinatorStates.png (PNG copy)>] [16 <./sekwencje/C
-anCommitMessage1.png (PNG copy)>] [17 <./sekwencje/CanCommitMessage2.png (PNG c
-opy)>] [18 <./sekwencje/YesForCommit.png (PNG copy)>] [19 <./sekwencje/NoForCom
-mit.png (PNG copy)>] [20 <./sekwencje/PreCommitMessage.png (PNG copy)>]
-[21 <./sekwencje/AckDoCommitMessage.png (PNG copy)>] [22 <./sekwencje/DoCommitM
-essage.png (PNG copy)>] [23 <./sekwencje/HaveCommittedMessage.png (PNG copy)>]
+NG copy)> <./sekwencje/CorCoordinatorStates.png (PNG copy)>] [16 <./sekwencje/T
+ransactionMessage1.png (PNG copy)>] [17 <./sekwencje/TransactionMessage2.png (P
+NG copy)>] [18 <./sekwencje/TransactionMessage3.png (PNG copy)>] [19 <./sekwenc
+je/CanCommitMessage1.png (PNG copy)>] [20 <./sekwencje/CanCommitMessage2.png (P
+NG copy)>] [21 <./sekwencje/YesForCommit.png (PNG copy)>] [22 <./sekwencje/NoFo
+rCommit.png (PNG copy)>] [23 <./sekwencje/PreCommitMessage.png (PNG copy)>]
+[24 <./sekwencje/AckDoCommitMessage.png (PNG copy)>] [25 <./sekwencje/DoCommitM
+essage.png (PNG copy)>] [26 <./sekwencje/HaveCommittedMessage.png (PNG copy)>]
 (./Dokumentacja.aux) ) 
 Here is how much of TeX's memory you used:
- 2503 strings out of 493847
- 32027 string characters out of 3153979
+ 2518 strings out of 493847
+ 32549 string characters out of 3153979
  84911 words of memory out of 3000000
- 5725 multiletter control sequences out of 15000+200000
+ 5737 multiletter control sequences out of 15000+200000
  13228 words of font info for 37 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
  25i,8n,31p,751b,233s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -657,9 +680,9 @@ l/plr10.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plsl10.pfb></usr/share
 /public/pl/plss12.pfb></usr/share/texmf-dist/fonts/type1/public/pl/plss17.pfb><
 /usr/share/texmf-dist/fonts/type1/public/pl/plti10.pfb></usr/share/texmf-dist/f
 onts/type1/public/pl/pltt10.pfb>
-Output written on Dokumentacja.pdf (24 pages, 924112 bytes).
+Output written on Dokumentacja.pdf (27 pages, 963675 bytes).
 PDF statistics:
- 145 PDF objects out of 1000 (max. 8388607)
+ 158 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 116 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 131 words of extra memory for PDF output out of 10000 (max. 10000000)
 
