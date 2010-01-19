@@ -59,7 +59,7 @@ public class TcpListener implements Runnable
             {
                 Socket newConnection = serverSocket.accept();
                 TcpSender.getInstance().addNodeBySocket(
-            		newConnection.getInetAddress(),
+            		(InetSocketAddress)newConnection.getRemoteSocketAddress(),
             		newConnection
         		);
                 

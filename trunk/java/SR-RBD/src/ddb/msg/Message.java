@@ -6,7 +6,7 @@ package ddb.msg;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 
 import ddb.BinarySerializable;
 import ddb.Logger;
@@ -24,13 +24,13 @@ public abstract class Message implements BinarySerializable {
 	
 	private final static String LOGGING_NAME = "Message";
 	
-	private InetAddress sender;
+	private InetSocketAddress sender;
 	
-	public void setSender(InetAddress sender) {
+	public void setSender(InetSocketAddress sender) {
 		this.sender = sender;
 	}
 
-	public InetAddress getSender() {
+	public InetSocketAddress getSender() {
 		return sender;
 	}
 	
@@ -86,7 +86,7 @@ public abstract class Message implements BinarySerializable {
 		}
 	}
 	
-	static public Message Unserialize(MessageType type, byte[] bytes, InetAddress sender) throws IOException
+	static public Message Unserialize(MessageType type, byte[] bytes, InetSocketAddress sender) throws IOException
 	{
 		// create message object of given type
 		Message result = MessageFactory.create(type);

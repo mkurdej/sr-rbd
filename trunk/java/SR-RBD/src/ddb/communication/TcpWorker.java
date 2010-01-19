@@ -9,7 +9,7 @@ import java.io.EOFException;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.concurrent.BlockingQueue;
 
 import ddb.Logger;
@@ -42,7 +42,7 @@ public class TcpWorker implements Runnable
 			, LOGGING_NAME, Logger.Level.INFO);
     	
     	// IMPROVEMENT: i'm unsure if this would work in finally clause
-    	InetAddress address = socket.getInetAddress();
+    	InetSocketAddress address = (InetSocketAddress)socket.getRemoteSocketAddress();
     	
 		try
 		{

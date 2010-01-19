@@ -1,6 +1,6 @@
 package ddb;
 
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -30,13 +30,13 @@ public abstract class Worker implements Runnable
 		queue.put(msg);
 	}
 	
-	public Message accept(MessageType type, InetAddress node) throws InterruptedException, TimeoutException
+	public Message accept(MessageType type, InetSocketAddress node) throws InterruptedException, TimeoutException
 	{
 		MessageType[] types = { type };
 		return accept(types, node);
 	}
 	
-	public Message accept(MessageType[] types, InetAddress node) throws InterruptedException, TimeoutException
+	public Message accept(MessageType[] types, InetSocketAddress node) throws InterruptedException, TimeoutException
 	{
 		while(true)
 		{

@@ -3,7 +3,7 @@
  */
 package ddb.tpc.cor;
 
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 
 import ddb.msg.client.ConflictMessage;
 import ddb.msg.client.TimeoutMessage;
@@ -27,7 +27,7 @@ public class WaitingState extends CoordinatorState {
 	 *  @see CoordinatorState#onYesForCommit(String node)
 	 */
 	@Override
-	public void onYesForCommit(InetAddress node) {
+	public void onYesForCommit(InetSocketAddress node) {
 		coordinator.processAnswer(node, new PreCommitMessage(), new PreparedState());
 	}
 
@@ -36,7 +36,7 @@ public class WaitingState extends CoordinatorState {
 	 * 
 	 */
 	@Override
-	public void onNoForCommit(InetAddress node) {
+	public void onNoForCommit(InetSocketAddress node) {
 		coordinator.abortTransaction(new ConflictMessage());
 	}
 }
