@@ -5,6 +5,7 @@ package ddb.tpc.cor;
 
 import java.net.InetSocketAddress;
 
+import ddb.Logger;
 import ddb.msg.client.ConflictMessage;
 import ddb.msg.client.TimeoutMessage;
 import ddb.tpc.TimeoutListener;
@@ -13,6 +14,9 @@ import ddb.tpc.msg.PreCommitMessage;
 /**
  */
 public class WaitingState extends CoordinatorState {
+	
+	private final static String LOGGING_NAME = "Coordinator.WaitingState";
+	
 	/** 
 	 * 
 	 * @see TimeoutListener#onTimeout()
@@ -28,7 +32,12 @@ public class WaitingState extends CoordinatorState {
 	 */
 	@Override
 	public void onYesForCommit(InetSocketAddress node) {
+	
 		coordinator.processAnswer(node, new PreCommitMessage(), new PreparedState());
+		Logger.getInstance().log("Got answer " 
+			+ coordinator.getAnswerCount() + " of " 
+			+ coordinator.getNodesCount(), LOGGING_NAME, 
+			Logger.Level.INFO);
 	}
 
 	/** 
@@ -37,6 +46,7 @@ public class WaitingState extends CoordinatorState {
 	 */
 	@Override
 	public void onNoForCommit(InetSocketAddress node) {
+		Logger.getInstance().log("Got no - aborting!", LOGGING_NAME, Logger.Level.INFO);
 		coordinator.abortTransaction(new ConflictMessage());
 	}
 }

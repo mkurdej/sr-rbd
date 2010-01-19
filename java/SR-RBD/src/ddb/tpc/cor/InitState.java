@@ -77,6 +77,9 @@ public class InitState extends CoordinatorState {
 			else {
 				msg.setCreate(false);
 			}
+			
+			Logger.getInstance().log("Changing state to waiting", LOGGING_NAME, Logger.Level.INFO);
+			
 			coordinator.broadcastMessage(msg);
 			coordinator.changeState(new WaitingState());
 		}
