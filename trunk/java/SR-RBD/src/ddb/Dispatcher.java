@@ -395,7 +395,7 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 		TcpSender.getInstance().AddServerNode(node, queue);
 		
 		NodeSyncInfo nsi = nodeSynchronization.get(node);
-		
+
 		// create entry for new nodes
 		if(nsi == null)
 		{
