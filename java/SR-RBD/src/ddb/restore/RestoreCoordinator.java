@@ -136,7 +136,7 @@ public class RestoreCoordinator extends Worker
 						LOGGING_NAME, 
 						Logger.Level.WARNING);
 				
-				RestoreTable rt = new RestoreTable(-1, tv.getTableName(), "");
+				RestoreTable rt = new RestoreTable(tv.getVersion(), tv.getTableName(), "");
 				TcpSender.getInstance().sendToNode(rt, targetNode);
 			}
 		}	

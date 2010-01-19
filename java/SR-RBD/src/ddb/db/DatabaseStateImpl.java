@@ -99,10 +99,7 @@ public class DatabaseStateImpl implements DatabaseState {
 	
 	public boolean checkSync(List<TableVersion> tvs) {
 		
-		// check count of tables
-		if(tvs.size() != tables.size())
-			return false;
-		
+		// check tables
 		for(TableVersion tv : tvs)
 		{
 			TableState ts = getTableByName(tv.getTableName());

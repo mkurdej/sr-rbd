@@ -79,7 +79,6 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 	// others
 	protected Map<InetSocketAddress, NodeSyncInfo> nodeSynchronization = new HashMap<InetSocketAddress, NodeSyncInfo>();
 	protected InetSocketAddress me;
-	protected int isRestoring = 0; // TODO: remove
 	
 	
 	public Dispatcher()
@@ -236,43 +235,32 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 		
 		if (msg instanceof CanCommitMessage) 
 		{
-			if(isRestoring > 0)
+			// check if cohort already exists
+			if(cohorts.get(transactionId) != null)
 			{
 				Logger.getInstance().log(
-						"Sending message to blocked cohort due to restoring in progress: " + msg.toString(), 
+						"Cohort already exists for tid: " + transactionId, 
 						LOGGING_NAME, 
-						Logger.Level.INFO);
+						Logger.Level.WARNING);
 				
-				blockedCohort.putMessage(msg);
+				return;
 			}
-			else
-			{	
-				// check if cohort already exists
-				if(cohorts.get(transactionId) != null)
-				{
-					Logger.getInstance().log(
-							"Cohort already exists for tid: " + transactionId, 
-							LOGGING_NAME, 
-							Logger.Level.WARNING);
-					
-					return;
-				}
-				
-				Logger.getInstance().log(
-						"Creating new cohort with tid " + transactionId + " : " + msg.toString(), 
-						LOGGING_NAME, 
-						Logger.Level.INFO);
-				
-				// create cohort and start his job
-				Cohort coh = new CohortImpl();
-				cohorts.put(transactionId, coh);
-				coh.setTransactionId(transactionId);
-				coh.setCoordinatorAddress(msg.getSender());
-				coh.setDatabaseState(DatabaseStateImpl.getInstance());
-				coh.setConnector(DbConnectorImpl.getInstance());
-				coh.addEndTransactionListener(this);
-				coh.processMessage(msg);
-			}
+			
+			Logger.getInstance().log(
+					"Creating new cohort with tid " + transactionId + " : " + msg.toString(), 
+					LOGGING_NAME, 
+					Logger.Level.INFO);
+			
+			// create cohort and start his job
+			Cohort coh = new CohortImpl();
+			cohorts.put(transactionId, coh);
+			coh.setTransactionId(transactionId);
+			coh.setCoordinatorAddress(msg.getSender());
+			coh.setDatabaseState(DatabaseStateImpl.getInstance());
+			coh.setConnector(DbConnectorImpl.getInstance());
+			coh.addEndTransactionListener(this);
+			coh.processMessage(msg);
+			
 		} 
 		else if (msg instanceof PreCommitMessage
 				|| msg instanceof DoCommitMessage
@@ -363,32 +351,27 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 	
 	public void processTransactionMessage(TransactionMessage msg) throws InterruptedException
 	{
-		if(isRestoring > 0)
-		{
-			blockedCoordinator.putMessage(msg);
-		}
-		else
-		{
-			String transactionId = Util.generateGUID();
-			
-			Logger.getInstance().log(
-					"Creating coordinator with tid - " + transactionId + " : " + msg.toString(), 
-					LOGGING_NAME, 
-					Logger.Level.INFO);
-			
-			
-			// create COORDINATOR
-			Coordinator coor = new CoordinatorImpl();
-			coordinators.put(transactionId, coor);
-			coor.setTransactionId(transactionId);
-			coor.setClientAddress(msg.getSender());
-			coor.setDatabaseState(DatabaseStateImpl.getInstance());
-			coor.setConnector(DbConnectorImpl.getInstance());
-			coor.addEndTransactionListener(this);
-			
-			// give him the message
-			coor.processMessage(msg);
-		}
+		
+		String transactionId = Util.generateGUID();
+		
+		Logger.getInstance().log(
+				"Creating coordinator with tid - " + transactionId + " : " + msg.toString(), 
+				LOGGING_NAME, 
+				Logger.Level.INFO);
+		
+		
+		// create COORDINATOR
+		Coordinator coor = new CoordinatorImpl();
+		coordinators.put(transactionId, coor);
+		coor.setTransactionId(transactionId);
+		coor.setClientAddress(msg.getSender());
+		coor.setDatabaseState(DatabaseStateImpl.getInstance());
+		coor.setConnector(DbConnectorImpl.getInstance());
+		coor.addEndTransactionListener(this);
+		
+		// give him the message
+		coor.processMessage(msg);
+		
 	}
 	
 	public void processHelloMessage(HelloMessage msg)
