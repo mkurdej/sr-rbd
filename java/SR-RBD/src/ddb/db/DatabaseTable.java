@@ -87,6 +87,9 @@ public class DatabaseTable implements Serializable
                         builder.append( "\n" );
                 }
                 
+                builder.append("TOTAL ROWS: ");
+                builder.append(rows.size());
+                
                 return builder.toString();
         
     }

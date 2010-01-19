@@ -39,6 +39,7 @@ public class TimeoutGenerator {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void startTimer(long miliseconds) {
+		stopped = false;
 		timer.schedule(new TimerTask() {
 
 			@Override

@@ -47,7 +47,8 @@ abstract public class CohortState implements TimeoutListener {
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
 	public void onAbort() {
-		Logger.getInstance().log("Nie oczekiwano wiadomosci: Abort", LOGGER_NAME, Level.WARNING);
+		this.cohort.endTransaction();
+		this.cohort.setState(new AbortState());
 	}
 
 	/** 

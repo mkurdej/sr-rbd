@@ -13,7 +13,6 @@ import ddb.db.DBException;
 import ddb.db.DatabaseTable;
 import ddb.msg.Message;
 import ddb.msg.client.ResultsetMessage;
-import ddb.msg.client.TimeoutMessage;
 import ddb.tpc.msg.AbortMessage;
 import ddb.tpc.msg.AckPreCommitMessage;
 import ddb.tpc.msg.HaveCommittedMessage;
@@ -240,7 +239,7 @@ public class CoordinatorImpl extends Coordinator {
 		else if(message instanceof TransactionMessage) {
 			state.onTransaction((TransactionMessage)message);
 		}
-		else if(message instanceof TimeoutMessage) {
+		else if(message instanceof ddb.tpc.msg.TimeoutMessage) {
 			state.onTimeout();
 		} else if(message instanceof ddb.tpc.msg.ErrorMessage) {
 			state.onErrorMessage((ddb.tpc.msg.ErrorMessage)message);
