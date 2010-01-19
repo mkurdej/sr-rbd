@@ -88,6 +88,7 @@ public class CanCommitMessage extends TPCMessage {
 
 	@Override
 	public void fromBinary(DataInputStream s) throws IOException {
+		super.fromBinary(s);
 		queryString = s.readString();
 		tableName = s.readString();
 		isCreate = s.readBoolean();
@@ -101,6 +102,7 @@ public class CanCommitMessage extends TPCMessage {
 
 	@Override
 	public void toBinary(DataOutputStream s) throws IOException {
+		super.toBinary(s);
 		s.writeString(queryString);
 		s.writeString(tableName);
 		s.writeBoolean(isCreate);

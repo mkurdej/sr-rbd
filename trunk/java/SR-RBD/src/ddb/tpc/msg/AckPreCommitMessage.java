@@ -19,7 +19,7 @@ public class AckPreCommitMessage extends TPCMessage {
 
 	@Override
 	public void fromBinary(DataInputStream s) throws IOException {
-		// empty		
+		super.fromBinary(s);	
 	}
 
 	@Override
@@ -29,6 +29,6 @@ public class AckPreCommitMessage extends TPCMessage {
 
 	@Override
 	public void toBinary(DataOutputStream s) throws IOException {
-		// empty		
+		super.toBinary(s);	
 	}
 }
