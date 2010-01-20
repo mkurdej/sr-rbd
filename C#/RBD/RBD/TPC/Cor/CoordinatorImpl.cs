@@ -24,7 +24,7 @@ public class CoordinatorImpl : Coordinator {
 	/**
 	 * Adres klienta, ktory zarzadal wykonania transakcji
 	 */
-    private IPAddress clientAddress;
+    private IPEndPoint clientAddress;
 	
 	public CoordinatorImpl() {
 		//super();
@@ -140,7 +140,7 @@ public class CoordinatorImpl : Coordinator {
 	 * @param clientAddress
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-    override public void setClientAddress(IPAddress clientAddress)
+    override public void setClientAddress(IPEndPoint clientAddress)
     {
 		this.clientAddress = clientAddress;
 	}
@@ -152,7 +152,7 @@ public class CoordinatorImpl : Coordinator {
 	 * @return
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-    public IPAddress getClientAddress()
+    public IPEndPoint getClientAddress()
     {
 		return clientAddress;
 	}

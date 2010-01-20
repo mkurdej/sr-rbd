@@ -15,6 +15,15 @@ namespace RBD.TPC.Msg
     {
         public DBException Exception { get; set; }
 
+        public ErrorMessage(string msg)
+        {
+            //TODO
+        }
+
+        public ErrorMessage()
+        {
+        }
+
         override
         public void FromBinary(DataInputStream s) //throws IOException 
         {

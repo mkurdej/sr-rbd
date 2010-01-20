@@ -50,9 +50,11 @@
     <Compile Include="Communication\DataInputStream.cs" />
     <Compile Include="Communication\DataOutputStream.cs" />
     <Compile Include="Communication\MessageFactory.cs" />
+    <Compile Include="Communication\NodeInfo.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="DB\DatabaseState.cs" />
     <Compile Include="DB\DBException.cs" />
+    <Compile Include="DB\DumpTableException.cs" />
     <Compile Include="Msg\Client\ResultSetMessage.cs" />
     <Compile Include="Msg\Client\SuccessMessage.cs" />
     <Compile Include="DB\TableVersion.cs" />
@@ -64,7 +66,35 @@
     <Compile Include="Msg\HelloMessage.cs" />
     <Compile Include="Msg\InvalidMessageTypeException.cs" />
     <Compile Include="NodeSyncInfo.cs" />
+    <Compile Include="Restore\BlockedCohort.cs" />
+    <Compile Include="Restore\BlockedCoordinator.cs" />
+    <Compile Include="Restore\BlockedRestoreCoordinator.cs" />
+    <Compile Include="Restore\EndRestorationListener.cs" />
+    <Compile Include="Restore\Msg\RestoreAck.cs" />
+    <Compile Include="Restore\Msg\RestoreIncentive.cs" />
+    <Compile Include="Restore\Msg\RestoreMessage.cs" />
+    <Compile Include="Restore\Msg\RestoreNack.cs" />
+    <Compile Include="Restore\Msg\RestoreTable.cs" />
+    <Compile Include="Restore\Msg\RestoreTableList.cs" />
+    <Compile Include="Restore\RestoreCohort.cs" />
+    <Compile Include="Restore\RestoreCoordinator.cs" />
     <Compile Include="TimeoutException.cs" />
+    <Compile Include="TPC\Coh\AbortState.cs" />
+    <Compile Include="TPC\Coh\Cohort.cs" />
+    <Compile Include="TPC\Coh\CohortImpl.cs" />
+    <Compile Include="TPC\Coh\CohortState.cs" />
+    <Compile Include="TPC\Coh\CommittedState.cs" />
+    <Compile Include="TPC\Coh\InitState.cs" />
+    <Compile Include="TPC\Coh\PreparedState.cs" />
+    <Compile Include="TPC\Coh\WaitingDoCommit.cs" />
+    <Compile Include="TPC\Cor\AbortState.cs" />
+    <Compile Include="TPC\Cor\CommitState.cs" />
+    <Compile Include="TPC\Cor\Coordinator.cs" />
+    <Compile Include="TPC\Cor\CoordinatorImpl.cs" />
+    <Compile Include="TPC\Cor\CoordinatorState.cs" />
+    <Compile Include="TPC\Cor\InitState.cs" />
+    <Compile Include="TPC\Cor\PreparedState.cs" />
+    <Compile Include="TPC\Cor\WaitingState.cs" />
     <Compile Include="TPC\EndTransactionListener.cs" />
     <Compile Include="TPC\LessTableVersionException.cs" />
     <Compile Include="TPC\MessageQueue.cs" />
@@ -106,11 +136,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\app.manifest" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Restore\Msg\" />
-    <Folder Include="TPC\Coh\" />
-    <Folder Include="TPC\Cor\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

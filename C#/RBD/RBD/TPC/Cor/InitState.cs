@@ -1,4 +1,5 @@
 using RBD.TPC.Msg;
+using RBD.DB;
 
 namespace RBD.TPC.COR
 {
@@ -32,7 +33,7 @@ public class InitState : CoordinatorState {
 		coordinator.tableName = parser.getTableName();
 		
 		
-		if(parser.getOperationType().equals(SqlOperationType.SELECT))
+		if(parser.getOperationType().Equals(SqlOperationType.SELECT))
 		{
 			Logger.getInstance().log("Select query detected", LOGGING_NAME, Logger.Level.INFO);
 			coordinator.processSelect();
@@ -43,7 +44,7 @@ public class InitState : CoordinatorState {
 			msg.TableName = parser.getTableName();
 			msg.QueryString = parser.getQueryString();
 			msg.TableVersion = coordinator.databaseState.getTableVersion(msg.TableName);
-			if(parser.getOperationType().equals(SqlOperationType.CREATE)) {
+			if(parser.getOperationType().Equals(SqlOperationType.CREATE)) {
 				msg.IsCreate = true;
 			}
 			else {

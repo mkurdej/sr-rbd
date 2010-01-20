@@ -1,195 +1,202 @@
-﻿//using System;
-//using System.Collections;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Net.Sockets;
-//using System.Net;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Net.Sockets;
+using System.Net;
+using RBD.Msg;
+using RBD.Communication;
 
-//namespace RBD
-//{
-//    class TcpSender
-//    {
-//        const String LOGGING_NAME = "TcpSender";
-//        Hashtable nodes = new Hashtable<IPAddress, NodeInfo>();
-//        static TcpSender instance = new TcpSender();                                                       
-                                                                                              
-//        protected TcpSender() 
-//        {
-                                                                  
-//        }                                                                                                    
-                                                                                       
-//        public static TcpSender getInstance() 
-//        {
-//            return instance;
-//        }                       
+namespace RBD
+{
+    class TcpSender
+    {
+        const string LOGGING_NAME = "TcpSender";        
+        SortedDictionary<IPEndPoint, NodeInfo> nodes = new SortedDictionary<IPEndPoint, NodeInfo>();
+        static TcpSender instance = new TcpSender();
 
-//        public void removeNode(IPAddress address) 
-//        {
-//            lock(typeof(TcpSender))
-//            {
-//                if(nodes.remove(address) == null)                       
-//                {                                                       
-//                        Logger.getInstance().log("Request to remove unexisting node: " + address.toString(), 
-//                                        LOGGING_NAME,                                                        
-//                                        Logger.Level.WARNING);                                               
-//                }
-//            }                                                                                
-//        }                                                                                                    
+        protected TcpSender()
+        {
 
-//        public void addNodeBySocket(IPAddress node, Socket s)
-//        {
-//            lock(typeof(TcpSender))
-//            {
-//                if(nodes.get(node) != null)
-//                {                          
-//                        Logger.getInstance().log("Request to add already existing node: " + node.toString(), 
-//                                        LOGGING_NAME,                                                        
-//                                        Logger.Level.WARNING);                                               
-//                }                                                                                            
+        }
 
-//                nodes.put(node, new NodeInfo(s, false));
-//            }
-//        }                                               
+        public static TcpSender getInstance()
+        {
+            return instance;
+        }
 
-//        public void AddServerNode(IPAddress node)
-//        {     
-//            lock(typeof(TcpSender))
-//            {                            
-//                NodeInfo nodeInfo = nodes.get(node);                  
+        public void removeNode(IPEndPoint address)
+        {
+            lock (typeof(TcpSender))
+            {
 
-//                if(nodeInfo == null)
-//                {                   
-//                        // connect to node
-//                        Socket socket;    
-//                        try 
-//                        {             
-//                            socket = new Socket(node.getAddress(), node.getPort());
-//                        } 
-//                        catch (IOException e) 
-//                        {                                      
-//                                Logger.getInstance().log("Failed to add server node: " + node.toString(), 
-//                                                LOGGING_NAME,                                             
-//                                                Logger.Level.WARNING);                                    
-//                                return;                                                                   
-//                        }                                                                                 
+                if (nodes.ContainsKey(address))
+                {
+                    Logger.getInstance().log("Request to remove unexisting node: " + address.ToString(),
+                                    LOGGING_NAME,
+                                    Logger.Level.WARNING);
+                }
+                else
+                {
+                    nodes.Remove(address);
+                }
+            }
+        }
 
-//                        nodes.put(node, new NodeInfo(socket, true));
-//                }                                                   
-//                else                                                
-//                {                                                   
-//                        // mark node as server                      
-//                        nodeInfo.setIsServer(true);                 
-//                }     
-//            }                              
-//        }                                                           
+        public void addNodeBySocket(IPEndPoint node, Socket s)
+        {
+            lock (typeof(TcpSender))
+            {
+                if (nodes.ContainsKey(node))
+                {
+                    Logger.getInstance().log("Request to add already existing node: " + node.ToString(),
+                                    LOGGING_NAME,
+                                    Logger.Level.WARNING);
+                }
 
-//        public int getServerNodesCount()
-//        {           
-//            lock(typeof(TcpSender))
-//            {     
-//                int count = 0;                       
+                nodes.Add(node, new NodeInfo(s, false));
+            }
+        }
 
-//                foreach(NodeInfo node in nodes.values())
-//                        if(node.getIsServer())     
-//                                ++count;           
+        public void AddServerNode(IPEndPoint node)
+        {
+            lock (typeof(TcpSender))
+            {
+                NodeInfo nodeInfo = nodes[node];
 
-//                return count;
-//            }
-//        }                    
+                if (nodeInfo == null)
+                {
+                    // connect to node
+                    Socket socket;
+                    try
+                    {
+                        socket = new Socket(node.Address, node.Port);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.getInstance().log("Failed to add server node: " + node.ToString(),
+                                        LOGGING_NAME,
+                                        Logger.Level.WARNING);
+                        return;
+                    }
 
-//        public List<IPAddress> getAllServerNodes()
-//        {
-//            lock(typeof(TcpSender))
-//            {                                  
-//                List<IPAddress> result = new LinkedList<IPAddress>();
+                    nodes.put(node, new NodeInfo(socket, true));
+                }
+                else
+                {
+                    // mark node as server                      
+                    nodeInfo.setIsServer(true);
+                }
+            }
+        }
 
-//                foreach(DictionaryEntry e in nodes)
-//                {                                                               
-//                        if(((NodeInfo)e.Value).getIsServer())                       
-//                        {
-//                            result.Add(e.getKey());                         
-//                        }                                                       
-//                }                                                               
+        public int getServerNodesCount()
+        {
+            lock (typeof(TcpSender))
+            {
+                int count = 0;
 
-//                return result;
-//            }
-//        }                     
-                                                                                      
-//        public void sendToAllServerNodes(Message message) 
-//        {
-//            lock(typeof(TcpSender))
-//            {
-//                // begin-user-code                                                                  
-//                byte[] data;                                                                        
+                foreach (NodeInfo node in nodes.values())
+                    if (node.getIsServer())
+                        ++count;
 
-//                // serialize
-//                data = message.Serialize();
+                return count;
+            }
+        }
 
-//                // search for server nodes
-//                IDictionaryEnumerator it = nodes.GetEnumerator();
-//                Iterator<Map.Entry<InetSocketAddress, NodeInfo>> it = nodes.entrySet().iterator();
+        public List<IPAddress> getAllServerNodes()
+        {
+            lock (typeof(TcpSender))
+            {
+                List<IPAddress> result = new LinkedList<IPAddress>();
 
-//                while(it.MoveNext())
-//                {
-//                        NodeInfo node = it.Value;                        
+                foreach (DictionaryEntry e in nodes)
+                {
+                    if (((NodeInfo)e.Value).getIsServer())
+                    {
+                        result.Add(e.getKey());
+                    }
+                }
 
-//                        if(node.getIsServer())
-//                        {                     
-//                                if(!writeToNode(it.Key, node.getSocket(), data))
-//                                {
-//                                    nodes.Remove(it.Key);                               
-//                                }                                                       
-//                        }                                                               
-//                }              
-//            }                                         
-//                // end-user-code                                                        
-//        }                                                                               
-                                                                                      
-//        public void sendToNode(Message message, IPAddress to)
-//        {
-//            lock (typeof(TcpSender))
-//            {
-//                // begin-user-code                                                                  
-//                byte[] data;
+                return result;
+            }
+        }
 
-//                // serialize
-//                data = message.Serialize();
-//                NodeInfo node = nodes.get(to);
+        public void sendToAllServerNodes(Message message)
+        {
+            lock (typeof(TcpSender))
+            {
+                // begin-user-code                                                                  
+                byte[] data;
 
-//                if (node == null)
-//                {
-//                    Logger.getInstance().log("Request to send to unexisting node: " + to.toString(),
-//                                    LOGGING_NAME,
-//                                    Logger.Level.WARNING);
-//                }
+                // serialize
+                data = message.Serialize();
 
-//                if (!writeToNode(to, node.getSocket(), data))
-//                {
-//                    nodes.Remove(to);
-//                }
-//                // end-user-code     
-//            }      
-//        }                                                  
-                                                 
-//        private bool writeToNode(IPAddress node, Socket s, byte[] data) 
-//        {
-//                try 
-//                {
-//                    s.Send(data);
-//                } 
-//                catch (System.IO.IOException e)
-//                {
+                // search for server nodes
+                IDictionaryEnumerator it = nodes.GetEnumerator();
+                Iterator<Map.Entry<InetSocketAddress, NodeInfo>> it = nodes.entrySet().iterator();
 
-//                        Logger.getInstance().log("Failure to write to node: " + node.ToString,
-//                                        LOGGING_NAME,
-//                                        Logger.Level.WARNING);
+                while (it.MoveNext())
+                {
+                    NodeInfo node = it.Value;
 
-//                        // remove node from pool
-//                        nodes.Remove(node);
-//                        return false;
-//                }
-//                return true;
-//        }
-//    }
-//}
+                    if (node.getIsServer())
+                    {
+                        if (!writeToNode(it.Key, node.getSocket(), data))
+                        {
+                            nodes.Remove(it.Key);
+                        }
+                    }
+                }
+            }
+            // end-user-code                                                        
+        }
+
+        public void sendToNode(Message message, IPEndPoint to)
+        {
+            lock (typeof(TcpSender))
+            {
+                // begin-user-code                                                                  
+                byte[] data;
+
+                // serialize
+                data = message.Serialize();
+                NodeInfo node = nodes.get(to);
+
+                if (node == null)
+                {
+                    Logger.getInstance().log("Request to send to unexisting node: " + to.toString(),
+                                    LOGGING_NAME,
+                                    Logger.Level.WARNING);
+                }
+
+                if (!writeToNode(to, node.getSocket(), data))
+                {
+                    nodes.Remove(to);
+                }
+                // end-user-code     
+            }
+        }
+
+        private bool writeToNode(IPAddress node, Socket s, byte[] data)
+        {
+            try
+            {
+                s.Send(data);
+            }
+            catch (System.IO.IOException e)
+            {
+
+                Logger.getInstance().log("Failure to write to node: " + node.ToString,
+                                LOGGING_NAME,
+                                Logger.Level.WARNING);
+
+                // remove node from pool
+                nodes.Remove(node);
+                return false;
+            }
+            return true;
+        }
+    }
+}
