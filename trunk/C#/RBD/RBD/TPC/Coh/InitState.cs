@@ -14,35 +14,29 @@ namespace RBD.TPC.COH
 
         override public void onCanCommit(CanCommitMessage message)
         {
-
             try
             {
-                this.cohort.tableName = message.TableName;
-                this.cohort.setQueryString(message.QueryString);
-                this.cohort.setCreate(message.IsCreate);
-                int coordinatorTableVersion = message.TableVersion;
-                string tableName = message.TableName;
-                int localTableVersion = this.cohort.databaseState.getTableVersion(tableName);
-                if (coordinatorTableVersion < localTableVersion)
-                {
-                    throw new LessTableVersionException(tableName, coordinatorTableVersion, localTableVersion);
+                    this.cohort.setTableName(message.getTableName());
+                    this.cohort.setQueryString(message.getQueryString());
+                    this.cohort.setCreate(message.isCreate());
+                    int coordinatorTableVersion = message.getTableVersion();
+                    String tableName = message.getTableName();
+                    int localTableVersion = this.cohort.getDatabaseState().getTableVersion(tableName);
+                    if (coordinatorTableVersion < localTableVersion)
+                    {
+                        throw new LessTableVersionException(tableName, coordinatorTableVersion, localTableVersion);
+                    }
+                    this.cohort.getDatabaseState().lockTable(message.getTableName());
+                    this.cohort.replyToCoordinator(new YesForCommitMessage());
+                    this.cohort.changeState(new PreparedState());
                 }
-                this.cohort.databaseState.lockTable(message.TableName);
-                this.cohort.replyToCoordinator(new YesForCommitMessage());
-                this.cohort.changeState(new PreparedState());
-                if (cohort.isCreate())
+                catch (Exception e)
                 {
-                    this.cohort.databaseState.addTable(cohort.tableName, cohort.getQueryString());
+                    Logger.getInstance().log(e.Message, "KOHORT", Logger.Level.WARNING);
+                    this.cohort.replyToCoordinator(new NoForCommitMessage());
+                    this.cohort.endTransaction();
+                    this.cohort.setState(new AbortState());
                 }
             }
-            catch (Exception e)
-            {
-                Logger.getInstance().log(e.Message, "KOHORT", Logger.Level.WARNING);
-                this.cohort.replyToCoordinator(new NoForCommitMessage());
-                this.cohort.endTransaction();
-                this.cohort.setState(new AbortState());
-            }
-
         }
     }
-}

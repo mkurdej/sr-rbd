@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
-using RBD.DB;
 using RBD.Msg;
 using RBD.Msg.Client;
 
@@ -23,7 +22,15 @@ namespace RBD.TPC
          * @generated 
          *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
          */
-        public String transactionId { get; set; }
+        public String getTransactionId()
+        {
+            return TransactionId;
+        }
+        public void setTransactionId(String transactionId)
+        {
+            TransactionId = transactionId;
+        }
+        public String TransactionId { get; set; }
 
         /**
          * <!-- begin-UML-doc --> Nazwa tabeli, na ktorej wykonywana jest
@@ -32,7 +39,15 @@ namespace RBD.TPC
          * @generated 
          *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
          */
-        public String tableName { get; set; }
+        public String getTableName()
+        {
+            return TableName;
+        }
+        public void setTableName(String tableName)
+        {
+            TableName = tableName;
+        }
+        public String TableName { get; set; }
 
         private TimeoutGenerator timeoutGenerator;
 
@@ -51,9 +66,17 @@ namespace RBD.TPC
          */
         private String queryString;
 
-        public DatabaseState databaseState;
+        public RBD.DB.DatabaseState getDatabaseState()
+        {
+            return DatabaseState;
+        }
+        public void setDatabaseState(RBD.DB.DatabaseState databaseState)
+        {
+            DatabaseState = databaseState;
+        }
+        public RBD.DB.DatabaseState DatabaseState;
 
-        protected DbConnector connector;
+        protected RBD.DB.DbConnector connector;
 
         public TPCParticipant()
         {
@@ -294,7 +317,7 @@ namespace RBD.TPC
             return queryString;
         }
 
-        public void setConnector(DbConnector connector)
+        public void setConnector(RBD.DB.DbConnector connector)
         {
             this.connector = connector;
         }

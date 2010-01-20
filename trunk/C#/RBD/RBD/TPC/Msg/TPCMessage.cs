@@ -12,6 +12,14 @@ namespace RBD.TPC.Msg
 {
     public abstract class TPCMessage : Message
     {
+        public String getTransactionId()
+        {
+            return TransactionId;
+        }
+        public void setTransactionId(String transactionId)
+        {
+            TransactionId = transactionId;
+        }
         public String TransactionId { get; set; }
 
         override

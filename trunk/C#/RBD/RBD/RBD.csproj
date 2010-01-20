@@ -36,6 +36,8 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -49,12 +51,18 @@
     <Compile Include="BinarySerializable.cs" />
     <Compile Include="Communication\DataInputStream.cs" />
     <Compile Include="Communication\DataOutputStream.cs" />
+    <Compile Include="Communication\HelloGenerator.cs" />
     <Compile Include="Communication\MessageFactory.cs" />
     <Compile Include="Communication\NodeInfo.cs" />
+    <Compile Include="Communication\TcpListener.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="DB\DatabaseState.cs" />
+    <Compile Include="DB\DatabaseStateImpl.cs" />
     <Compile Include="DB\DBException.cs" />
     <Compile Include="DB\DumpTableException.cs" />
+    <Compile Include="DB\ImportTableException.cs" />
+    <Compile Include="DB\TableLockedException.cs" />
+    <Compile Include="DB\TableState.cs" />
     <Compile Include="Msg\Client\ResultSetMessage.cs" />
     <Compile Include="Msg\Client\SuccessMessage.cs" />
     <Compile Include="DB\TableVersion.cs" />

@@ -40,7 +40,7 @@ namespace RBD.DB
          * @param tableName nazwa tabeli
          * @param createStatement zapytanei tworzace tabele
          */
-        void addTable(String tableName, String createStatement);
+        void addTable(String tableName);
         /**
          * Pobiera numer wersji tabeli
          * @param tableName nazwa tabeli

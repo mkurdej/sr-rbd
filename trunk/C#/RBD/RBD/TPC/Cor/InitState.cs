@@ -17,7 +17,7 @@ public class InitState : CoordinatorState {
 	
 		Logger.getInstance().log("Processing transaction", LOGGING_NAME, Logger.Level.INFO);
 		
-		coordinator.setNodeList( TcpSender.getInstance().getAllServerNodes() );
+		coordinator.setNodeList(TcpSender.getInstance().getAllServerNodes());
 		SqlParser parser = new SqlParserImpl();
 		
 		if(!parser.parse(message.QueryString))
@@ -30,7 +30,7 @@ public class InitState : CoordinatorState {
 		}
 		
 		coordinator.setQueryString( parser.getQueryString() );
-		coordinator.tableName = parser.getTableName();
+		coordinator.TableName = parser.getTableName();
 		
 		
 		if(parser.getOperationType().Equals(SqlOperationType.SELECT))
@@ -43,7 +43,7 @@ public class InitState : CoordinatorState {
 			CanCommitMessage msg = new CanCommitMessage();
 			msg.TableName = parser.getTableName();
 			msg.QueryString = parser.getQueryString();
-			msg.TableVersion = coordinator.databaseState.getTableVersion(msg.TableName);
+			msg.TableVersion = coordinator.DatabaseState.getTableVersion(msg.TableName);
 			if(parser.getOperationType().Equals(SqlOperationType.CREATE)) {
 				msg.IsCreate = true;
 			}

@@ -1,3 +1,5 @@
+// + TODO check
+
 using System.Collections;
 using System.Collections.Generic;
 using RBD.DB;
@@ -7,34 +9,36 @@ namespace RBD.Restore.Msg
 {
     public class RestoreTableList : RestoreMessage {
 
-	    private List<TableVersion> tables = new LinkedList<TableVersion>();
+        private IList<TableVersion> tables = new List<TableVersion>();
     	
 	    public RestoreTableList()
 	    {
     		
 	    }
-    	
-	    public RestoreTableList(List<TableVersion> list)
-	    {
-		    this.tables = list;
-	    }
-    	
-	    public void setTables(List<TableVersion> tables) {
-		    this.tables = tables;
-	    }
 
-	    public List<TableVersion> getTables() {
-		    return tables;
-	    }
+        public RestoreTableList(IList<TableVersion> list)
+        {
+            this.tables = list;
+        }
+
+        public void setTables(IList<TableVersion> tables)
+        {
+            this.tables = tables;
+        }
+
+        public IList<TableVersion> getTables()
+        {
+            return tables;
+        }
     	
 	    override public void FromBinary(DataInputStream s)  {
 		    // read count
-		    int count = s.ReadInt();
-		    setTables(new LinkedList<TableVersion>());
-    		
-		    // read contents
-		    for(int i = 0; i < count; ++i)
-			    getTables().add(new TableVersion(s));
+		    int count = s.ReadInt32();
+            setTables(new List<TableVersion>());
+
+            // read contents
+            for(int i = 0; i < count; ++i)
+                getTables().Add(new TableVersion(s));
 	    }
 
         override public MessageType GetMessageType()
@@ -45,11 +49,11 @@ namespace RBD.Restore.Msg
         override public void ToBinary(DataOutputStream s)
         {
 		    // write length
-		    s.writeInt(getTables().size());
-    		
-		    // write tables
-		    foreach(TableVersion tv in getTables())
-			    tv.toBinary(s);
+            s.Write((int)getTables().Count);
+
+            // write tables
+            foreach (TableVersion tv in getTables())
+                tv.ToBinary(s);
 	    }
     }
 }

@@ -12,15 +12,45 @@ namespace RBD.TPC.Msg
 {
     public class CanCommitMessage : TPCMessage
     {
+        public String getQueryString() {
+            return QueryString;
+        }
+        public void setQueryString(String queryString)
+        {
+            QueryString =queryString;
+        }
         public String QueryString { get; set; }
+        public String getTableName()
+        {
+            return TableName;
+        }
+        public void setTableName(String tableName)
+        {
+            TableName = tableName;
+        }
         public String TableName { get; set; }
         /**
          * Czy transakcja dotyczy utworzenia nowej tabeli
          */
+        public bool isCreate()
+        {
+            return IsCreate;
+        }
+        public void setCreate(bool isCreate) {
+            IsCreate = isCreate;
+        }
         public bool IsCreate { get; set; }
         /**
          * Numer wersji tabeli na koordynatorze
          */
+        public int getTableVersion()
+        {
+            return TableVersion;
+        }
+        public void setTableVersion(int tableVersion)
+        {
+            TableVersion = tableVersion;
+        }
         public int TableVersion { get; set; }
 
         override

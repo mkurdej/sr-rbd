@@ -1,70 +1,92 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Net;
-//using System.Net.Sockets;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading;
 
-//namespace RBD
-//{
-//    class TcpWorker
-//    {
-//        const String LOGGING_NAME = "TcpWorker";
+using RBD.Communication;
+using RBD.Msg;
+using RBD.Util;
 
-        
-//        BlockingQueue<Message> storage;
-//        TcpClient tcpClient;
+namespace RBD
+{
+    class TcpWorker
+    {
+        const String LOGGING_NAME = "TcpWorker";
 
-//        public TcpWorker(TcpClient newTcpClient, BlockingQueue<Message> newStorage)
-//        {
-//            tcpClient = newTcpClient;
-//            storage = newStorage;
-//        }
+        protected BlockingQueue<Message> storage;
+        protected Socket socket;
 
-//        public void run()
-//        {
-//            IPEndPoint ip = (IPEndPoint)tcpClient.Client.RemoteEndPoint;
-//            Logger.getInstance().log("New connection from: " + ip.Address.ToString()
-//                                     + ":" + ip.Port.ToString(),
-//                                     LOGGING_NAME, Logger.Level.INFO);
-//            NetworkStream stream = tcpClient.GetStream();
+        public TcpWorker(Socket newSocket, BlockingQueue<Message> queue)
+        {
+            storage = queue;
+            socket = newSocket;
+        }
 
-//            try
-//            {
-//                while (true)
-//                {
-//                    Byte[] sizeBuf = new Byte[4];
-//                    for (int nread = 0; nread < 4; )
-//                        nread += stream.Read(sizeBuf, nread, 4 - nread);
-//                    int size = BitConverter.ToInt32(sizeBuf, 0);
-//                    size = IPAddress.NetworkToHostOrder(size);
+        public void run()
+        {
+            IPEndPoint address = (IPEndPoint)socket.RemoteEndPoint;
+            Logger.getInstance().log("New connection from: "
+                + address.ToString(), LOGGING_NAME, Logger.Level.INFO);
 
-//                    Byte[] typeBuf = new Byte[4];
-//                    for (int nread = 0; nread < 4; )
-//                        nread += stream.Read(typeBuf, nread, 4 - nread);
-//                    int type = BitConverter.ToInt32(typeBuf, 0);
-//                    type = IPAddress.NetworkToHostOrder(type);
+            try
+            {
+                int size;
+                int type;
+                socket.SendTimeout = 0;
+                NetworkStream networkStream = new NetworkStream(socket);
+                DataInputStream dis = new DataInputStream(networkStream);
 
-//                    Logger.getInstance().log("Size = " + size, LOGGING_NAME, Logger.Level.INFO);
+                while (true)
+                {
+                    try
+                    {
+                        size = dis.ReadInt32();
+                    }
+                    catch (EndOfStreamException ex)
+                    {
+                        break; // node has disconnected legally
+                    }
 
-//                    Byte[] buffer = new Byte[size];
-//                    for (int nread = 0; nread < size; )
-//                        nread += stream.Read(buffer, nread, size - nread);
+                    type = dis.ReadInt32();
+                    byte[] b = new byte[size];
 
-//                    String messageStr = System.Text.Encoding.ASCII.GetString(buffer);
-//                    Message m = Message.Unserialize(MessageType.fromInt(type), messageStr, ip.Address);
-//                    storage.put(m);
+                    Logger.getInstance().log("Size = " + size,
+                            LOGGING_NAME, Logger.Level.INFO);
 
-//                    Logger.getInstance().log("Message: [" + message + "]",
-//                                             LOGGING_NAME, Logger.Level.INFO);
-//                }
-//            }
-//            catch(System.IO.IOException ex)
-//            {
-//                Logger.getInstance().log("Socket exception! " + ex.Message, LOGGING_NAME, Logger.Level.WARNING);
-//                break;
-//            }
-//            TcpSender.getInstance().removeNode(ip.Address);
-//        }
-//    }
-//}
+                    int left;
+                    for (left = size; left > 0; )
+                        left -= dis.Read(b, size - left, left);
+
+                    Message m = Message.Unserialize(Message.FromInt(type), b, address);
+                    storage.put(m);
+                }
+            }
+            catch (IOException ex)
+            {
+                Logger.getInstance().log("Socket exception! " + ex.Message,
+                        LOGGING_NAME,
+                        Logger.Level.WARNING);
+            }
+            catch (ThreadInterruptedException ex)
+            {
+                Logger.getInstance().log("InterruptedException " + ex.Message,
+                        LOGGING_NAME,
+                        Logger.Level.WARNING);
+            }
+            catch (InvalidMessageTypeException ex)
+            {
+                Logger.getInstance().log("InvalidMessageTypeException " + ex.Message,
+                        LOGGING_NAME,
+                        Logger.Level.WARNING);
+            }
+            finally
+            {
+                TcpSender.getInstance().removeNode(address);
+            }
+        }
+    }
+}

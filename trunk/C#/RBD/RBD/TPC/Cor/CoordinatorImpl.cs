@@ -16,11 +16,11 @@ public class CoordinatorImpl : Coordinator {
 	/** 
 	 * Lista pozytywnych&nbsp;odpowiedzi&nbsp;od&nbsp;wezlow
 	 */
-    private List<IPAddress> answers;
+    private IList<IPAddress> answers;
 	/** 
 	 * Lista wezlo bioracych udzial w transakcji
 	 */
-    private List<IPAddress> nodes;
+    private IList<IPAddress> nodes;
 	/**
 	 * Adres klienta, ktory zarzadal wykonania transakcji
 	 */
@@ -50,7 +50,7 @@ public class CoordinatorImpl : Coordinator {
 	 * Ustawia liste wezlow bioracych udzial w transakcji.
 	 * @param nodeList
 	 */
-	public void setNodeList(List<IPAddress> nodeList) {
+	public void setNodeList(IList<IPAddress> nodeList) {
 		this.nodes = nodeList;
 	}
 
@@ -80,7 +80,7 @@ public class CoordinatorImpl : Coordinator {
 	 */
 	public void broadcastMessage(TPCMessage message) {
 		this.clearAnswers();
-        message.TransactionId = this.transactionId;
+        message.TransactionId = this.TransactionId;
 		TcpSender.getInstance().sendToAllServerNodes(message);
 	}
 

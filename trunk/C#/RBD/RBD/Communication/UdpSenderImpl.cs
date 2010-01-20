@@ -15,14 +15,12 @@ namespace RBD
         protected Socket socket;
 
         IPEndPoint broadcast;
-        EndPoint broadcastEP;
 
         private UdpSenderImpl()
         {
             try
             {
                 broadcast = new IPEndPoint(IPAddress.Broadcast, UdpListener.LISTEN_PORT);
-                broadcastEP = (EndPoint)broadcast;
                 socket = new Socket(AddressFamily.InterNetwork,
                                     SocketType.Dgram, ProtocolType.Udp);
                 socket.Connect(broadcast);

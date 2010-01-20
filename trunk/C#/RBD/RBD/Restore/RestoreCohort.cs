@@ -159,9 +159,8 @@ namespace RBD.Restore {
 		    {
 			    try {
 				    DbConnectorImpl.getInstance().importTable(tableName, version, rtm.getTableDump());
-    			
 			    } catch (ImportTableException e) {
-				    Logger.getInstance().log("ImportTableException" + e.getMessage(),
+				    Logger.getInstance().log("ImportTableException" + e.Message,
 						    LOGGING_NAME, Logger.Level.WARNING);
 			    }
 		    }

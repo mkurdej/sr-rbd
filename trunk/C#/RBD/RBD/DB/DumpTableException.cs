@@ -13,7 +13,7 @@ namespace RBD.DB
         
         public DumpTableException(IOException e)
         {
-                errorMessage = e.getMessage();
+                errorMessage = e.Message;
         }
         
         public String getErrorMessage()
