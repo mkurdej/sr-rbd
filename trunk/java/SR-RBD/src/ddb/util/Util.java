@@ -50,6 +50,7 @@ public class Util {
 		for (int i = 0; i < bytes.length; ++i) {
 			guid.append(bytes[i] ^ mac[i % mac.length]);
 		}
+		System.out.println(guid.toString());
 		return guid.toString();
 	}
 
@@ -69,9 +70,13 @@ public class Util {
 
 	private static byte[] getHardwareAddress() {
 		try {
+			/*
 			InetAddress address = InetAddress.getLocalHost();
 			NetworkInterface ni = NetworkInterface.getByInetAddress(address);
-			if (ni != null) {
+			*/
+			NetworkInterface ni = NetworkInterface.getNetworkInterfaces().nextElement();
+			if(ni != null)
+			{
 				return ni.getHardwareAddress();
 			}
 		} catch (Exception e) {
