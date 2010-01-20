@@ -66,7 +66,7 @@ public class TcpSender {
 					Logger.Level.WARNING);
 		}
 		
-		Logger.getInstance().log("Node disconnected legally " + address.toString(), 
+		Logger.getInstance().log("Node disconnected " + address.toString(), 
 				LOGGING_NAME,
 				Logger.Level.INFO);
 	}
