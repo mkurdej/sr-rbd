@@ -63,7 +63,7 @@ abstract public class CoordinatorState : TimeoutListener {
 
     virtual public void onTimeout()
     {
-		// empty
+        coordinator.abortTransaction(new TimeoutMessage());
 	}
 }
 }

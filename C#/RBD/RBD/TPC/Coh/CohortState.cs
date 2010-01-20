@@ -41,6 +41,8 @@ namespace RBD.TPC.COH
         virtual public void onAbort()
         {
             Logger.getInstance().log("Nie oczekiwano wiadomosci: Abort", LOGGER_NAME, Logger.Level.WARNING);
+            this.cohort.endTransaction();
+            this.cohort.setState(new AbortState());
         }
 
         /** 

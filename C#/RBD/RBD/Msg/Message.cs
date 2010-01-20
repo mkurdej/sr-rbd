@@ -89,7 +89,10 @@ namespace RBD.Msg
             builder.Append("[");
             builder.Append(GetMessageType());
             builder.Append(" from ");
-            builder.Append(Sender.ToString());
+            if(Sender != null)
+ 				builder.Append(Sender.ToString());
+ 			else 
+ 			    builder.Append("self");
             builder.Append("]");
 
             return builder.ToString();

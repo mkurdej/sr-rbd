@@ -39,6 +39,17 @@ public class CoordinatorImpl : Coordinator {
 	}
 
 
+    public int getAnswerCount()
+    {
+        return this.answers.Count;
+    }
+
+    public int getNodesCount()
+    {
+        return this.nodes.Count;
+    }
+
+
 	/** 
 	 * Czysci wszystkie odpowiedzi.
 	 */
@@ -222,7 +233,10 @@ public class CoordinatorImpl : Coordinator {
 		else if(message is RBD.TPC.Msg.TimeoutMessage) {
 			state.onTimeout();
 		}
-		
+        else if (message is RBD.TPC.Msg.ErrorMessage)
+        {
+            state.onErrorMessage((RBD.TPC.Msg.ErrorMessage)message); 
+ 		}
 	}
 
 	/** 

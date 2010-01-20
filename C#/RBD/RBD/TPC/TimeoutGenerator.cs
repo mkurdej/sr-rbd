@@ -37,6 +37,7 @@ namespace RBD.TPC
          */
         public void startTimer(long miliseconds)
         {
+            stopped = false;
             Timer t = new Timer(timerCallback, this, miliseconds, Timeout.Infinite);
         }
 
