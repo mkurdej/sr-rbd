@@ -32,5 +32,26 @@ namespace RBD.Util
                 return que.Dequeue();
             }
         }
+
+        public T poll(int mil)
+        {
+            //TODO sprawdzic implementacje !!!
+            bool result = sem.WaitOne(mil);
+            if (!result)
+            {
+                //nie moge zwrocic null, bo:
+                /*
+                    Cannot convert null to type parameter 'T' because it
+                    could be a non-nullable value type.
+                    Consider using 'default(T)' instead.
+                */
+                throw new TimeoutException();
+            }
+
+            lock (que)
+            {
+                return que.Dequeue();
+            }
+        }
     }
 }

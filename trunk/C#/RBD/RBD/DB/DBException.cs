@@ -9,7 +9,7 @@ using RBD.Communication;
 
 namespace RBD.DB
 {
-    public class DBException : BinarySerializable
+    public class DBException : System.Exception, BinarySerializable
     {
         String vErrorMessage;
         public String ErrorMessage { get { return vErrorMessage; } }

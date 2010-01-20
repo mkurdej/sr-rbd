@@ -24,7 +24,7 @@ public abstract class Cohort : TPCParticipant {
 	 * @generated 
 	 *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-    protected IPAddress coordinatorAddress;
+    protected IPEndPoint coordinatorAddress;
 
 	/**
 	 * <!-- begin-UML-doc --> <!-- end-UML-doc -->
@@ -43,7 +43,8 @@ public abstract class Cohort : TPCParticipant {
 	 * @generated 
 	 *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-	public void setCoordinatorAddress(IPAddress address) {
+    public void setCoordinatorAddress(IPEndPoint address)
+    {
 		this.coordinatorAddress = address;
 	}
 
@@ -57,7 +58,7 @@ public abstract class Cohort : TPCParticipant {
 	 * @generated 
 	 *            "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-    public IPAddress getCoordinatorAddress()
+    public IPEndPoint getCoordinatorAddress()
     {
 		return this.coordinatorAddress;
 	}
