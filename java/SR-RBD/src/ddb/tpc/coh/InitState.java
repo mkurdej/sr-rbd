@@ -50,10 +50,7 @@ public class InitState extends CohortState {
 			this.cohort.getDatabaseState().lockTable(message.getTableName());
 			this.cohort.replyToCoordinator(new YesForCommitMessage());
 			this.cohort.changeState(new PreparedState());
-			// TODO: debugging is this really needed?
-			//if(cohort.isCreate()) {
-			//	this.cohort.getDatabaseState().addTable(cohort.getTableName(), cohort.getQueryString());
-			//}
+
 		} catch (Exception e) {
 			Logger.getInstance().log(e.toString(), "KOHORT", Level.WARNING);
 			this.cohort.replyToCoordinator(new NoForCommitMessage());

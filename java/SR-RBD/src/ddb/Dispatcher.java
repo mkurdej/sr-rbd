@@ -125,8 +125,10 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 						detectDownNodes();
 					}
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Logger.getInstance().log(
+							"InterruptedException in stale detection thread", 
+							LOGGING_NAME, 
+							Logger.Level.SEVERE);
 				}
 			}
         	

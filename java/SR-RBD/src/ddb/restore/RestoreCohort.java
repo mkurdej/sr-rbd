@@ -118,7 +118,6 @@ public class RestoreCohort extends Worker {
 		int left = rtl.getTables().size();
 		for(TableVersion table : rtl.getTables())
 		{
-			// TODO: implement? is this really required? RestoreTableRequest
 			Logger.getInstance().log(
 					"Table '" + table.getTableName() + "' version " + table.getVersion(), 
 					LOGGING_NAME, 
