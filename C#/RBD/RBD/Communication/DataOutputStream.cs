@@ -17,6 +17,11 @@ namespace RBD.Communication
         {
         }
 
+        public void writeString(String s)
+        {
+            WriteString(s);
+        }
+
         public void WriteString(String s) //throws IOException
         {
             // transform string to bytes

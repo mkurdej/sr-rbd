@@ -17,6 +17,11 @@ namespace RBD.Communication
         {
         }
 
+        public String readString()
+        {
+            return ReadString();
+        }
+
         override public String ReadString() //throws IOException
         {
             // read bytes length
