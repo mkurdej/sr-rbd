@@ -95,8 +95,8 @@ public class RestoreCoordinator extends Worker
 				LOGGING_NAME, 
 				Logger.Level.INFO);
 			
-		// TODO: tutaj nie moze byc zadnych transakcji
-		// TODO: lock whole database ( all tables )
+		
+		
 		RestoreTableList rtl = new RestoreTableList(DatabaseStateImpl.getInstance().getTableVersions()); 
 		TcpSender.getInstance().sendToNode(rtl, targetNode);
 		
@@ -114,7 +114,7 @@ public class RestoreCoordinator extends Worker
 				LOGGING_NAME, 
 				Logger.Level.INFO);
 		
-		// TODO: release lock
+		
 		
 		// send all tables
 		for(TableVersion tv : rtl.getTables())
