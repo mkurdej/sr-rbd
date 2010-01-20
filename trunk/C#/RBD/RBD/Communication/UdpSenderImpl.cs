@@ -1,57 +1,68 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Net;
-//using System.Net.Sockets;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Net;
+using System.Net.Sockets;
 
-//namespace RBD
-//{
-//    class UdpSenderImpl : UdpSender
-//    {
-//        const String LOGGING_NAME = "UdpSender";
-//        static UdpSenderImpl instance = new UdpSenderImpl();
-//        Socket socket;
-//        IPEndPoint broadcast;
-//        EndPoint broadcastEP;
+using RBD.Msg;
+namespace RBD
+{
+    class UdpSenderImpl : UdpSender
+    {
+        const String LOGGING_NAME = "UdpSenderImpl";
+        static UdpSenderImpl instance = null;
+        protected Socket socket;
 
-//        UdpSenderImpl()
-//        {
-//            broadcast = new IPEndPoint(IPAddress.Broadcast, UdpListener.LISTEN_PORT);
-//            broadcastEP = (EndPoint)broadcast;
-//            socket = new Socket(AddressFamily.InterNetwork,
-//                                SocketType.Dgram, ProtocolType.Udp);
-//            socket.Connect(broadcast);
-//        }
+        IPEndPoint broadcast;
+        EndPoint broadcastEP;
 
-//        public static UdpSenderImpl getInstance()
-//        {
-//            return instance;
-//        }
+        private UdpSenderImpl()
+        {
+            try
+            {
+                broadcast = new IPEndPoint(IPAddress.Broadcast, UdpListener.LISTEN_PORT);
+                broadcastEP = (EndPoint)broadcast;
+                socket = new Socket(AddressFamily.InterNetwork,
+                                    SocketType.Dgram, ProtocolType.Udp);
+                socket.Connect(broadcast);
+            }
+            catch (SocketException ex)
+            {
+                Logger.getInstance().log("SocketException in constructor: " + ex.Message,
+                        LOGGING_NAME,
+                        Logger.Level.SEVERE);
+            }
+        }
 
-//        public void sendToAll(Message msg)
-//        {
-//            lock (typeof(UdpSenderImpl))
-//            {
-//                try
-//                {
-//                    //TODO - też zmienić na serializację jak w Javie.
-//                    String message = msg.toString();
+        /** 
+         * @generated "Singleton (com.ibm.xtools.patterns.content.gof.creational.singleton.SingletonPattern)"
+         */
+        public static UdpSenderImpl getInstance()
+        {
+            // begin-user-code
+            if (instance == null)
+                instance = new UdpSenderImpl();
 
-//                    int size = message.Length;
-//                    size = IPAddress.HostToNetworkOrder(size);
-//                    Byte[] sizeStr = BitConverter.GetBytes(size);
-//                    message = message.Insert(0, Encoding.ASCII.GetString(sizeStr, 0, 4));
-//                    Byte[] buffer = Encoding.ASCII.GetBytes(message);
-//                    socket.Send(buffer);
-//                    Logger.getInstance().log("Sending: [" + message + "]", LOGGING_NAME, Logger.Level.INFO);
-//                }
-//                catch (SocketException e)
-//                {
-//                    Logger.getInstance().log("Socket exception: " + e.Message, 
-//                        LOGGING_NAME, Logger.Level.WARNING);
-//                }
-//            }
-//        }
-//    }
-//}
+            return instance;
+            // end-user-code
+        }
+
+        public void sendToAll(Message msg)
+        {
+            lock (typeof(UdpSenderImpl))
+            {
+                try
+                {
+                    byte[] data = msg.Serialize();
+                    socket.Send(data);
+                    Logger.getInstance().log("Sending: [" + msg.ToString() + "]", LOGGING_NAME, Logger.Level.INFO);
+                }
+                catch (SocketException ex)
+                {
+                    Logger.getInstance().log("SocketException: " + ex.Message, LOGGING_NAME, Logger.Level.WARNING);
+                }
+            }
+        }
+    }
+}
