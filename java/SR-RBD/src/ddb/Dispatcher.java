@@ -5,6 +5,8 @@ package ddb;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -15,6 +17,7 @@ import ddb.communication.TcpSender;
 import ddb.communication.UdpListener;
 import ddb.db.DatabaseStateImpl;
 import ddb.db.DbConnectorImpl;
+import ddb.db.TableVersion;
 import ddb.msg.HelloMessage;
 import ddb.msg.Message;
 import ddb.restore.BlockedCohort;
@@ -56,7 +59,8 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 
 	private final static String LOGGING_NAME = "Dispatcher";
 	protected final static int OUT_OF_SYNC_BEATS_THRESHOLD = 4;
-	protected final static int OUT_OF_SYNC_RESET_TIME_MS = 60000;
+	protected final static int OUT_OF_SYNC_RESET_TIME_MS = 15000;
+	protected final static int DOWN_NODES_CHECK_INTERVAL = 8000;
 	
 	// destination for messages
 	protected BlockingQueue<Message> queue = new LinkedBlockingQueue<Message>();
@@ -108,6 +112,25 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
         new Thread(blockedCohort, "BLOCKED_COHORT").start();
         new Thread(blockedCoordinator, "BLOCKED_COORDINATOR").start();
         new Thread(blockedRestoreCoordinator, "BLOCKER_RESTORE_COORDINATOR").start();
+        
+        // install stale connection detecting thread
+        new Thread(new Runnable(){
+
+			@Override
+			public void run() {
+				try {
+					while(true)
+					{
+						Thread.sleep(DOWN_NODES_CHECK_INTERVAL);
+						detectDownNodes();
+					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+        	
+        }).start();
 	}
 	
 	public void Run() throws InterruptedException
@@ -377,6 +400,86 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 		
 	}
 	
+	public synchronized void detectDownNodes()
+	{
+		Iterator<Map.Entry<InetSocketAddress, NodeSyncInfo>> it 
+			= nodeSynchronization.entrySet().iterator();
+
+		while(it.hasNext())
+		{
+			Map.Entry<InetSocketAddress, NodeSyncInfo> entry = it.next();
+			InetSocketAddress isa 	= entry.getKey();
+			NodeSyncInfo nsi 		= entry.getValue();
+			
+			if(nsi.getMsSinceLastBeat() > OUT_OF_SYNC_RESET_TIME_MS )
+			{
+				Logger.getInstance().log(
+						"Detected stale node - removing connection " + isa.toString(), 
+						LOGGING_NAME, 
+						Logger.Level.INFO);
+				
+				TcpSender.getInstance().removeNode(isa);
+				it.remove();
+			}
+		}
+	}
+	
+	public synchronized void updateNodeSyncInfo(InetSocketAddress node, List<TableVersion> tvs)
+	{
+		NodeSyncInfo nsi = nodeSynchronization.get(node);
+
+		// create entry for new nodes
+		if(nsi == null)
+		{
+			nsi = new NodeSyncInfo();
+			nodeSynchronization.put(node, nsi);
+		}
+		// reset counter for nodes which were unreachable for long period of time
+		else if( nsi.getMsSinceLastBeat() > OUT_OF_SYNC_RESET_TIME_MS)
+		{
+			Logger.getInstance().log(
+					"Node was inactive for too long - " + nsi.getMsSinceLastBeat() + " - reseting nsi - " + node.toString(), 
+					LOGGING_NAME, 
+					Logger.Level.INFO);
+			
+			nsi.InSync();
+		}
+		
+		// check synchronization
+		if(DatabaseStateImpl.getInstance().checkSync(tvs))
+		{
+			nsi.InSync();
+		}	
+		else 
+		{
+			if(nsi.getBeatsOutOfSync() > OUT_OF_SYNC_BEATS_THRESHOLD)
+			{
+				Logger.getInstance().log(
+						"Node out of sync " + nsi.getBeatsOutOfSync() + " times - " + node.toString(), 
+						LOGGING_NAME, 
+						Logger.Level.INFO);
+				
+				
+				nsi.BeatOutOfSync();
+			}
+			else if(restoreCoordinators.get(node) == null)
+			{
+				Logger.getInstance().log(
+						"Node out of sync detected creating restorator - " + node.toString(), 
+						LOGGING_NAME, 
+						Logger.Level.INFO);
+				
+				
+				// need to restore
+				RestoreCoordinator rc = new RestoreCoordinator(node);
+				restoreCoordinators.put(node, rc);
+				rc.addEndRestorationListener(this);
+				new Thread(rc).start();
+			}
+		}
+	}
+	
+	
 	public void processHelloMessage(HelloMessage msg)
 	{
 		InetSocketAddress node = new InetSocketAddress(
@@ -393,58 +496,7 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 				Logger.Level.INFO);
 		
 		TcpSender.getInstance().AddServerNode(node, queue);
-		
-		NodeSyncInfo nsi = nodeSynchronization.get(node);
-
-		// create entry for new nodes
-		if(nsi == null)
-		{
-			nsi = new NodeSyncInfo();
-			nodeSynchronization.put(node, nsi);
-		}
-		// reset counter for nodes which were unreachable for long period of time
-		else if( nsi.getMsSinceLastBeat() > OUT_OF_SYNC_RESET_TIME_MS)
-		{
-			Logger.getInstance().log(
-					"Node was inactive for too long - " + nsi.getMsSinceLastBeat() + " - reseting nsi - " + node.toString() + " : " + msg.toString(), 
-					LOGGING_NAME, 
-					Logger.Level.INFO);
-			
-			nsi.InSync();
-		}
-		
-		// check synchronization
-		if(DatabaseStateImpl.getInstance().checkSync(msg.getTables()))
-		{
-			nsi.InSync();
-		}	
-		else 
-		{
-			if(nsi.getBeatsOutOfSync() > OUT_OF_SYNC_BEATS_THRESHOLD)
-			{
-				Logger.getInstance().log(
-						"Node out of sync " + nsi.getBeatsOutOfSync() + " times - " + node.toString() + " : " + msg.toString(), 
-						LOGGING_NAME, 
-						Logger.Level.INFO);
-				
-				
-				nsi.BeatOutOfSync();
-			}
-			else if(restoreCoordinators.get(node) == null)
-			{
-				Logger.getInstance().log(
-						"Node out of sync detected creating restorator - " + node.toString() + " : " + msg.toString(), 
-						LOGGING_NAME, 
-						Logger.Level.INFO);
-				
-				
-				// need to restore
-				RestoreCoordinator rc = new RestoreCoordinator(node);
-				restoreCoordinators.put(node, rc);
-				rc.addEndRestorationListener(this);
-				new Thread(rc).start();
-			}
-		}
+		updateNodeSyncInfo(node, msg.getTables());
 	}
 	
 	
