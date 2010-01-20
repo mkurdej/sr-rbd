@@ -50,6 +50,9 @@ public class InitState : CoordinatorState {
 			else {
                 msg.IsCreate = false;
 			}
+
+            Logger.getInstance().log("Changing state to waiting", LOGGING_NAME, Logger.Level.INFO);
+
 			coordinator.broadcastMessage(msg);
 			coordinator.changeState(new WaitingState());
 		}

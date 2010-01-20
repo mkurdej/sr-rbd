@@ -7,6 +7,7 @@ namespace RBD.TPC.COR
 {
     public class WaitingState : CoordinatorState
     {
+        private static string LOGGING_NAME = "Coordinator.WaitingState";
 
         override public void onTimeout()
         {
@@ -16,10 +17,15 @@ namespace RBD.TPC.COR
         override public void onYesForCommit(IPAddress node)
         {
             coordinator.processAnswer(node, new PreCommitMessage(), new PreparedState());
+            Logger.getInstance().log("Got answer "
+ 				+ coordinator.getAnswerCount() + " of "
+ 				+ coordinator.getNodesCount(), LOGGING_NAME,
+ 				Logger.Level.INFO);
         }
 
         override public void onNoForCommit(IPAddress node)
         {
+            Logger.getInstance().log("Got no - aborting!", LOGGING_NAME, Logger.Level.INFO);
             coordinator.abortTransaction(new ConflictMessage());
         }
     }
