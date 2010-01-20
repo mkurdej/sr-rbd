@@ -10,6 +10,6 @@ namespace RBD.DB
         DatabaseTable query(String queryString);
         void clearDatabase();
         String dumpTable(String tableName);
-        void importTable(String dump);
+        void importTable(string tableName, int version, String dump);
     }
 }
