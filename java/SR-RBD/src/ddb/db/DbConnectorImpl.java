@@ -166,13 +166,19 @@ public class DbConnectorImpl implements DbConnector
             OutputStream stdin = p.getOutputStream();
             stdin.write(dump.toString().getBytes());
             stdin.flush();
+            stdin.close();
+            p.waitFor();
         }
         catch (IOException e)
         {
             Logger.getInstance().log("IO error during table import: " + e.getMessage(),
                     LOGGING_NAME, Logger.Level.WARNING);
             throw new ImportTableException(e);
-        }
+        } catch (InterruptedException e) {
+        	 Logger.getInstance().log("InterruptedException during table import: " + e.getMessage(),
+                     LOGGING_NAME, Logger.Level.WARNING);
+             throw new ImportTableException(e);
+		}
         DatabaseStateImpl.getInstance().setTableVersion(tableName, version);
     }
 

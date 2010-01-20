@@ -1,7 +1,5 @@
 package ddb.db;
 
-import java.io.IOException;
-
 public class ImportTableException extends Exception {
 
 	/**
@@ -9,7 +7,7 @@ public class ImportTableException extends Exception {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public ImportTableException(IOException e) {
+	public ImportTableException(Exception e) {
 		super(e);
 	}
 
