@@ -109,7 +109,7 @@ namespace RBD.Restore {
     			
 			    } catch (DumpTableException e) {
 				    Logger.getInstance().log(
-						    "DumpTableException " + e.getMessage(),
+						    "DumpTableException " + e.Message,
 						    LOGGING_NAME, 
 						    Logger.Level.WARNING);
     				

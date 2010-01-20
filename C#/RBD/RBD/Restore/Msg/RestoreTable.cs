@@ -1,3 +1,5 @@
+// + TODO check
+
 using RBD.Communication;
 
 namespace RBD.Restore.Msg
@@ -45,9 +47,9 @@ namespace RBD.Restore.Msg
 
         override public void FromBinary(DataInputStream s)
         {
-		    tableVersion = s.readInt();
-		    tableName = s.readString();
-		    tableDump = s.readString();
+		    tableVersion = s.ReadInt32();
+		    tableName = s.ReadString();
+		    tableDump = s.ReadString();
 	    }
 
         override public MessageType GetMessageType()
@@ -57,9 +59,9 @@ namespace RBD.Restore.Msg
 
         override public void ToBinary(DataOutputStream s)
         {
-		    s.writeInt(tableVersion);
-		    s.writeString(tableName);
-		    s.writeString(tableDump);
+            s.Write((int)tableVersion);
+		    s.WriteString(tableName);
+		    s.WriteString(tableDump);
 	    }
     }
 }

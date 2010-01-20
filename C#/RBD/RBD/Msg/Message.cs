@@ -41,6 +41,10 @@ namespace RBD.Msg
             HELLO_MESSAGE
         };
 
+        public static MessageType fromInt(int type) //throws InvalidMessageTypeException 
+        {
+            return FromInt(type);
+        }
         public static MessageType FromInt(int type) //throws InvalidMessageTypeException 
         {
             if (type < 0 || type >= Enum.GetValues(typeof(MessageType)).Length)
@@ -49,6 +53,14 @@ namespace RBD.Msg
             return (MessageType)type;
         }
         /// //////////////////////////////////////////////////////////
+        public void toBinary(DataOutputStream dos)
+        {
+            ToBinary(dos);
+        }
+        public void fromBinary(DataInputStream dis)
+        {
+            FromBinary(dis);
+        }
         /// interface
         public abstract void ToBinary(DataOutputStream dos);
         public abstract void FromBinary(DataInputStream dis);
@@ -57,8 +69,19 @@ namespace RBD.Msg
         const string LOGGING_NAME = "Message";
 
         //InetSocketAddress sender;
+        public IPEndPoint getSender() {
+            return Sender;
+        }
+        public void setSender(IPEndPoint sender)
+        {
+            Sender = sender;
+        }
         public IPEndPoint Sender { get; set; }
 
+        public String toString()
+        {
+            return ToString();
+        }
         override public String ToString()
         {
             StringBuilder builder = new StringBuilder();
@@ -76,9 +99,17 @@ namespace RBD.Msg
          * 
          * @return type constant for specialized class
          */
+        public MessageType getMessageType()
+        {
+            return GetMessageType();
+        }
         public abstract MessageType GetMessageType();
 
         //final
+        public byte[] serialize()
+        {
+            return Serialize();
+        }
         public byte[] Serialize()
         {
             MemoryStream ms = new MemoryStream();
@@ -99,6 +130,10 @@ namespace RBD.Msg
             return envelopeMs.ToArray();
         }
 
+        static public Message unserialize(MessageType type, byte[] bytes, IPEndPoint sender) //throws IOException
+        {
+            return Unserialize(type, bytes, sender);
+        }
         static public Message Unserialize(MessageType type, byte[] bytes, IPEndPoint sender) //throws IOException
         {
             // create message object of given type

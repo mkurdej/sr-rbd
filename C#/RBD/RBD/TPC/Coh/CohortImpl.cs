@@ -13,7 +13,7 @@ public class CohortImpl : Cohort {
 	}
 
 	override public void replyToCoordinator(TPCMessage message) {
-        message.TransactionId = this.transactionId;
+        message.TransactionId = this.TransactionId;
 		TcpSender.getInstance().sendToNode(message, getCoordinatorAddress());
 	}
 
@@ -28,7 +28,7 @@ public class CohortImpl : Cohort {
 	override public void commitTransaction() {
 		try {
 			this.connector.query(getQueryString());
-			this.databaseState.incrementTableVersion(this.tableName);
+			this.DatabaseState.incrementTableVersion(this.TableName);
 			replyToCoordinator(new HaveCommittedMessage());
 			setState(new CommittedState());
 		} catch (DBException exception) {
@@ -61,7 +61,7 @@ public class CohortImpl : Cohort {
 
     override protected void cleanupTransaction()
     {
-		this.databaseState.unlockTable(this.tableName);
+		this.DatabaseState.unlockTable(this.TableName);
 	}
 
 	public void onPreCommit() {

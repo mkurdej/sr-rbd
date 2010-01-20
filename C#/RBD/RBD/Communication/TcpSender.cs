@@ -5,6 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Net.Sockets;
 using System.Net;
+using System.Threading;
+
+using RBD.Util;
 using RBD.Msg;
 using RBD.Communication;
 
@@ -59,7 +62,12 @@ namespace RBD
             }
         }
 
-        public void AddServerNode(IPEndPoint node)
+        static void WorkerThread(object o) {
+            TcpWorker worker = (TcpWorker)o;
+            worker.run();
+        }
+
+        public void AddServerNode(IPEndPoint node, BlockingQueue<Message> storage) 
         {
             lock (typeof(TcpSender))
             {
@@ -68,10 +76,20 @@ namespace RBD
                 if (nodeInfo == null)
                 {
                     // connect to node
+                    IPEndPoint nodeEndPoint;
                     Socket socket;
                     try
                     {
-                        socket = new Socket(node.Address, node.Port);
+                        nodeEndPoint = new IPEndPoint(node.Address, node.Port);
+                        socket = new Socket(AddressFamily.InterNetwork,
+                                    SocketType.Stream, ProtocolType.Tcp);
+                        socket.Connect(nodeEndPoint);
+
+                        TcpWorker worker = new TcpWorker(socket, storage);
+                        ParameterizedThreadStart threadStart = new ParameterizedThreadStart(WorkerThread);
+                        Thread t = new Thread(threadStart);
+                        t.Start(worker);
+                        nodes[node] = new NodeInfo(socket, true);
                     }
                     catch (Exception e)
                     {
@@ -80,8 +98,7 @@ namespace RBD
                                         Logger.Level.WARNING);
                         return;
                     }
-
-                    nodes.put(node, new NodeInfo(socket, true));
+                    nodes[node] = new NodeInfo(socket, true);
                 }
                 else
                 {
@@ -97,7 +114,7 @@ namespace RBD
             {
                 int count = 0;
 
-                foreach (NodeInfo node in nodes.values())
+                foreach (NodeInfo node in nodes.Values)
                     if (node.getIsServer())
                         ++count;
 
@@ -105,17 +122,17 @@ namespace RBD
             }
         }
 
-        public List<IPAddress> getAllServerNodes()
+        public IList<IPAddress> getAllServerNodes()
         {
             lock (typeof(TcpSender))
             {
-                List<IPAddress> result = new LinkedList<IPAddress>();
+                IList<IPAddress> result = new List<IPAddress>(); //new LinkedList<IPAddress>();
 
-                foreach (DictionaryEntry e in nodes)
+                foreach(KeyValuePair<IPEndPoint,NodeInfo> e in nodes)
                 {
-                    if (((NodeInfo)e.Value).getIsServer())
+                    if ((e.Value).getIsServer())
                     {
-                        result.Add(e.getKey());
+                        result.Add(e.Key.Address);
                     }
                 }
 
@@ -135,17 +152,14 @@ namespace RBD
 
                 // search for server nodes
                 IDictionaryEnumerator it = nodes.GetEnumerator();
-                Iterator<Map.Entry<InetSocketAddress, NodeInfo>> it = nodes.entrySet().iterator();
-
                 while (it.MoveNext())
                 {
-                    NodeInfo node = it.Value;
-
+                    NodeInfo node = (NodeInfo)it.Value;
                     if (node.getIsServer())
                     {
-                        if (!writeToNode(it.Key, node.getSocket(), data))
+                        if (!writeToNode((IPEndPoint)it.Key, node.getSocket(), data))
                         {
-                            nodes.Remove(it.Key);
+                            nodes.Remove((IPEndPoint)it.Key);
                         }
                     }
                 }
@@ -162,11 +176,11 @@ namespace RBD
 
                 // serialize
                 data = message.Serialize();
-                NodeInfo node = nodes.get(to);
+                NodeInfo node = nodes[to];
 
                 if (node == null)
                 {
-                    Logger.getInstance().log("Request to send to unexisting node: " + to.toString(),
+                    Logger.getInstance().log("Request to send to unexisting node: " + to.ToString(),
                                     LOGGING_NAME,
                                     Logger.Level.WARNING);
                 }
@@ -179,7 +193,7 @@ namespace RBD
             }
         }
 
-        private bool writeToNode(IPAddress node, Socket s, byte[] data)
+        private bool writeToNode(IPEndPoint node, Socket s, byte[] data)
         {
             try
             {
@@ -187,8 +201,8 @@ namespace RBD
             }
             catch (System.IO.IOException e)
             {
-
-                Logger.getInstance().log("Failure to write to node: " + node.ToString,
+                Logger.getInstance().log("Failure to write to node: " + node.ToString()
+                        + " (" + e.Message + ")",
                                 LOGGING_NAME,
                                 Logger.Level.WARNING);
 
