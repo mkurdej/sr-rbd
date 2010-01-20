@@ -180,6 +180,17 @@ namespace RBD.TPC
          */
         private void startThread()
         {
+            /*
+            // można by skorzystać z domknięcia (jest typizowane)
+            public Thread StartTheThread(SomeType param1, SomeOtherType param2) {
+              var t = new Thread(() => RealStart(param1, param2));
+              t.Start();
+              return t;
+            }
+            private static void RealStart(SomeType param1, SomeOtherType param2) {
+              ...
+            }
+            */
             ParameterizedThreadStart ts = new ParameterizedThreadStart(TPCParticipant.ThreadBody);
             Thread thread = new Thread(ts);
             thread.Name = "TPC_THREAD";

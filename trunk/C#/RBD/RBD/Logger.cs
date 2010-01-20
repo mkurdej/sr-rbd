@@ -1,4 +1,4 @@
-﻿// +-
+﻿// + TODO check
 
 using System;
 using System.Collections.Generic;
@@ -35,43 +35,27 @@ namespace RBD
             }
         }
 
-        //private String timestamp()
-        //{
-        //    Calendar calendar = new GregorianCalendar();
-        //    int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        //    int minute = calendar.get(Calendar.MINUTE);
-        //    int seconds = calendar.get(Calendar.SECOND);
-        //    int miliseconds = calendar.get(Calendar.MILLISECOND);
-
-        //    DecimalFormat hourFormat = new DecimalFormat("#00");
-        //    DecimalFormat minuteFormat = new DecimalFormat("#00");
-        //    DecimalFormat secondsFormat = new DecimalFormat("#00");
-        //    DecimalFormat milisecondsFormat = new DecimalFormat("#000");
-
-        //    String timeString = hourFormat.format(hour) + ":"
-        //            + minuteFormat.format(minute) + ":"
-        //            + secondsFormat.format(seconds) + "."
-        //            + milisecondsFormat.format(miliseconds);
-
-        //    return timeString;
-        //}
+        private String timestamp()
+        {
+            DateTime now = DateTime.Now;
+            String timeString = String.Format("{0:00}", now.Hour) + ":"
+                        + String.Format("{0:00}", now.Minute) + ":"
+                        + String.Format("{0:00}", now.Second) + "."
+                        + String.Format("{0:000}", now.Millisecond);
+            return timeString;
+        }
 
         private void printLog(String msg, String who, String level)
         {
-            //StringBuilder sb = new StringBuilder();
-            //Formatter formatter = new Formatter(sb);
-
-            //formatter.format("%1$s <%2$3s> (%4$s) [%3$-15s] : %5$S",
-            //    timestamp(),
-            //    Thread.currentThread().getId(),
-            //    who,
-            //    level,
-            //    msg
-            //);
-            //Console.WriteLine(formatter.toString());
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat("{0} ", timestamp());
+            sb.AppendFormat("<{0,3}> ", AppDomain.GetCurrentThreadId());   // Thread.CurrentThread.ManagedThreadId
+            sb.AppendFormat("({0}) ", who);
+            sb.AppendFormat("[{0,-15}] : ", level);
+            sb.AppendFormat("{0}", msg);
+            Console.WriteLine(sb.ToString());
         }
 
-        //synchronized 
         public void log(String msg, String who, Level level)
         {
             lock (this)
