@@ -21,7 +21,7 @@ namespace RBD.Msg
             // empty
         }
 
-        public HelloMessage(List<TableVersion> tables, int port)
+        public HelloMessage(IList<TableVersion> tables, int port)
         {
             Tables = tables;
             ListeningPort = port;
