@@ -124,7 +124,7 @@ namespace RBD.DB
             return output;
         }
 
-        public void importTable(String dump)
+        public void importTable(string tableName, int version, String dump)
         {
             ProcessStartInfo mysql = new ProcessStartInfo();
             mysql.FileName = "mysql";
@@ -138,6 +138,8 @@ namespace RBD.DB
             using (Process process = Process.Start(mysql))
                 using (StreamWriter writer = process.StandardInput)
                    writer.Write(dump);
+            DatabaseStateImpl.getInstance().setTableVersion(tableName, version);
+
         }
     }
 }
