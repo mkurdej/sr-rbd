@@ -1,4 +1,4 @@
-﻿// +- almost
+﻿// +
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,14 +23,14 @@ namespace RBD
 
                 Logger.getInstance().log("Running dispatcher", LOGGING_NAME, Logger.Level.INFO);
 
-                //try
-                //{
-                dispatcher.Run();
-                //}
-                //catch (InterruptedException e)
-                //{
-                //    Logger.getInstance().log("InterruptedException" + e.getMessage(), LOGGING_NAME, Logger.Level.SEVERE);
-                //}
+                try
+                {
+                    dispatcher.Run();
+                }
+                catch (ThreadInterruptedException e)
+                {
+                    Logger.getInstance().log("InterruptedException" + e.Message, LOGGING_NAME, Logger.Level.SEVERE);
+                }
             }
             else
             {
