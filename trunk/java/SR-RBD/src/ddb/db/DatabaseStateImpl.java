@@ -25,14 +25,8 @@ public class DatabaseStateImpl implements DatabaseState {
 		this.tables = new HashMap<String, TableState>();
 	}
 	
-	private static DatabaseStateImpl instance = null;
+	private static DatabaseStateImpl instance = new DatabaseStateImpl();
 	
-	/** 
-	 * /* (non-Javadoc)
-	 *  * @see DatabaseState#lockTable(String tableName)
-	 * 
-	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
-	 */
 	public void lockTable(String tableName) throws TableLockedException {
 		getTableByName(tableName).lockTable();
 	}
@@ -111,11 +105,7 @@ public class DatabaseStateImpl implements DatabaseState {
 		return true;
 	}
 	
-	synchronized public static DatabaseStateImpl getInstance() {
-		if(instance == null) {
-			instance = new DatabaseStateImpl();
-		}
-		
+	public static DatabaseStateImpl getInstance() {
 		return instance;
 	}
 }

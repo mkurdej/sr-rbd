@@ -27,7 +27,7 @@ public class UdpSenderImpl implements UdpSender {
 	 * @generated "Singleton (com.ibm.xtools.patterns.content.gof.creational.singleton.SingletonPattern)"
 	 */
 	private final static String LOGGING_NAME = "UdpSenderImpl";
-	private static UdpSenderImpl instance = null;
+	private static UdpSenderImpl instance = new UdpSenderImpl();
 	protected DatagramSocket socket;
 
 	/** 
@@ -45,16 +45,8 @@ public class UdpSenderImpl implements UdpSender {
 		// end-user-code
 	}
 
-	/** 
-	 * @generated "Singleton (com.ibm.xtools.patterns.content.gof.creational.singleton.SingletonPattern)"
-	 */
 	public static UdpSenderImpl getInstance() {
-		// begin-user-code
-		if(instance == null)
-			instance = new UdpSenderImpl();
-		
 		return instance;
-		// end-user-code
 	}
 
 	public synchronized void sendToAll(Message msg) {
