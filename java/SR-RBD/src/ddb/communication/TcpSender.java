@@ -28,11 +28,7 @@ public class TcpSender {
 	private Map<InetSocketAddress, NodeInfo> nodes = new HashMap<InetSocketAddress, NodeInfo>();
 	protected BlockingQueue<Message> queue;
 	
-	
-	/**
-	 * @generated "Singleton (com.ibm.xtools.patterns.content.gof.creational.singleton.SingletonPattern)"
-	 */
-	private static TcpSender instance = null;
+	private static TcpSender instance = new TcpSender();
 
 	/**
 	 * @generated "Singleton (com.ibm.xtools.patterns.content.gof.creational.singleton.SingletonPattern)"
@@ -45,12 +41,7 @@ public class TcpSender {
 	 * @generated "Singleton (com.ibm.xtools.patterns.content.gof.creational.singleton.SingletonPattern)"
 	 */
 	public static TcpSender getInstance() {
-		// begin-user-code
-		if(instance == null)
-			instance = new TcpSender();
-		
 		return instance;
-		// end-user-code
 	}
 	
 	public void setQueue(BlockingQueue<Message> q)

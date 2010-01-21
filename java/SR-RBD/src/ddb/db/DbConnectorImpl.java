@@ -21,7 +21,7 @@ public class DbConnectorImpl implements DbConnector
     private static final String LOGGING_NAME = "DbConnector";
     
 
-    private static DbConnector instance = null;
+    private static DbConnector instance = new DbConnectorImpl();
     
     String URL_BEGIN = "jdbc:mysql";
     String DRIVER = "com.mysql.jdbc.Driver";
@@ -60,9 +60,6 @@ public class DbConnectorImpl implements DbConnector
 
     public static DbConnector getInstance()
     {
-    	if( instance == null )
-    		instance = new DbConnectorImpl();
-    	
         return instance;
     }
 
