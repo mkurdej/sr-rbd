@@ -25,7 +25,7 @@ import ddb.msg.MessageType;
  */
 public class UdpListener implements Runnable
 {
-    private static final int DATAGRAM_SIZE = 100;
+    private static final int DATAGRAM_SIZE = 500;
     private static final String LOGGING_NAME = "UdpListener";
     protected int listenPort;
     protected BlockingQueue<Message> storage = null;
