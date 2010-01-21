@@ -77,6 +77,8 @@ public class Util {
 			NetworkInterface ni = NetworkInterface.getNetworkInterfaces().nextElement();
 			if(ni != null)
 			{
+				if(ni.getHardwareAddress() == null)
+					return NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
 				return ni.getHardwareAddress();
 			}
 		} catch (Exception e) {
