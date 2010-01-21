@@ -1,4 +1,4 @@
-// + TODO check
+// +
 
 using System;
 using System.Collections.Generic;
@@ -9,6 +9,7 @@ using System.Threading;
 
 using RBD.DB;
 using RBD.Msg;
+using RBD.Util;
 
 namespace RBD.Communication
 {
@@ -19,8 +20,8 @@ namespace RBD.Communication
  * @author User
  * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
  */
-//public class HelloGenerator implements Runnable {
-    public class HelloGenerator  {
+    public class HelloGenerator : Runnable
+    {
 	// configuration
 	private const String LOGGING_NAME = "HelloGenerator";
 	private const int BROADCAST_INTERVAL_MS = 5000;
@@ -51,8 +52,8 @@ namespace RBD.Communication
 	        	Thread.Sleep(BROADCAST_INTERVAL_MS);
 	        } 
 		}
-        catch (ThreadInterruptedException e) {
-        	Logger.getInstance().log("InterruptedException" + e.Message, LOGGING_NAME, Logger.Level.INFO);
+        catch (ThreadInterruptedException) {
+        	Logger.getInstance().log("InterruptedException", LOGGING_NAME, Logger.Level.INFO);
 		}
     }
 }

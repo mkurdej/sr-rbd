@@ -127,13 +127,13 @@ namespace RBD.Restore {
 			    // try to restore
 			    Restore();
 		    }
-		    catch(TimeoutException ex)
+		    catch(TimeoutException)
 		    {
 			    Logger.getInstance().log(
 					    "Restore timed out",
 					    LOGGING_NAME, 
 					    Logger.Level.WARNING);
-		    } catch (Exception e) {
+		    } catch (Exception) {
 			    Logger.getInstance().log(
 					    "InterruptedException",
 					    LOGGING_NAME, 

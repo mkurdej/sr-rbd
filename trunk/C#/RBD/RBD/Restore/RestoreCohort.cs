@@ -20,13 +20,13 @@ namespace RBD.Restore {
 				    {
 					    restoreCycle();
 				    }
-				    catch(TimeoutException e)
+				    catch(TimeoutException)
 				    {
 					    Logger.getInstance().log("TimeoutException",
 							    LOGGING_NAME, Logger.Level.WARNING);
 				    }
 			    }
-		    } catch (Exception e) {
+		    } catch (Exception) {
 			    Logger.getInstance().log("InterruptedException",
 					    LOGGING_NAME, Logger.Level.WARNING);
 		    }

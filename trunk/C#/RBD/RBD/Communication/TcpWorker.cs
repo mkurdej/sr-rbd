@@ -1,4 +1,6 @@
-﻿using System;
+﻿// +
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,7 +15,7 @@ using RBD.Util;
 
 namespace RBD
 {
-    class TcpWorker
+    class TcpWorker : Runnable
     {
         const String LOGGING_NAME = "TcpWorker";
 
@@ -31,7 +33,6 @@ namespace RBD
             IPEndPoint address = (IPEndPoint)socket.RemoteEndPoint;
             Logger.getInstance().log("New connection from: "
                 + address.ToString(), LOGGING_NAME, Logger.Level.INFO);
-
             try
             {
                 int size;
@@ -46,7 +47,7 @@ namespace RBD
                     {
                         size = dis.ReadInt32();
                     }
-                    catch (EndOfStreamException ex)
+                    catch (EndOfStreamException)
                     {
                         break; // node has disconnected legally
                     }

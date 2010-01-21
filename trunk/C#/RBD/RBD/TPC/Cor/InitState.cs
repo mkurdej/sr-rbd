@@ -16,8 +16,8 @@ public class InitState : CoordinatorState {
     {
 	
 		Logger.getInstance().log("Processing transaction", LOGGING_NAME, Logger.Level.INFO);
-		
-		coordinator.setNodeList(TcpSender.getInstance().getAllServerNodes());
+
+        coordinator.setNodeCount(TcpSender.getInstance().getServerNodesCount());
 		SqlParser parser = new SqlParserImpl();
 		
 		if(!parser.parse(message.QueryString))
