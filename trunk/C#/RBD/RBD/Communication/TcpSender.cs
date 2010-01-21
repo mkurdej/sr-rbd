@@ -152,7 +152,7 @@ namespace RBD
                 {
                     queue.put(message);
                 }
-                catch (ThreadInterruptedException e)
+                catch (ThreadInterruptedException)
                 {
                     Logger.getInstance().log("InterruptedException Cannot send to self",
                             LOGGING_NAME,
