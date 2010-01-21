@@ -1,3 +1,5 @@
+// +
+
 using System.Net;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,21 +18,21 @@ public class CoordinatorImpl : Coordinator {
 	/** 
 	 * Lista pozytywnych&nbsp;odpowiedzi&nbsp;od&nbsp;wezlow
 	 */
-    private IList<IPAddress> answers;
+    private HashSet<IPAddress> answers;
 	/** 
 	 * Lista wezlo bioracych udzial w transakcji
 	 */
-    private IList<IPAddress> nodes;
+    private int nodes;
+    //private IList<IPAddress> nodes;
 	/**
 	 * Adres klienta, ktory zarzadal wykonania transakcji
 	 */
     private IPEndPoint clientAddress;
 	
-	public CoordinatorImpl() {
-		//super();
+	public CoordinatorImpl() : base() {
 		//this.connector = DbConnectorImpl.getInstance();
 		setState(new InitState());
-		this.answers = new List<IPAddress>();
+		this.answers = new HashSet<IPAddress>();
 	}
 
 	protected void setState(CoordinatorState state) {
@@ -38,6 +40,13 @@ public class CoordinatorImpl : Coordinator {
 		state.setCoordinator(this);
 	}
 
+    /** 
+	 * Czysci wszystkie odpowiedzi.
+	 */
+    private void clearAnswers()
+    {
+        this.answers.Clear();
+    }
 
     public int getAnswerCount()
     {
@@ -46,24 +55,17 @@ public class CoordinatorImpl : Coordinator {
 
     public int getNodesCount()
     {
-        return this.nodes.Count;
+        return this.nodes;
     }
 
-
-	/** 
-	 * Czysci wszystkie odpowiedzi.
-	 */
-	private void clearAnswers() {
-        this.answers.Clear();
-	}
-
-	/** 
-	 * Ustawia liste wezlow bioracych udzial w transakcji.
-	 * @param nodeList
-	 */
-	public void setNodeList(IList<IPAddress> nodeList) {
-		this.nodes = nodeList;
-	}
+    /** 
+     * Ustawia liste wezlow bioracych udzial w transakcji.
+     * @param nodeList
+     */
+    public void setNodeCount(int nodeCount)
+    {
+        this.nodes = nodeCount;
+    }
 
 	/** 
 	 * <p>
@@ -81,7 +83,7 @@ public class CoordinatorImpl : Coordinator {
 	 * @return
 	 */
 	private bool checkAnswers() {
-		return this.answers.Count == this.nodes.Count;
+		return this.answers.Count == this.nodes;
 	}
 
 	/** 
@@ -183,9 +185,9 @@ public class CoordinatorImpl : Coordinator {
 		try {
 			DatabaseTable table = this.connector.query(getQueryString());
 			ResultsetMessage msg = new ResultsetMessage();
-			msg.Result = table.ToString();
-			TcpSender.getInstance().sendToNode(msg, this.getClientAddress());
-			setState(new CommitState());
+            msg.setResultSet(table);
+            TcpSender.getInstance().sendToNode(msg, this.getClientAddress());
+            setState(new CommitState());
 		}
 		catch(DBException ex) {
 			processDBException(ex);
@@ -216,16 +218,16 @@ public class CoordinatorImpl : Coordinator {
 		Logger.getInstance().log("NewMessage: " + message, "Coordinator", Logger.Level.INFO);
 		
 		if(message is YesForCommitMessage) {
-			state.onYesForCommit(message.Sender.Address);
+			state.onYesForCommit(message.getSender().Address);
 		}
 		else if(message is NoForCommitMessage) {
-            state.onNoForCommit(message.Sender.Address);
+            state.onNoForCommit(message.getSender().Address);
 		}
 		else if(message is HaveCommittedMessage) {
 			state.onHaveCommitted((HaveCommittedMessage)message);
 		}
 		else if(message is AckPreCommitMessage) {
-			state.onAckPreCommit(message.Sender.Address);
+            state.onAckPreCommit(message.getSender().Address);
 		}
 		else if(message is TransactionMessage) {
 			state.onTransaction((TransactionMessage)message);

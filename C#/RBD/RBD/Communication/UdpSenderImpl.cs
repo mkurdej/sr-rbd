@@ -1,4 +1,6 @@
-﻿using System;
+﻿// +
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +13,7 @@ namespace RBD
     class UdpSenderImpl : UdpSender
     {
         const String LOGGING_NAME = "UdpSenderImpl";
-        static UdpSenderImpl instance = null;
+        static UdpSenderImpl instance = new UdpSenderImpl();
         protected Socket socket;
 
         IPEndPoint broadcast;
@@ -33,17 +35,9 @@ namespace RBD
             }
         }
 
-        /** 
-         * @generated "Singleton (com.ibm.xtools.patterns.content.gof.creational.singleton.SingletonPattern)"
-         */
         public static UdpSenderImpl getInstance()
         {
-            // begin-user-code
-            if (instance == null)
-                instance = new UdpSenderImpl();
-
             return instance;
-            // end-user-code
         }
 
         public void sendToAll(Message msg)

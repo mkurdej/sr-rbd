@@ -1,4 +1,4 @@
-// +--
+// +
 
 using System;
 using System.Collections.Generic;
@@ -14,8 +14,7 @@ using RBD.Msg;
 
 namespace RBD.Communication
 {
-    //public class TcpListener implements Runnable
-    public class TcpListener
+    public class TcpListener : Runnable
     {
         private const String LOGGING_NAME = "TcpListener";
 
@@ -44,9 +43,9 @@ namespace RBD.Communication
                 Logger.getInstance().log("Server is listening on port " +
                         listenPort + ".", LOGGING_NAME, Logger.Level.INFO);
             }
-            catch (IOException ex)
+            catch (SocketException)
             {
-                Logger.getInstance().log("Could not listen on port " + listenPort + "!" + " (" + ex.Message + ")", LOGGING_NAME, Logger.Level.SEVERE);
+                Logger.getInstance().log("Could not listen on port " + listenPort + "!", LOGGING_NAME, Logger.Level.SEVERE);
                 return;
             }
 
@@ -62,9 +61,9 @@ namespace RBD.Communication
                     TcpWorker worker = new TcpWorker(newConnection, storage);
                     new Thread(new ThreadStart(worker.run)).Start();
                 }
-                catch (IOException ex)
+                catch (SocketException)
                 {
-                    Logger.getInstance().log("Could not accept new connection!" + " (" + ex.Message + ")",
+                    Logger.getInstance().log("Could not accept new connection!",
                             LOGGING_NAME, Logger.Level.WARNING);
                 }
 

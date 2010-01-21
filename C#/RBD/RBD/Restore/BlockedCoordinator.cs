@@ -20,7 +20,7 @@ namespace RBD.Restore {
 					    LOGGING_NAME, 
 					    Logger.Level.INFO);
 		    } 
-		    catch (TimeoutException e) 
+		    catch (TimeoutException) 
 		    {
 			    Logger.getInstance().log(
 					    "TimeoutException (should never happen)", 
@@ -33,7 +33,7 @@ namespace RBD.Restore {
 		    try {
 			    while(true)
 				    ForbidTransaction();
-		    } catch (Exception e) {
+		    } catch (Exception) {
 			    Logger.getInstance().log(
 					    "InterruptedException - terminating", 
 					    LOGGING_NAME, 

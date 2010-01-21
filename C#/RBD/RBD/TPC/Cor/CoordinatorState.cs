@@ -1,3 +1,5 @@
+// +
+
 using System.Net;
 using RBD;
 using RBD.TPC.Msg;
@@ -58,12 +60,15 @@ abstract public class CoordinatorState : TimeoutListener {
 	 */
     virtual public void onErrorMessage(ErrorMessage message)
     {
-        Logger.getInstance().log("Nie oczekiwano wiadomosci: ErrorMessage", LOGGER_NAME, Logger.Level.WARNING);
+        RBD.Msg.Client.ErrorMessage reply = new RBD.Msg.Client.ErrorMessage();
+        reply.Exception = message.Exception;
+
+        coordinator.abortTransaction(reply);
 	}
 
     virtual public void onTimeout()
     {
-        coordinator.abortTransaction(new TimeoutMessage());
+        coordinator.abortTransaction(new RBD.Msg.Client.TimeoutMessage());
 	}
 }
 }

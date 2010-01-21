@@ -1,4 +1,4 @@
-﻿// +-
+﻿// +
 
 using System;
 using System.Collections.Generic;
@@ -6,33 +6,33 @@ using System.Linq;
 using System.Text;
 
 using RBD.Communication;
+using RBD.DB;
 
 namespace RBD.Msg.Client
 {
     public class ResultsetMessage : SuccessMessage
     {
         private String result;
-        public String Result
+
+        public void setResultSet(DatabaseTable table)
         {
-            get
-            {
-                return result;
-            }
-            set
-            {
-                result = value;
-            }
+            this.setResult(table.toString());
         }
 
-        //public void setResultSet(DatabaseTable table)
-        //{
-        //    this.setResult(table.toString());
-        //}
+        public void setResult(String result)
+        {
+            this.result = result;
+        }
+
+        public String getResult()
+        {
+            return result;
+        }
 
         override
         public void FromBinary(DataInputStream s) //throws IOException 
         {
-            Result = s.ReadString();
+            result = s.ReadString();
         }
 
         override
@@ -44,7 +44,7 @@ namespace RBD.Msg.Client
         override
         public void ToBinary(DataOutputStream s) //throws IOException 
         {
-            s.WriteString(Result);
+            s.WriteString(result);
         }
     }
 }
