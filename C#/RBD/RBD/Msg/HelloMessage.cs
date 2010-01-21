@@ -11,7 +11,7 @@ using RBD.Communication;
 
 namespace RBD.Msg
 {
-    class HelloMessage : Message
+    public class HelloMessage : Message
     {
         public int ListeningPort { get; set; }
         public IList<TableVersion> Tables { get; set; }

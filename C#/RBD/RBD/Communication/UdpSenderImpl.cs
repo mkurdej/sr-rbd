@@ -20,7 +20,7 @@ namespace RBD
         {
             try
             {
-                broadcast = new IPEndPoint(IPAddress.Broadcast, UdpListener.LISTEN_PORT);
+                broadcast = new IPEndPoint(IPAddress.Broadcast, Config.UdpPort());
                 socket = new Socket(AddressFamily.InterNetwork,
                                     SocketType.Dgram, ProtocolType.Udp);
                 socket.Connect(broadcast);
@@ -48,7 +48,7 @@ namespace RBD
 
         public void sendToAll(Message msg)
         {
-            lock (typeof(UdpSenderImpl))
+            lock (this)
             {
                 try
                 {

@@ -5,37 +5,32 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 
+using RBD.Util;
+using RBD.Msg;
+
 namespace RBD
 {
-    class UdpListener
+    public class UdpListener
     {
-        public const int LISTEN_PORT = 1502;
-        public const int DATAGRAM_SIZE = 100;
-        const String LOGGING_NAME = "UdpListener";
-        static UdpListener instance = new UdpListener();
-        
-        UdpListener()
+        private const int DATAGRAM_SIZE = 500;
+    private const String LOGGING_NAME = "UdpListener";
+    protected int listenPort;
+    protected BlockingQueue<Message> storage = null;
+    
+        public UdpListener(BlockingQueue<Message> queue, int port)
         {
-
+            storage = queue;
+            listenPort = port;
         }
 
-        public static UdpListener getInstance()
+        public void run()
         {
-            return instance;
-        }
-
-        public void listen()
-        {
-            IPEndPoint ip = new IPEndPoint(IPAddress.Any, LISTEN_PORT);
-
+            IPEndPoint ip = new IPEndPoint(IPAddress.Any, listenPort);
             Socket socket = new Socket(AddressFamily.InterNetwork,
                             SocketType.Dgram, ProtocolType.Udp);
-
             socket.Bind(ip);
-
-            Logger.getInstance().log("Listening on port " + LISTEN_PORT,
+            Logger.getInstance().log("Listening on port " + listenPort,
                                      LOGGING_NAME, Logger.Level.INFO);
-
             while (true)
             {
                 IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
@@ -58,5 +53,6 @@ namespace RBD
                                          LOGGING_NAME, Logger.Level.INFO);
             }
         }
+        // TODO run
     }
 }
