@@ -16,7 +16,7 @@ public class TimeoutMessage extends Message {
 	@Override
 	public MessageType getType() {
 		// empty
-		return MessageType.TIMEOUT_MESSAGE;
+		return MessageType.TPC_TIMEOUT_MESSAGE;
 	}
 
 	@Override

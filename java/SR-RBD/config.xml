@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config>
-	<tcpaddress>192.168.1.2</tcpaddress>
-	<tcpport>9999</tcpport>
+	<tcpaddress>192.168.169.8</tcpaddress>
+	<tcpport>9998</tcpport>
 	<udpport>9999</udpport>
 	<maxnodes>-1</maxnodes>
 	<database>sr1</database>
