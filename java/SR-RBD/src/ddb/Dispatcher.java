@@ -329,10 +329,10 @@ public class Dispatcher implements EndTransactionListener, EndRestorationListene
 			
 			if(coordinator == null)
 			{
-				Logger.getInstance().log(
-						"No coordinator for tid" + transactionId, 
-						LOGGING_NAME, 
-						Logger.Level.WARNING);
+//				Logger.getInstance().log(
+//						"No coordinator for tid" + transactionId, 
+//						LOGGING_NAME, 
+//						Logger.Level.WARNING);
 				return;
 			}
 			
