@@ -84,7 +84,7 @@ namespace RBD.DB
 		return result;
 	}
 	
-	public bool checkSync(List<TableVersion> tvs) {
+	public bool checkSync(IList<TableVersion> tvs) {
 		
 		// check tables
 		foreach(TableVersion tv in tvs)

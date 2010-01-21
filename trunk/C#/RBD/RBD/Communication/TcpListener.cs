@@ -32,12 +32,6 @@ namespace RBD.Communication
             listenPort = port;
         }
 
-        static void WorkerThread(object o)
-        {
-            TcpWorker worker = (TcpWorker)o;
-            worker.run();
-        }
-
         public void run()
         {
             try
@@ -66,9 +60,7 @@ namespace RBD.Communication
                     );
 
                     TcpWorker worker = new TcpWorker(newConnection, storage);
-                    ParameterizedThreadStart threadStart = new ParameterizedThreadStart(WorkerThread);
-                    Thread t = new Thread(threadStart);
-                    t.Start(worker);
+                    new Thread(new ThreadStart(worker.run)).Start();
                 }
                 catch (IOException ex)
                 {

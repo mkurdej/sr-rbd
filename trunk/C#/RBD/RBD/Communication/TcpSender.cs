@@ -18,6 +18,8 @@ namespace RBD
         const string LOGGING_NAME = "TcpSender";        
         SortedDictionary<IPEndPoint, NodeInfo> nodes = new SortedDictionary<IPEndPoint, NodeInfo>();
         static TcpSender instance = new TcpSender();
+	    protected BlockingQueue<Message> queue;
+	
 
         protected TcpSender()
         {
@@ -29,9 +31,14 @@ namespace RBD
             return instance;
         }
 
+        public void setQueue(BlockingQueue<Message> q)
+        {
+            queue = q;
+        }
+
         public void removeNode(IPEndPoint address)
         {
-            lock (typeof(TcpSender))
+            lock (this)
             {
 
                 if (nodes.ContainsKey(address))
@@ -49,7 +56,7 @@ namespace RBD
 
         public void addNodeBySocket(IPEndPoint node, Socket s)
         {
-            lock (typeof(TcpSender))
+            lock (this)
             {
                 if (nodes.ContainsKey(node))
                 {
@@ -62,14 +69,9 @@ namespace RBD
             }
         }
 
-        static void WorkerThread(object o) {
-            TcpWorker worker = (TcpWorker)o;
-            worker.run();
-        }
-
         public void AddServerNode(IPEndPoint node, BlockingQueue<Message> storage) 
         {
-            lock (typeof(TcpSender))
+            lock (this)
             {
                 NodeInfo nodeInfo = nodes[node];
 
@@ -86,9 +88,7 @@ namespace RBD
                         socket.Connect(nodeEndPoint);
 
                         TcpWorker worker = new TcpWorker(socket, storage);
-                        ParameterizedThreadStart threadStart = new ParameterizedThreadStart(WorkerThread);
-                        Thread t = new Thread(threadStart);
-                        t.Start(worker);
+                        new Thread(new ThreadStart(worker.run)).Start();
                         nodes[node] = new NodeInfo(socket, true);
                     }
                     catch (Exception e)
@@ -110,7 +110,7 @@ namespace RBD
 
         public int getServerNodesCount()
         {
-            lock (typeof(TcpSender))
+            lock (this)
             {
                 int count = 0;
 
@@ -124,7 +124,7 @@ namespace RBD
 
         public IList<IPAddress> getAllServerNodes()
         {
-            lock (typeof(TcpSender))
+            lock (this)
             {
                 IList<IPAddress> result = new List<IPAddress>(); //new LinkedList<IPAddress>();
 
@@ -142,7 +142,7 @@ namespace RBD
 
         public void sendToAllServerNodes(Message message)
         {
-            lock (typeof(TcpSender))
+            lock (this)
             {
                 // begin-user-code                                                                  
                 byte[] data;
@@ -169,7 +169,7 @@ namespace RBD
 
         public void sendToNode(Message message, IPEndPoint to)
         {
-            lock (typeof(TcpSender))
+            lock (this)
             {
                 // begin-user-code                                                                  
                 byte[] data;

@@ -214,10 +214,7 @@ namespace RBD.TPC
               ...
             }
             */
-            ParameterizedThreadStart ts = new ParameterizedThreadStart(TPCParticipant.ThreadBody);
-            Thread thread = new Thread(ts);
-            thread.Name = "TPC_THREAD";
-            thread.Start(this);
+            new Thread(new ThreadStart(this.run)).Start();
             //    new Thread(new Runnable() {
             //        @Override
             //        public void run() {
@@ -231,13 +228,13 @@ namespace RBD.TPC
             //    }, "TPC_THREAD").start();
         }
 
-        static void ThreadBody(object o)
+        void run()
         {
-            TPCParticipant tpcp = (TPCParticipant)o;
+            // TODO
             Logger.getInstance().log("startThread " + Thread.CurrentThread.Name, "TPC", Logger.Level.INFO);
-            while (!tpcp.stopped)
+            while (!stopped)
             {
-                tpcp.waitForMessage();
+                waitForMessage();
             }
         }
 
