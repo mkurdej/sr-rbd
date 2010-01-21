@@ -4,8 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using System.Net;
+using System.Xml;
+using System.Xml.XPath;
+using System.IO;
 
 namespace RBD
 {
@@ -13,7 +15,7 @@ namespace RBD
     {
         const String LOGGING_NAME = "Config";
 
-        static IPEndPoint tcpaddress;
+        static IPAddress tcpaddress;
         static int tcpPort;
         static int udpPort;
         static int maxNodes;
@@ -39,7 +41,7 @@ namespace RBD
             return tcpPort;
         }
 
-        public static IPEndPoint TcpAddress()
+        public static IPAddress TcpAddress()
         {
             return tcpaddress;
         }
@@ -81,32 +83,70 @@ namespace RBD
 
         public static bool Load(String path)
         {
-            //        try
-            //        {
-            //            Document inputSource = DocumentBuilderFactory.newInstance().
-            //                newDocumentBuilder().parse(path);    
+            try
+            {
+                FileStream stream = new FileStream(path, FileMode.Open);
+                XPathDocument document = new XPathDocument(stream);
+                XPathNavigator navigator = document.CreateNavigator();
+                XPathNodeIterator iter;
+                iter = navigator.Select("/config/tcpaddress");
+                if (iter.MoveNext())
+                {
+                    tcpaddress = IPAddress.Parse(iter.Current.Value);
+                    //Console.WriteLine("tcpaddress = {0}", tcpaddress.ToString());
+                }
+                iter = navigator.Select("/config/tcpport");
+                if (iter.MoveNext())
+                {
+                    tcpPort = Convert.ToInt32(iter.Current.Value);
+                    //Console.WriteLine("tcpPort = {0}", tcpPort);
+                }
+                iter = navigator.Select("/config/udpport");
+                if (iter.MoveNext())
+                {
+                    udpPort = Convert.ToInt32(iter.Current.Value);
+                    //Console.WriteLine("udpPort = {0}", udpPort);
+                }
+                iter = navigator.Select("/config/maxnodes");
+                if (iter.MoveNext())
+                {
+                    maxNodes = Convert.ToInt32(iter.Current.Value);
+                    //Console.WriteLine("maxnodes = {0}", maxNodes);
+                }
+                iter = navigator.Select("/config/database");
+                if (iter.MoveNext())
+                {
+                    database = iter.Current.Value;
+                    //Console.WriteLine("database = {0}", database);
+                }
+                iter = navigator.Select("/config/host");
+                if (iter.MoveNext())
+                {
+                    host = iter.Current.Value;
+                    //Console.WriteLine("host = {0}", host);
+                }
+                iter = navigator.Select("/config/user");
+                if (iter.MoveNext())
+                {
+                    user = iter.Current.Value;
+                    //Console.WriteLine("user = {0}", user);
+                }
+                iter = navigator.Select("/config/password");
+                if (iter.MoveNext())
+                {
+                    password = iter.Current.Value;
+                    //Console.WriteLine("password = {0}", password);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.getInstance().log(
+                    "Config parsing error: " + ex.Message,
+                    LOGGING_NAME,
+                    Logger.Level.WARNING);
 
-            //            XPathFactory factory = XPathFactory.newInstance();
-            //            XPath xPath = factory.newXPath();
-
-            //            tcpaddress 	= InetAddress.getByName(xPath.evaluate("/config/tcpaddress", inputSource));
-            //            tcpPort 	= Integer.parseInt(xPath.evaluate("/config/tcpport", inputSource));
-            //            udpPort 	= Integer.parseInt(xPath.evaluate("/config/udpport", inputSource));
-            //            maxNodes 	= Integer.parseInt(xPath.evaluate("/config/maxnodes", inputSource));
-            //            database 	= xPath.evaluate("/config/database", inputSource);
-            //            host 		= xPath.evaluate("/config/host", inputSource);
-            //            user 		= xPath.evaluate("/config/user", inputSource);
-            //            password 	= xPath.evaluate("/config/password", inputSource);
-            //        }
-            //        catch(Exception ex)
-            //        {
-            //            Logger.getInstance().log(
-            //                "Config parsing error " + ex.toString(), 
-            //                LOGGING_NAME, 
-            //                Logger.Level.WARNING);
-
-            //            return false;
-            //        }
+                return false;
+            }
 
             return true;
         }
