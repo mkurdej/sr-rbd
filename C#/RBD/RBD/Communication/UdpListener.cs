@@ -12,7 +12,7 @@ using System.Threading;
 using RBD.Util;
 using RBD.Msg;
 
-namespace RBD
+namespace RBD.Communication
 {
     public class UdpListener : Runnable
     {
@@ -45,18 +45,17 @@ namespace RBD
                     Byte[] buffer = new Byte[DATAGRAM_SIZE];
                     socket.ReceiveFrom(buffer, ref senderEP);
 
-                    int size = BitConverter.ToInt32(buffer, 0);
-                    size = IPAddress.NetworkToHostOrder(size);
-                    Byte[] buffer2 = new Byte[DATAGRAM_SIZE];
-                    for (int c1 = 4; c1 < DATAGRAM_SIZE; c1++)
-                        buffer2[c1 - 4] = buffer[c1];
+                    MemoryStream ms = new MemoryStream(buffer);
+                    DataInputStream dis = new DataInputStream(ms);
 
+                    int size = dis.readInt();
+                    int type = dis.readInt();
 
-                    String Message = Encoding.ASCII.GetString(buffer2, 0, size);
+                    byte[] data = new byte[size];
+                    System.Array.Copy(buffer, 2*sizeof(Int32) /*8*/, data, 0, size);
 
-                    Logger.getInstance().log("Message from " + senderEP.ToString() +
-                                             ": [" + Message + "](" + size + ")",
-                                             LOGGING_NAME, Logger.Level.INFO);
+                    Message m = Message.Unserialize(Message.fromInt(type), data, (IPEndPoint)senderEP);
+                    storage.put(m);
                 }
             }
             catch (SocketException)

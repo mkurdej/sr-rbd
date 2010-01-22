@@ -401,7 +401,11 @@ namespace RBD
         {
             lock (this)
             {
-                NodeSyncInfo nsi = nodeSynchronization[node];
+                NodeSyncInfo nsi = null;
+                if (nodeSynchronization.ContainsKey(node))
+                {
+                    nsi = nodeSynchronization[node];
+                }
 
                 // create entry for new nodes
                 if (nsi == null)

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Net;
 
 namespace RBD.Communication
 {
@@ -22,10 +23,15 @@ namespace RBD.Communication
             return ReadString();
         }
 
+        public int readInt()
+        {
+            return IPAddress.NetworkToHostOrder(ReadInt32());
+        }
+
         override public String ReadString() //throws IOException
         {
             // read bytes length
-            int length = ReadInt32();
+            int length = readInt();
 
             // read bytes
             byte[] bytes = new byte[length];

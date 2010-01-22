@@ -13,7 +13,7 @@ using RBD.Communication;
 using RBD.Msg;
 using RBD.Util;
 
-namespace RBD
+namespace RBD.Communication
 {
     class TcpWorker : Runnable
     {
@@ -45,14 +45,14 @@ namespace RBD
                 {
                     try
                     {
-                        size = dis.ReadInt32();
+                        size = dis.readInt();
                     }
                     catch (EndOfStreamException)
                     {
                         break; // node has disconnected legally
                     }
 
-                    type = dis.ReadInt32();
+                    type = dis.readInt();
                     byte[] b = new byte[size];
 
                     Logger.getInstance().log("Size = " + size,

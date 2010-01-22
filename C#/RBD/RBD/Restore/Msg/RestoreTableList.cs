@@ -33,7 +33,7 @@ namespace RBD.Restore.Msg
     	
 	    override public void FromBinary(DataInputStream s)  {
 		    // read count
-		    int count = s.ReadInt32();
+		    int count = s.readInt();
             setTables(new List<TableVersion>());
 
             // read contents

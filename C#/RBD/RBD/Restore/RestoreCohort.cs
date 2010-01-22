@@ -1,7 +1,9 @@
 using System;
+using System.Net;
+
+using RBD.Communication;
 using RBD.Msg;
 using RBD.Restore.Msg;
-using System.Net;
 using RBD.DB;
 
 namespace RBD.Restore {

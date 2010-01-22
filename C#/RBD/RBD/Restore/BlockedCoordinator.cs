@@ -1,4 +1,6 @@
 using System;
+
+using RBD.Communication;
 using RBD.TPC.Msg;
 using RBD.Msg;
 using RBD.Msg.Client;

@@ -13,12 +13,12 @@ using RBD.Util;
 using RBD.Msg;
 using RBD.Communication;
 
-namespace RBD
+namespace RBD.Communication
 {
     class TcpSender
     {
         const string LOGGING_NAME = "TcpSender";        
-        SortedDictionary<IPEndPoint, NodeInfo> nodes = new SortedDictionary<IPEndPoint, NodeInfo>();
+        Dictionary<IPEndPoint, NodeInfo> nodes = new Dictionary<IPEndPoint, NodeInfo>();
         static TcpSender instance = new TcpSender();
 	    protected BlockingQueue<Message> queue;
 
@@ -71,7 +71,11 @@ namespace RBD
         {
             lock (this)
             {
-                NodeInfo nodeInfo = nodes[node];
+                NodeInfo nodeInfo = null;
+                if (nodes.ContainsKey(node))
+                {
+                    nodeInfo = nodes[node];
+                }
 
                 if (nodeInfo == null)
                 {
@@ -96,7 +100,6 @@ namespace RBD
                                         Logger.Level.WARNING);
                         return;
                     }
-                    nodes[node] = new NodeInfo(socket, true);
                 }
                 else
                 {

@@ -61,7 +61,7 @@ namespace RBD.TPC.Msg
             TableName = s.ReadString();
             //http://java.sun.com/j2se/1.4.2/docs/api/java/io/DataInput.html#readBoolean()
             IsCreate = s.ReadBoolean(); // 1 Byte
-            TableVersion = s.ReadInt32();
+            TableVersion = s.readInt();
         }
 
         override
