@@ -123,7 +123,7 @@ namespace RBD.Restore {
 		    // finished
 	    }
     	
-	    public void run() {
+	    override public void run() {
 		    try
 		    {
 			    // try to restore

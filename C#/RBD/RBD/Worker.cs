@@ -1,4 +1,6 @@
-﻿using System;
+﻿// +
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,13 +10,14 @@ using System.Net;
 
 namespace RBD
 {
-    //public abstract class Worker implements Runnable
-    public abstract class Worker
+    public abstract class Worker : Runnable
     {
         const String LOGGING_NAME = "Worker";
 
         protected BlockingQueue<Message> queue = new BlockingQueue<Message>();
         protected long timeoutTime = -1;
+
+        public abstract void run();
 
         //final
         public void setTimeout(long ms)
@@ -73,7 +76,7 @@ namespace RBD
                 }
 
                 Logger.getInstance().log(
-                        "Unexcepted message" + msg.ToString(),
+                        "Unexpected message" + msg.ToString(),
                         LOGGING_NAME,
                         Logger.Level.WARNING);
             }

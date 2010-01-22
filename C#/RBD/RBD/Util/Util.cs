@@ -1,4 +1,4 @@
-﻿// +-
+﻿// + (większość niepotrzebna, wykorzystana metoda System.Guid.NewGuid().ToString("D");
 
 using System;
 using System.Collections.Generic;
