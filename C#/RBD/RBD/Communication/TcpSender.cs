@@ -191,18 +191,23 @@ namespace RBD.Communication
 
                 // serialize
                 data = message.Serialize();
-                NodeInfo node = nodes[to];
-
+                NodeInfo node = null;
+                if (nodes.ContainsKey(to))
+                {
+                    node = nodes[to];
+                }
                 if (node == null)
                 {
                     Logger.getInstance().log("Request to send to unexisting node: " + to.ToString(),
                             LOGGING_NAME,
                             Logger.Level.WARNING);
                 }
-
-                if (!writeToNode(to, node.getSocket(), data))
+                else
                 {
-                    nodes.Remove(to);
+                    if (!writeToNode(to, node.getSocket(), data))
+                    {
+                        nodes.Remove(to);
+                    }
                 }
                 // end-user-code    
             }
