@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Threading;
 
 using RBD.Communication;
 using RBD.Msg;
@@ -12,31 +13,32 @@ namespace RBD.Restore {
 	    private int RESTORE_TIMEOUT = 1000;
 
 	    override public void run() {
-
 		    // loop unit worker finishes his task
-		    try {
-			    // listen for restoring incentives forever
-			    while (true) 
-			    {
-				    try
-				    {
-					    restoreCycle();
-				    }
-				    catch(TimeoutException)
-				    {
-					    Logger.getInstance().log("TimeoutException",
-							    LOGGING_NAME, Logger.Level.WARNING);
-				    }
-			    }
-		    } catch (Exception) {
-			    Logger.getInstance().log("InterruptedException",
-					    LOGGING_NAME, Logger.Level.WARNING);
-		    }
+            try
+            {
+                // listen for restoring incentives forever
+                while (true)
+                {
+                    try
+                    {
+                        restoreCycle();
+                    }
+                    catch (TimeoutException e)
+                    {
+                        Logger.getInstance().log("TimeoutException" + e.Message,
+                                LOGGING_NAME, Logger.Level.WARNING);
+                    }
+                }
+            }
+            catch (ThreadInterruptedException e)
+            {
+                Logger.getInstance().log("InterruptedException" + e.Message,
+                        LOGGING_NAME, Logger.Level.WARNING);
+            }
 	    }
 
 	    public void restoreCycle()
 	    {
-    		
 		    Message msg;
             Message.MessageType[] awaitingTableList = { Message.MessageType.RESTORE_TABLELIST, Message.MessageType.RESTORE_INCENTIVE };
             Message.MessageType[] awaitingTables = { Message.MessageType.RESTORE_TABLE, Message.MessageType.RESTORE_INCENTIVE };

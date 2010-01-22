@@ -23,7 +23,7 @@ namespace RBD
         public void setTimeout(long ms)
         {
             //timeoutTime = System.currentTimeMillis() + ms;
-            timeoutTime = (long) TimeSpan.FromTicks(DateTime.Now.Ticks).TotalMilliseconds + ms;
+            timeoutTime = (long)TimeSpan.FromTicks(DateTime.Now.Ticks).TotalMilliseconds + ms;
         }
 
         //final
@@ -56,7 +56,9 @@ namespace RBD
                 }
                 else
                 {
-                    msg = queue.poll((int)timeoutTime - (int)TimeSpan.FromTicks(DateTime.Now.Ticks).TotalMilliseconds);
+                    long now = (long)TimeSpan.FromTicks(DateTime.Now.Ticks).TotalMilliseconds;
+                    long diff = timeoutTime - now;
+                    msg = queue.poll((int)diff);
                     //zakomentowane, bo patrz na queue.poll()
                     //if (msg == null)
                     //    throw new TimeoutException();
