@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
+
+using RBD.Communication;
 using RBD.Msg;
 using RBD.DB;
 using RBD.Restore.Msg;

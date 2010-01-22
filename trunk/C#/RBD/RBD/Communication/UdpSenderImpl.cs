@@ -8,7 +8,8 @@ using System.Net;
 using System.Net.Sockets;
 
 using RBD.Msg;
-namespace RBD
+
+namespace RBD.Communication
 {
     class UdpSenderImpl : UdpSender
     {

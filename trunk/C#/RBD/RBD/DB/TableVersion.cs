@@ -51,7 +51,7 @@ namespace RBD.DB
         public void FromBinary(DataInputStream dis) //throws IOException
         {
             Name = dis.ReadString();
-            Version = dis.ReadInt32();
+            Version = dis.readInt();
         }
 
         public void ToBinary(DataOutputStream dos) //throws IOException

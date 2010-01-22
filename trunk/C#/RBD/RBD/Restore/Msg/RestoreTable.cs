@@ -47,7 +47,7 @@ namespace RBD.Restore.Msg
 
         override public void FromBinary(DataInputStream s)
         {
-		    tableVersion = s.ReadInt32();
+		    tableVersion = s.readInt();
 		    tableName = s.ReadString();
 		    tableDump = s.ReadString();
 	    }

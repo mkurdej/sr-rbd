@@ -7,7 +7,7 @@ using System.Text;
 
 using RBD.Msg;
 
-namespace RBD
+namespace RBD.Communication
 {
     interface UdpSender
     {

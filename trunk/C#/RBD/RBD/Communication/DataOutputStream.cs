@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Net;
 
 namespace RBD.Communication
 {
@@ -15,6 +16,11 @@ namespace RBD.Communication
         public DataOutputStream(Stream output)
             : base(output)
         {
+        }
+
+        public void writeInt(int value)
+        {
+            Write(IPAddress.HostToNetworkOrder(value));
         }
 
         public void writeString(String s)
