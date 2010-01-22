@@ -29,8 +29,9 @@ namespace RBD.Restore {
 					    Logger.Level.WARNING);
 		    }
 	    }
-    	
-	    public void run() {
+
+        override public void run()
+        {
 		    try {
 			    while(true)
 				    ForbidRestoration();

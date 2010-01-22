@@ -1,4 +1,4 @@
-﻿// +--
+﻿// +
 
 using System;
 using System.Collections.Generic;
@@ -25,7 +25,8 @@ namespace RBD
     {
         private const String LOGGING_NAME = "Dispatcher";
         protected const int OUT_OF_SYNC_BEATS_THRESHOLD = 4;
-        protected const int OUT_OF_SYNC_RESET_TIME_MS = 60000;
+        protected const int OUT_OF_SYNC_RESET_TIME_MS = 15000;
+	    protected const int DOWN_NODES_CHECK_INTERVAL = 8000;
 
         // destination for messages
         protected BlockingQueue<Message> queue = new BlockingQueue<Message>();
@@ -48,8 +49,6 @@ namespace RBD
         // others
         protected Dictionary<IPEndPoint, NodeSyncInfo> nodeSynchronization = new Dictionary<IPEndPoint, NodeSyncInfo>();
         protected IPEndPoint me;
-        protected int isRestoring = 0; // TODO: remove
-
 
         public Dispatcher()
         {
@@ -59,258 +58,266 @@ namespace RBD
         }
 
         public void Initialize()
-	{
-		// set queue for self writing
-		TcpSender.getInstance().setQueue(queue);
-		
-		// assign self identifier
-		me = new IPEndPoint(Config.TcpAddress(), Config.TcpPort());
-		
-		// install threads for managing communication
-		new Thread(new ThreadStart(tcp.run)).Start();
-            //(tcp, "TPC_LISTENER").start();
-        new Thread(new ThreadStart(udp.run)).Start(); //, "UDP_LISTENER").start();
-        new Thread(new ThreadStart(hello.run)).Start(); //, "HELLO_SENDER").start();
-        
-        // install restore thread
-        new Thread(new ThreadStart(restoreCohort.run)).Start(); //, "RESTORE_COHORT").start();
-        
-        // install blocked threads
-        new Thread(new ThreadStart(blockedCohort.run)).Start(); //, "BLOCKED_COHORT").start();
-        new Thread(new ThreadStart(blockedCoordinator.run)).Start(); //, "BLOCKED_COORDINATOR").start();
-        new Thread(new ThreadStart(blockedRestoreCoordinator.run)).Start(); //, "BLOCKER_RESTORE_COORDINATOR").start();
-        
-        // install stale connection detecting thread
-        //new Thread(new Runnable(){
+        {
+            // set queue for self writing
+            TcpSender.getInstance().setQueue(queue);
 
-        //    //@Override
-        //    public void run() {
-        //        try {
-        //            while(true)
-        //            {
-        //                Thread.sleep(DOWN_NODES_CHECK_INTERVAL);
-        //                detectDownNodes();
-        //            }
-        //        } catch (InterruptedException e) {
-        //            Logger.getInstance().log(
-        //                    "InterruptedException in stale detection thread", 
-        //                    LOGGING_NAME, 
-        //                    Logger.Level.SEVERE);
-        //        }
-        //    }
-        	
-        //}).start();
-	}
+            // assign self identifier
+            me = new IPEndPoint(Config.TcpAddress(), Config.TcpPort());
+
+            // install threads for managing communication
+            new Thread(new ThreadStart(tcp.run)).Start();
+            //(tcp, "TPC_LISTENER").start();
+            new Thread(new ThreadStart(udp.run)).Start(); //, "UDP_LISTENER").start();
+            new Thread(new ThreadStart(hello.run)).Start(); //, "HELLO_SENDER").start();
+
+            // install restore thread
+            new Thread(new ThreadStart(restoreCohort.run)).Start(); //, "RESTORE_COHORT").start();
+
+            // install blocked threads
+            new Thread(new ThreadStart(blockedCohort.run)).Start(); //, "BLOCKED_COHORT").start();
+            new Thread(new ThreadStart(blockedCoordinator.run)).Start(); //, "BLOCKED_COORDINATOR").start();
+            new Thread(new ThreadStart(blockedRestoreCoordinator.run)).Start(); //, "BLOCKER_RESTORE_COORDINATOR").start();
+
+            // install stale connection detecting thread
+            new Thread(new ThreadStart(this.detectStaleConnectionThread)).Start();
+        }
+
+        public void detectStaleConnectionThread()
+        {
+            try
+            {
+                while (true)
+                {
+                    Thread.Sleep(DOWN_NODES_CHECK_INTERVAL);
+                    detectDownNodes();
+                }
+            }
+            catch (ThreadInterruptedException)
+            {
+                Logger.getInstance().log(
+                        "InterruptedException in stale detection thread",
+                        LOGGING_NAME,
+                        Logger.Level.SEVERE);
+            }
+        }
 
         public void Run() //throws InterruptedException
-	{
-    	Logger.getInstance().log("Initializing", LOGGING_NAME, Logger.Level.INFO);
-        Initialize();
-		Logger.getInstance().log("Initializing Done", LOGGING_NAME, Logger.Level.INFO);
-		
-		// main loop
-		while(true)
-		{
-			Message m = queue.take();
-			
-			int count = TcpSender.getInstance().getServerNodesCount();
-			
-			if( count < Config.MinOtherNodes())
-			{
-				
-				Logger.getInstance().log(
-					"Brainsplit mode due to " 
-						+ count.ToString()
-						+ " of " 
-						+ Config.MinOtherNodes() 
-						+ " seen - message: " 
-						+ m.toString(), 
-					LOGGING_NAME, 
-					Logger.Level.WARNING);
-				
-				brainsplit(m);
-			}
-			else
-			{
-				if(!(m is HelloMessage))
-				{
-					Logger.getInstance().log(
-							"Processing message:" + m.toString(), 
-							LOGGING_NAME, 
-							Logger.Level.INFO);
-				}
-				
-				process(m);
-			}
-		}
-	}
+        {
+            Logger.getInstance().log("Initializing", LOGGING_NAME, Logger.Level.INFO);
+            Initialize();
+            Logger.getInstance().log("Initializing Done", LOGGING_NAME, Logger.Level.INFO);
+
+            // main loop
+            while (true)
+            {
+                Message m = queue.take();
+
+                int count = TcpSender.getInstance().getServerNodesCount();
+
+                if (count < Config.MinOtherNodes())
+                {
+                    Logger.getInstance().log(
+                        "Brainsplit mode due to "
+                            + count.ToString()
+                            + " of "
+                            + Config.MinOtherNodes()
+                            + " seen - message: "
+                            + m.toString(),
+                        LOGGING_NAME,
+                        Logger.Level.WARNING);
+
+                    brainsplit(m);
+                }
+                else
+                {
+                    if (!(m is HelloMessage))
+                    {
+                        Logger.getInstance().log(
+                                "Processing message:" + m.toString(),
+                                LOGGING_NAME,
+                                Logger.Level.INFO);
+                    }
+
+                    process(m);
+                }
+            }
+        }
 
         // IMPROVEMENT: should be visitor pattern
-	public void process(Message msg) //throws InterruptedException
-	{
-        lock(this) {
+        public void process(Message msg) //throws InterruptedException
+        {
+            lock (this)
+            {
 
-		if (msg is TPCMessage) 
-		{
-			processTpcMessage((TPCMessage)msg);
-		}
-		else if (msg is RestoreMessage)
-		{
-			processRestoreMessage((RestoreMessage)msg);
-		}
-		else if (msg is TransactionMessage)
-		{
-			processTransactionMessage((TransactionMessage)msg);
-		}
-		else if (msg is HelloMessage)
-		{
-			processHelloMessage((HelloMessage)msg);
-		}
-    }
-	}
+                if (msg is TPCMessage)
+                {
+                    processTpcMessage((TPCMessage)msg);
+                }
+                else if (msg is RestoreMessage)
+                {
+                    processRestoreMessage((RestoreMessage)msg);
+                }
+                else if (msg is TransactionMessage)
+                {
+                    processTransactionMessage((TransactionMessage)msg);
+                }
+                else if (msg is HelloMessage)
+                {
+                    processHelloMessage((HelloMessage)msg);
+                }
+            }
+        }
 
         public void brainsplit(Message msg) //throws InterruptedException
-	{
-            lock(this) {
-		// current transaction can timeout
-		if(msg is CanCommitMessage) 
-		{
-			// forbid new transactions
-			Logger.getInstance().log(
-					"Sending message to blocked cohort: " + msg.toString(), 
-					LOGGING_NAME, 
-					Logger.Level.INFO);
-			
-			blockedCohort.putMessage(msg);
-		}
-		else if(msg is TransactionMessage)
-		{
-			// forbid new transactions
-			Logger.getInstance().log(
-					"Sending message to blocked coordinator: " + msg.toString(), 
-					LOGGING_NAME, 
-					Logger.Level.INFO);
-			
-			blockedCoordinator.putMessage(msg);
-		}
-		else if(msg is RestoreIncentive)
-		{
-			// forbid new restoration
-			Logger.getInstance().log(
-					"Sending message to blocked restore coordinator: " + msg.toString(), 
-					LOGGING_NAME, 
-					Logger.Level.INFO);
-			
-			blockedRestoreCoordinator.putMessage(msg);
-		}
-		else if(msg is HelloMessage)
-		{
-			HelloMessage hm = (HelloMessage)msg;
-			
-			IPEndPoint node = new IPEndPoint(
-					hm.getSender().Address, 
-					hm.ListeningPort
-			);
-			
-			if(node.Equals(me))
-				return;
-			
-			
-			// try to add new node
-			TcpSender.getInstance().AddServerNode(node, queue);
-		}
-		else
-		{
-			Logger.getInstance().log(
-					"Undelivered message due to brainsplit: " + msg.toString(), 
-					LOGGING_NAME, 
-					Logger.Level.WARNING);
-		}
+        {
+            lock (this)
+            {
+                // current transaction can timeout
+                if (msg is CanCommitMessage)
+                {
+                    // forbid new transactions
+                    Logger.getInstance().log(
+                            "Sending message to blocked cohort: " + msg.toString(),
+                            LOGGING_NAME,
+                            Logger.Level.INFO);
+
+                    blockedCohort.putMessage(msg);
+                }
+                else if (msg is TransactionMessage)
+                {
+                    // forbid new transactions
+                    Logger.getInstance().log(
+                            "Sending message to blocked coordinator: " + msg.toString(),
+                            LOGGING_NAME,
+                            Logger.Level.INFO);
+
+                    blockedCoordinator.putMessage(msg);
+                }
+                else if (msg is RestoreIncentive)
+                {
+                    // forbid new restoration
+                    Logger.getInstance().log(
+                            "Sending message to blocked restore coordinator: " + msg.toString(),
+                            LOGGING_NAME,
+                            Logger.Level.INFO);
+
+                    blockedRestoreCoordinator.putMessage(msg);
+                }
+                else if (msg is HelloMessage)
+                {
+                    HelloMessage hm = (HelloMessage)msg;
+
+                    IPEndPoint node = new IPEndPoint(
+                            hm.getSender().Address,
+                            hm.ListeningPort
+                    );
+
+                    if (node.Equals(me))
+                        return;
+
+
+                    // try to add new node
+                    TcpSender.getInstance().AddServerNode(node, queue);
+                }
+                else
+                {
+                    Logger.getInstance().log(
+                            "Undelivered message due to brainsplit: " + msg.toString(),
+                            LOGGING_NAME,
+                            Logger.Level.WARNING);
+                }
             }
-	}
+        }
 
         public void processTpcMessage(TPCMessage msg) //throws InterruptedException
-	{
-		String transactionId = msg.getTransactionId();
-		
-		if (msg is CanCommitMessage) 
-		{
-			// check if cohort already exists
-			if(cohorts[transactionId] != null)
-			{
-				Logger.getInstance().log(
-						"Cohort already exists for tid: " + transactionId, 
-						LOGGING_NAME, 
-						Logger.Level.WARNING);
-				
-				return;
-			}
-			
-			Logger.getInstance().log(
-					"Creating new cohort with tid " + transactionId + " : " + msg.toString(), 
-					LOGGING_NAME, 
-					Logger.Level.INFO);
-			
-			// create cohort and start his job
-			Cohort coh = new CohortImpl();
-			cohorts[transactionId] = coh;
-			coh.setTransactionId(transactionId);
-			coh.setCoordinatorAddress(msg.getSender());
-			coh.setDatabaseState(DatabaseStateImpl.getInstance());
-			coh.setConnector(DbConnectorImpl.getInstance());
-			coh.addEndTransactionListener(this);
-			coh.processMessage(msg);
-			
-		} 
-		else if (msg is PreCommitMessage
-				|| msg is DoCommitMessage
-				|| msg is AbortMessage) 
-		{
-			Logger.getInstance().log(
-					"Dispatching to cohort with tid " + transactionId + " : " + msg.toString(), 
-					LOGGING_NAME, 
-					Logger.Level.INFO);
-			
-			// check if cohort exists
-			Cohort cohort = cohorts[transactionId];
-			
-			if(cohort == null)
-			{
-				Logger.getInstance().log(
-						"No cohort for tid" + transactionId, 
-						LOGGING_NAME, 
-						Logger.Level.WARNING);
-				return;
-			}
-			
-			cohort.processMessage(msg);
-		} 
-		else if (msg is YesForCommitMessage
-				|| msg is NoForCommitMessage
-				|| msg is AckPreCommitMessage
-				|| msg is HaveCommittedMessage
-				|| msg is RBD.TPC.Msg.ErrorMessage) 
-		{
-			Logger.getInstance().log(
-					"Dispatching to coordinator with tid " + transactionId + " : " + msg.toString(), 
-					LOGGING_NAME, 
-					Logger.Level.INFO);
-			
-			// send to COORDINATOR
-			Coordinator coordinator = coordinators[transactionId];
-			
-			if(coordinator == null)
-			{
-//				Logger.getInstance().log(
-//						"No coordinator for tid" + transactionId, 
-//						LOGGING_NAME, 
-//						Logger.Level.WARNING);
-				return;
-			}
-			
-			coordinator.processMessage(msg);
-		}
-	}
+        {
+            String transactionId = msg.getTransactionId();
+
+            if (msg is CanCommitMessage)
+            {
+                // check if cohort already exists
+                if (cohorts.ContainsKey(transactionId))
+                {
+                    Logger.getInstance().log(
+                            "Cohort already exists for tid: " + transactionId,
+                            LOGGING_NAME,
+                            Logger.Level.WARNING);
+
+                    return;
+                }
+
+                Logger.getInstance().log(
+                        "Creating new cohort with tid " + transactionId + " : " + msg.toString(),
+                        LOGGING_NAME,
+                        Logger.Level.INFO);
+
+                // create cohort and start his job
+                Cohort coh = new CohortImpl();
+                cohorts[transactionId] = coh;
+                coh.setTransactionId(transactionId);
+                coh.setCoordinatorAddress(msg.getSender());
+                coh.setDatabaseState(DatabaseStateImpl.getInstance());
+                coh.setConnector(DbConnectorImpl.getInstance());
+                coh.addEndTransactionListener(this);
+                coh.processMessage(msg);
+
+            }
+            else if (msg is PreCommitMessage
+                    || msg is DoCommitMessage
+                    || msg is AbortMessage)
+            {
+                Logger.getInstance().log(
+                        "Dispatching to cohort with tid " + transactionId + " : " + msg.toString(),
+                        LOGGING_NAME,
+                        Logger.Level.INFO);
+
+                // check if cohort exists
+                Cohort cohort = null;
+                if (cohorts.ContainsKey(transactionId))
+                {
+                    cohort = cohorts[transactionId];
+                }
+                if (cohort == null)
+                {
+                    Logger.getInstance().log(
+                            "No cohort for tid" + transactionId,
+                            LOGGING_NAME,
+                            Logger.Level.WARNING);
+                    return;
+                }
+
+                cohort.processMessage(msg);
+            }
+            else if (msg is YesForCommitMessage
+                    || msg is NoForCommitMessage
+                    || msg is AckPreCommitMessage
+                    || msg is HaveCommittedMessage
+                    || msg is RBD.TPC.Msg.ErrorMessage)
+            {
+                Logger.getInstance().log(
+                        "Dispatching to coordinator with tid " + transactionId + " : " + msg.toString(),
+                        LOGGING_NAME,
+                        Logger.Level.INFO);
+
+                // send to COORDINATOR
+                Coordinator coordinator = null;
+                if (coordinators.ContainsKey(transactionId))
+                {
+                    coordinator = coordinators[transactionId];
+                }
+                if (coordinator == null)
+                {
+                    //				Logger.getInstance().log(
+                    //						"No coordinator for tid" + transactionId, 
+                    //						LOGGING_NAME, 
+                    //						Logger.Level.WARNING);
+                    return;
+                }
+
+                coordinator.processMessage(msg);
+            }
+        }
 
         public void processRestoreMessage(RestoreMessage msg) //throws InterruptedException
         {
@@ -318,7 +325,6 @@ namespace RBD
                 || msg is RestoreTableList
                 || msg is RestoreTable)
             {
-
                 Logger.getInstance().log(
                         "Dispatching to restore cohort: " + msg.toString(),
                         LOGGING_NAME,
@@ -329,8 +335,11 @@ namespace RBD
             else
             {
                 IPEndPoint node = msg.getSender();
-                RestoreCoordinator coordinator = restoreCoordinators[node];
-
+                RestoreCoordinator coordinator = null;
+                if (restoreCoordinators.ContainsKey(node))
+                {
+                    coordinator = restoreCoordinators[node];
+                }
                 if (coordinator != null)
                 {
                     Logger.getInstance().log(
@@ -406,7 +415,6 @@ namespace RBD
                 {
                     nsi = nodeSynchronization[node];
                 }
-
                 // create entry for new nodes
                 if (nsi == null)
                 {
@@ -437,17 +445,14 @@ namespace RBD
                                 "Node out of sync " + nsi.BeatsOutOfSync + " times - " + node.ToString(),
                                 LOGGING_NAME,
                                 Logger.Level.INFO);
-
-
                         nsi.BeatOutOfSync();
                     }
-                    else if (restoreCoordinators[node] == null)
+                    else if (restoreCoordinators.ContainsKey(node) == false)
                     {
                         Logger.getInstance().log(
                                 "Node out of sync detected creating restorator - " + node.ToString(),
                                 LOGGING_NAME,
                                 Logger.Level.INFO);
-
 
                         // need to restore
                         RestoreCoordinator rc = new RestoreCoordinator(node);
@@ -486,12 +491,12 @@ namespace RBD
                 // begin-user-code
                 String tid = participant.getTransactionId();
 
-                if (cohorts.Remove(tid) == false) // TODO check
+                if (cohorts.Remove(tid) == false)
                 {
-                    if (coordinators.Remove(tid) == false) // TODO check
+                    if (coordinators.Remove(tid) == false)
                     {
                         Logger.getInstance().log(
-                                "onEndTransaction didnt delete participant (should not happen)",
+                                "onEndTransaction didn't delete participant (should not happen)",
                                 LOGGING_NAME,
                                 Logger.Level.SEVERE);
                     }
@@ -511,8 +516,11 @@ namespace RBD
             {
                 IPEndPoint node = coordinator.getTargetNode();
 
-                NodeSyncInfo nsi = nodeSynchronization[node];
-
+                NodeSyncInfo nsi = null;
+                if (nodeSynchronization.ContainsKey(node))
+                {
+                    nsi = nodeSynchronization[node];
+                }
                 // mark node as synchronized
                 if (nsi == null)
                 {
@@ -527,7 +535,7 @@ namespace RBD
                 }
 
                 // remove coordinator
-                if (restoreCoordinators.Remove(node) == false) // TODO check
+                if (restoreCoordinators.Remove(node) == false)  // TODO check if this way works
                 {
                     Logger.getInstance().log(
                             "onEndRestoration deleted wrong coordinator (should not happen)",

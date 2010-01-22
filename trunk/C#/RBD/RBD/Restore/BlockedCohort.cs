@@ -32,7 +32,7 @@ namespace RBD.Restore {
 		    }
 	    }
     	
-	    public void run() {
+	    override public void run() {
     		
 		    try {
 			    while(true)

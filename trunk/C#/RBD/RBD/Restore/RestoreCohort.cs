@@ -11,7 +11,7 @@ namespace RBD.Restore {
 	    private static string LOGGING_NAME = "RestoreCohort";
 	    private int RESTORE_TIMEOUT = 1000;
 
-	    public void run() {
+	    override public void run() {
 
 		    // loop unit worker finishes his task
 		    try {

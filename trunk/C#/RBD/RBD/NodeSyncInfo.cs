@@ -1,4 +1,4 @@
-﻿// + TODO check
+﻿// +
 
 using System;
 using System.Collections.Generic;
@@ -36,14 +36,17 @@ namespace RBD
         public void BeatOutOfSync()
         {
             ++vBeatsOutOfSync;
-            //LastBeat = System.currentTimeMillis();
             LastBeat = DateTime.Now;
+        }
+
+        public int getBeatsOutOfSync()
+        {
+            return BeatsOutOfSync;
         }
 
         public long getMsSinceLastBeat()
         {
             return (DateTime.Now - LastBeat).Milliseconds;
-            //return System.currentTimeMillis() - LastBeat;
         }
     }
 }
