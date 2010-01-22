@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<project name="sr-rbd" default="compile" basedir="." >
+	<property name="dist.dir" value="dist" />
+	<property name="res.dir" value="res" />
+	<property name="lib.dir" value="lib" />
+	<property name="build.dir" value="build" />
+	<property name="src.dir" value="src" />
+	
+	<property name="main.class" value="ddb.Main" />
+	
+	<property name="output.jar" value="${ant.project.name}.jar" />
+	<property name="output.jar.standalone" value="${ant.project.name}-standalone.jar" />
+	
+	<property name="version" value="1.0." />
+	<property name="authors" value="Piotr Kalański, Marcin Kubacki, Marek Kurdej, Adrian Wiśniewski" />
+	
+	<path id="project.classpath" >
+		<pathelement location="${build.dir}" />
+		<pathelement location="mysql-connector-java-5.1.6-bin.jar" />
+	</path>
+	
+	<!-- ================ CLEAN =================== -->
+	<target name="clean" >
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+	</target>
+	
+	<!-- ================ INIT =================== -->
+	<target name="init" description="initialise: create output directory and set timestamp" >
+			<tstamp>
+				<format property="DATE" pattern="yyyy-MM-dd" locale="pl,PL" />
+				<format property="TIME" pattern="HH:mm:ss" locale="pl,PL" />
+			</tstamp> 
+			<mkdir dir="${build.dir}" />
+	</target>
+	
+	<!-- ================ COMPILE =================== -->
+	<target name="compile" depends="init" description="compile the source" >
+		<echo message="${ant.project.name}: ${ant.file}" />
+		<echo message="build started (${DATE} ${TIME})" />
+		<javac destdir="${build.dir}" >
+			<src path="${src.dir}" />
+			<classpath refid="project.classpath" />
+		</javac>
+		<echo message="build ended" />
+	</target>
+	
+	<!-- ================ Create fat (lib-including) JAR =================== -->
+	<target name="fatjar" depends="compile" 
+			description="prepare for distribution in a single JAR" >
+		<mkdir dir="${dist.dir}" />
+		<jar destfile="${dist.dir}/${output.jar.standalone}" >
+			<zipfileset dir="${build.dir}" />
+			<!-- <zipfileset dir="${res.dir}" prefix="${res.dir}" /> -->
+			<zipfileset src="mysql-connector-java-5.1.6-bin.jar" />
+			<manifest>
+				<attribute name="Main-Class" value="${main.class}" />
+				<attribute name="Created-By" value="${authors}" />
+				<attribute name="Version" value="${version}v${DSTAMP}${TSTAMP}" />
+			</manifest>
+		</jar>
+		<copy file="config.xml" todir="${dist.dir}" />
+		<!-- <copy file="runGUIone.bat" todir="${dist.dir}" /> -->
+	</target>
+	
+	<!-- ================ Create JAR =================== -->
+	<target name="jar" depends="compile"
+			description="prepare for distribution in a JAR plus additional libraries in JARs" >
+		<mkdir dir="${dist.dir}" />
+		<jar destfile="${dist.dir}/${output.jar}" >
+			<fileset dir="${build.dir}" >
+				<include name="**/*.class" />
+			</fileset>
+
+			<manifest>
+				<attribute name="Main-Class" value="${main.class}" />
+				
+				<attribute name="Created-By" value="${authors}" />
+				<attribute name="Class-Path" value=". mysql-connector-java-5.1.6-bin.jar" />
+				<!-- <attribute name="Class-Path" value=". ${lib.dir}/dom4j-1.6.1.jar" /> -->
+				<attribute name="Version" value="${version}v${DSTAMP}${TSTAMP}" />
+			</manifest>
+		</jar>
+
+		<copy file="config.xml" todir="${dist.dir}" />
+		<copy todir="${dist.dir}" >
+			<fileset dir="." >
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+		<!--
+		<copy todir="${dist.dir}/${lib.dir}" >
+			<fileset dir="${lib.dir}" >
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${dist.dir}/${res.dir}" >
+			<fileset dir="${res.dir}" >
+				<include name="**/*" />
+			</fileset>
+		</copy>
+		-->
+		<!-- <copy file="runGUI.bat" todir="${dist.dir}" />  -->
+	</target>
+	
+	<!-- ================ ??? ======================== -->
+	<target name="Main-Class" >
+		<java fork="yes" classname="${main.class}" failonerror="true" >
+			<classpath refid="project.classpath" />
+		</java>
+	</target>
+	
+</project>
