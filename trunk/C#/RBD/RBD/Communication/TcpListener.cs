@@ -17,6 +17,7 @@ namespace RBD.Communication
     public class TcpListener : Runnable
     {
         private const String LOGGING_NAME = "TcpListener";
+        const int BACKLOG = 64;
 
         protected BlockingQueue<Message> storage = null;
 
@@ -39,6 +40,7 @@ namespace RBD.Communication
                 serverSocket = new Socket(AddressFamily.InterNetwork,
                                             SocketType.Stream, ProtocolType.Tcp);
                 serverSocket.Bind(ip);
+                serverSocket.Listen(BACKLOG);
 
                 Logger.getInstance().log("Server is listening on port " +
                         listenPort + ".", LOGGING_NAME, Logger.Level.INFO);
