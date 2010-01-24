@@ -20,12 +20,11 @@ public class CoordinatorImpl : Coordinator {
 	/** 
 	 * Lista pozytywnych&nbsp;odpowiedzi&nbsp;od&nbsp;wezlow
 	 */
-    private HashSet<IPAddress> answers;
+    private HashSet<IPEndPoint> answers;
 	/** 
 	 * Lista wezlo bioracych udzial w transakcji
 	 */
     private int nodes;
-    //private IList<IPAddress> nodes;
 	/**
 	 * Adres klienta, ktory zarzadal wykonania transakcji
 	 */
@@ -34,7 +33,7 @@ public class CoordinatorImpl : Coordinator {
 	public CoordinatorImpl() : base() {
 		//this.connector = DbConnectorImpl.getInstance();
 		setState(new InitState());
-		this.answers = new HashSet<IPAddress>();
+        this.answers = new HashSet<IPEndPoint>();
 	}
 
 	protected void setState(CoordinatorState state) {
@@ -75,7 +74,7 @@ public class CoordinatorImpl : Coordinator {
 	 * </p>
 	 * @param nodeName nazwa wezla
 	 */
-    private void addAnswer(IPAddress nodeName)
+    private void addAnswer(IPEndPoint nodeName)
     {
 		this.answers.Add(nodeName);
 	}
@@ -139,7 +138,7 @@ public class CoordinatorImpl : Coordinator {
 	 * @param nextState Nastepny stan.
 	 * @generated "UML to Java (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
 	 */
-    public void processAnswer(IPAddress node, TPCMessage message, CoordinatorState nextState)
+    public void processAnswer(IPEndPoint node, TPCMessage message, CoordinatorState nextState)
     {
 		addAnswer(node);
 		if(checkAnswers()) {
@@ -220,16 +219,16 @@ public class CoordinatorImpl : Coordinator {
 		Logger.getInstance().log("NewMessage: " + message, "Coordinator", Logger.Level.INFO);
 		
 		if(message is YesForCommitMessage) {
-			state.onYesForCommit(message.getSender().Address);
+			state.onYesForCommit(message.getSender());
 		}
 		else if(message is NoForCommitMessage) {
-            state.onNoForCommit(message.getSender().Address);
+            state.onNoForCommit(message.getSender());
 		}
 		else if(message is HaveCommittedMessage) {
 			state.onHaveCommitted((HaveCommittedMessage)message);
 		}
 		else if(message is AckPreCommitMessage) {
-            state.onAckPreCommit(message.getSender().Address);
+            state.onAckPreCommit(message.getSender());
 		}
 		else if(message is TransactionMessage) {
 			state.onTransaction((TransactionMessage)message);

@@ -20,7 +20,7 @@ abstract public class CoordinatorState : TimeoutListener {
 	/** 
 	 * @param node
 	 */
-    virtual public void onYesForCommit(IPAddress node)
+    virtual public void onYesForCommit(IPEndPoint node)
     {
 		Logger.getInstance().log("Nie oczekiwano wiadomosci: YesForCommit", LOGGER_NAME, Logger.Level.WARNING);
 	}
@@ -28,7 +28,7 @@ abstract public class CoordinatorState : TimeoutListener {
 	/** 
 	 * @param node
 	 */
-    virtual public void onNoForCommit(IPAddress node)
+    virtual public void onNoForCommit(IPEndPoint node)
     {
         Logger.getInstance().log("Nie oczekiwano wiadomosci: NoForCommit", LOGGER_NAME, Logger.Level.WARNING);
 	}
@@ -36,7 +36,7 @@ abstract public class CoordinatorState : TimeoutListener {
 	/** 
 	 * @param node
 	 */
-    virtual public void onAckPreCommit(IPAddress node)
+    virtual public void onAckPreCommit(IPEndPoint node)
     {
         Logger.getInstance().log("Nie oczekiwano wiadomosci: AckPreCommit", LOGGER_NAME, Logger.Level.WARNING);
 	}
