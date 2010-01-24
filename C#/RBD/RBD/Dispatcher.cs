@@ -65,22 +65,30 @@ namespace RBD
             // assign self identifier
             me = new IPEndPoint(Config.TcpAddress(), Config.TcpPort());
 
+            Thread t;
             // install threads for managing communication
-            new Thread(new ThreadStart(tcp.run)).Start();
-            //(tcp, "TPC_LISTENER").start();
-            new Thread(new ThreadStart(udp.run)).Start(); //, "UDP_LISTENER").start();
-            new Thread(new ThreadStart(hello.run)).Start(); //, "HELLO_SENDER").start();
+            t = new Thread(new ThreadStart(tcp.run));
+            t.Name = "TCP_LISTENER"; t.Start();
+            t = new Thread(new ThreadStart(udp.run));
+            t.Name = "UDP_LISTENER"; t.Start();
+            t = new Thread(new ThreadStart(hello.run));
+            t.Name = "HELLO_SENDER"; t.Start();
 
             // install restore thread
-            new Thread(new ThreadStart(restoreCohort.run)).Start(); //, "RESTORE_COHORT").start();
+            t = new Thread(new ThreadStart(restoreCohort.run));
+            t.Name = "RESTORE_COHORT"; t.Start();
 
             // install blocked threads
-            new Thread(new ThreadStart(blockedCohort.run)).Start(); //, "BLOCKED_COHORT").start();
-            new Thread(new ThreadStart(blockedCoordinator.run)).Start(); //, "BLOCKED_COORDINATOR").start();
-            new Thread(new ThreadStart(blockedRestoreCoordinator.run)).Start(); //, "BLOCKER_RESTORE_COORDINATOR").start();
+            t = new Thread(new ThreadStart(blockedCohort.run));
+            t.Name = "BLOCKED_COHORT"; t.Start();
+            t = new Thread(new ThreadStart(blockedCoordinator.run));
+            t.Name = "BLOCKED_COORDINATOR"; t.Start();
+            t = new Thread(new ThreadStart(blockedRestoreCoordinator.run));
+            t.Name = "BLOCKER_RESTORE_COORDINATOR"; t.Start();
 
             // install stale connection detecting thread
-            new Thread(new ThreadStart(this.detectStaleConnectionThread)).Start();
+            t = new Thread(new ThreadStart(this.detectStaleConnectionThread));
+            t.Name = "DETECT_STALE_CONNECTION"; t.Start();
         }
 
         public void detectStaleConnectionThread()
@@ -459,7 +467,8 @@ namespace RBD
                         restoreCoordinators[node] = rc;
                         rc.addEndRestorationListener(this);
 
-                        new Thread(new ThreadStart(rc.run)).Start();
+                        Thread t = new Thread(new ThreadStart(rc.run));
+                        t.Name = "RESTORE_COORDINATOR"; t.Start();
                     }
                 }
             }
@@ -535,7 +544,7 @@ namespace RBD
                 }
 
                 // remove coordinator
-                if (restoreCoordinators.Remove(node) == false)  // TODO check if this way works
+                if (restoreCoordinators.Remove(node) == false)
                 {
                     Logger.getInstance().log(
                             "onEndRestoration deleted wrong coordinator (should not happen)",
