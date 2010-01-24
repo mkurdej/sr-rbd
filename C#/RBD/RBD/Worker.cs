@@ -32,7 +32,6 @@ namespace RBD
             timeoutTime = -1;
         }
 
-        
         public void putMessage(Message msg) //throws InterruptedException
         {
             queue.put(msg);
@@ -59,9 +58,9 @@ namespace RBD
                     long now = (long)TimeSpan.FromTicks(DateTime.Now.Ticks).TotalMilliseconds;
                     long diff = timeoutTime - now;
                     msg = queue.poll((int)diff);
-                    //zakomentowane, bo patrz na queue.poll()
-                    //if (msg == null)
-                    //    throw new TimeoutException();
+                    //zakomentowane, bo patrz na queue.poll() // odkomentowane na wszelki wypadek
+                    if (msg == null)
+                        throw new TimeoutException();
                 }
 
                 Message.MessageType type = msg.GetMessageType();

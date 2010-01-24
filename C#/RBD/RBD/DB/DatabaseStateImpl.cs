@@ -64,14 +64,16 @@ namespace RBD.DB
 
         public int getTableVersion(String tableName)
         {
-
             return getTableByName(tableName).getVersion();
         }
 
         protected TableState getTableByName(String tableName)
         {
-            TableState ts = tables[tableName];
-
+            TableState ts = null;
+            if (tables.ContainsKey(tableName))
+            {
+                ts = tables[tableName];
+            }
             if (ts == null)
             {
                 ts = new TableState(tableName);
