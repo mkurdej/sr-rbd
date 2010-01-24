@@ -31,7 +31,7 @@ namespace RBD.Msg
             TPC_HAVECOMMITED,
             TPC_NOFORCOMMIT,
             TPC_ERROR,
-            TPC_TIMEOUTMESSAGE, // TODO dodany w C#
+            TPC_TIMEOUTMESSAGE,
             TRANSACTION_MESSAGE,
             CLIENT_SUCCESS,
             CLIENT_CONFLICT,
@@ -121,7 +121,7 @@ namespace RBD.Msg
 
             // wrap data in envelope ( byte[][] would be more efficient, but this is more convinient )
             MemoryStream envelopeMs = new MemoryStream();
-            DataOutputStream envelopeDataStream = new DataOutputStream(ms);
+            DataOutputStream envelopeDataStream = new DataOutputStream(envelopeMs);
 
             byte[] bytes = ms.ToArray();
 
@@ -129,8 +129,8 @@ namespace RBD.Msg
             envelopeDataStream.writeInt(bytes.Length);
             envelopeDataStream.writeInt((int)GetMessageType());
             envelopeDataStream.Write(bytes);
-
-            return envelopeMs.ToArray();
+            byte[] result = envelopeMs.ToArray();
+            return result;
         }
 
         static public Message unserialize(MessageType type, byte[] bytes, IPEndPoint sender) //throws IOException

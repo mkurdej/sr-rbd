@@ -220,12 +220,12 @@ namespace RBD.TPC
               ...
             }
             */
-            new Thread(new ThreadStart(this.run)).Start();
+            Thread t = new Thread(new ThreadStart(this.run));
+            t.Name = "TPC_THREAD"; t.Start();
         }
 
         void run()
         {
-            // TODO
             Logger.getInstance().log("startThread " + Thread.CurrentThread.Name, "TPC", Logger.Level.INFO);
             while (!stopped)
             {

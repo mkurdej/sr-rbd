@@ -42,7 +42,7 @@ namespace RBD.DB
 
         public void addTable(String tableName)
         {
-            if (tables[tableName] != null) // TODO check
+            if (tables.ContainsKey(tableName))
             {
                 Logger.getInstance().log("Adding table that exists", LOGGING_NAME, Logger.Level.WARNING);
                 return;

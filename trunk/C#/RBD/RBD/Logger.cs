@@ -50,9 +50,9 @@ namespace RBD
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("{0} ", timestamp());
             sb.AppendFormat("<{0,4}> ", AppDomain.GetCurrentThreadId());   // Thread.CurrentThread.ManagedThreadId returns always 1
-            sb.AppendFormat("({0,8}) : ", level);
+            sb.AppendFormat("({0,-8}) : ", level);
             sb.AppendFormat("[{0,-15}] ", who);
-            sb.AppendFormat("{0}", msg.ToUpper());
+            sb.AppendFormat("{0}", msg);
             Console.WriteLine(sb.ToString());
         }
 
