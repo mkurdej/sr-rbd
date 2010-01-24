@@ -1,4 +1,4 @@
-﻿// +- TODO exceptions + logging, check
+﻿// +
 
 using System;
 using System.Collections.Generic;
@@ -100,13 +100,16 @@ namespace RBD.TPC
          */
         public void processMessage(Message message)
         {
-            //try {
-            this.messageQueue.putMessage(message);
-            //} catch(InterruptedException e) {
-            //    Logger.getInstance().log(e.getMessage(), "TPC", Level.SEVERE);
-            //} 
+            try
+            {
+                this.messageQueue.putMessage(message);
+            }
+            catch (ThreadInterruptedException e)
+            {
+                Logger.getInstance().log(e.Message, "TPC", Logger.Level.SEVERE);
+            }
 
-            ////this.onNewMessage(message);
+            //this.onNewMessage(message);
         }
 
         /**
@@ -119,12 +122,15 @@ namespace RBD.TPC
          */
         private void waitForMessage()
         {
-            //try {
-            Message msg = this.messageQueue.getMessage();
-            onNewMessage(msg);
-            //} catch (InterruptedException e) {
-            //    Logger.getInstance().log(e.getMessage(), "TPC", Logger.Level.SEVERE);
-            //}
+            try
+            {
+                Message msg = this.messageQueue.getMessage();
+                onNewMessage(msg);
+            }
+            catch (ThreadInterruptedException e)
+            {
+                Logger.getInstance().log(e.Message, "TPC", Logger.Level.SEVERE);
+            }
         }
 
         /**
@@ -215,17 +221,6 @@ namespace RBD.TPC
             }
             */
             new Thread(new ThreadStart(this.run)).Start();
-            //    new Thread(new Runnable() {
-            //        @Override
-            //        public void run() {
-            //            Logger.getInstance().log(
-            //                    "startThread " + Thread.currentThread(), "TPC",
-            //                    Level.INFO);
-            //            while (!stopped) {
-            //                waitForMessage();
-            //            }
-            //        }
-            //    }, "TPC_THREAD").start();
         }
 
         void run()

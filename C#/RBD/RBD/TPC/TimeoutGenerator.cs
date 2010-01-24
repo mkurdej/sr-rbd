@@ -1,4 +1,4 @@
-﻿// + TODO check
+﻿// +
 
 using System;
 using System.Collections.Generic;
@@ -12,17 +12,6 @@ namespace RBD.TPC
     {
         private volatile bool stopped = false;
         private TimeoutListener timeoutListener;
-
-        private TimerCallback timerCallback = new TimerCallback(TimeoutCallback);
-
-        static void TimeoutCallback(object o)
-        {
-            TimeoutGenerator tg = (TimeoutGenerator)o;
-            if (!tg.stopped)
-            {
-                tg.timeoutListener.onTimeout();
-            }
-        }
 
         public void setTimeoutListener(TimeoutListener timeoutListener)
         {
@@ -38,8 +27,17 @@ namespace RBD.TPC
         public void startTimer(long miliseconds)
         {
             stopped = false;
-            Timer t = new Timer(timerCallback, this, miliseconds, Timeout.Infinite);
+            Timer t = new Timer(new TimerCallback(this.runTimer), null, miliseconds, Timeout.Infinite);
         }
+
+        private void runTimer(object o)
+        {
+            if (!stopped)
+            {
+                timeoutListener.onTimeout();
+            }
+        }
+
 
         /** 
          * <!-- begin-UML-doc -->

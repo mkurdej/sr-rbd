@@ -1,4 +1,4 @@
-﻿// +--- TODO BlockingQueue
+﻿// +
 
 using System;
 using System.Collections.Generic;
@@ -14,26 +14,13 @@ namespace RBD.TPC
     {
         private BlockingQueue<Message> messages = new BlockingQueue<Message>();
 
-        /** 
-         * <!-- begin-UML-doc -->
-         * <!-- end-UML-doc -->
-         * @param message
-         * @throws InterruptedException 
-         */
         public void putMessage(Message message) //throws InterruptedException
         {
             messages.put(message);
         }
 
-        /** 
-         * <!-- begin-UML-doc -->
-         * <!-- end-UML-doc -->
-         * @return
-         * @throws InterruptedException 
-         */
         public Message getMessage() //throws InterruptedException 
         {
-            //return new HelloMessage();
             return messages.take();
         }
     }
