@@ -1,3 +1,4 @@
+// +
 
 using RBD.DB;
 using RBD.Msg;
@@ -13,7 +14,7 @@ public class CohortImpl : Cohort {
 	}
 
 	override public void replyToCoordinator(TPCMessage message) {
-        message.TransactionId = this.TransactionId;
+        message.setTransactionId(getTransactionId());
 		TcpSender.getInstance().sendToNode(message, getCoordinatorAddress());
 	}
 
@@ -28,7 +29,7 @@ public class CohortImpl : Cohort {
 	override public void commitTransaction() {
 		try {
 			this.connector.query(getQueryString());
-			this.DatabaseState.incrementTableVersion(this.TableName);
+            this.getDatabaseState().incrementTableVersion(getTableName());
 			replyToCoordinator(new HaveCommittedMessage());
 			setState(new CommittedState());
 		} catch (DBException exception) {
@@ -70,7 +71,6 @@ public class CohortImpl : Cohort {
 
 	public void onCanCommit(CanCommitMessage message) {
 		state.onCanCommit(message);
-
 	}
 
 	public void onAbort() {
