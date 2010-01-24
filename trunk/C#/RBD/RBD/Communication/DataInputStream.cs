@@ -1,4 +1,4 @@
-﻿// + TODO check
+﻿// +
 
 using System;
 using System.Collections.Generic;
@@ -16,6 +16,11 @@ namespace RBD.Communication
         public DataInputStream(Stream input)
             : base(input)
         {
+        }
+
+        public bool readBoolean()
+        {
+            return ReadBoolean();
         }
 
         public String readString()

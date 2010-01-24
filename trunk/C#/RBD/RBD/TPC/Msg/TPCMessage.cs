@@ -1,4 +1,4 @@
-﻿// +--- TODO check, UWAGA transactionId nie było serializowane, sprawdzić klasy potomne by wywoływały metodę klasy bazowej!!!
+﻿// +
 
 using System;
 using System.Collections.Generic;
@@ -12,15 +12,18 @@ namespace RBD.TPC.Msg
 {
     public abstract class TPCMessage : Message
     {
+
+        public String TransactionId { get; set; }
+
         public String getTransactionId()
         {
             return TransactionId;
         }
+
         public void setTransactionId(String transactionId)
         {
             TransactionId = transactionId;
         }
-        public String TransactionId { get; set; }
 
         override
         public void FromBinary(DataInputStream s)
