@@ -1,10 +1,13 @@
-﻿using System;
+﻿// +
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace RBD.TPC
 {
+    [Serializable]
     public class LessTableVersionException : Exception
     {
         public LessTableVersionException(String tableName, int coordinatorTableVersion, int localTableVersion)
