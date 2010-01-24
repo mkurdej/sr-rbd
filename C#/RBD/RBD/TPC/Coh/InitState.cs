@@ -1,3 +1,5 @@
+// +
+
 using System;
 using RBD.TPC.Msg;
 
@@ -5,7 +7,6 @@ namespace RBD.TPC.COH
 {
     public class InitState : CohortState
     {
-
         override public void onTimeout()
         {
             this.cohort.endTransaction();

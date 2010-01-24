@@ -1,3 +1,5 @@
+// +
+
 namespace RBD.TPC.COH
 {
     public class WaitingDoCommit : CohortState {
