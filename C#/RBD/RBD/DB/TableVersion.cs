@@ -1,4 +1,4 @@
-﻿// + TODO check
+﻿// +
 
 using System;
 using System.Collections.Generic;
@@ -11,6 +11,18 @@ namespace RBD.DB
 {
     public class TableVersion : BinarySerializable
     {
+
+        public TableVersion(String name, int version)
+        {
+            Name = name;
+            Version = version;
+        }
+
+        public TableVersion(DataInputStream dis) //throws IOException
+        {
+            FromBinary(dis);
+        }
+
         public String getTableName()
         {
             return Name;
@@ -37,26 +49,15 @@ namespace RBD.DB
         }
         public int Version { get; set; }
 
-        public TableVersion(String name, int version)
-        {
-            Name = name;
-            Version = version;
-        }
-
-        public TableVersion(DataInputStream dis) //throws IOException
-        {
-            FromBinary(dis);
-        }
-
         public void FromBinary(DataInputStream dis) //throws IOException
         {
-            Name = dis.ReadString();
+            Name = dis.readString();
             Version = dis.readInt();
         }
 
         public void ToBinary(DataOutputStream dos) //throws IOException
         {
-            dos.WriteString(Name);
+            dos.writeString(Name);
             dos.writeInt(Version);
         }
 

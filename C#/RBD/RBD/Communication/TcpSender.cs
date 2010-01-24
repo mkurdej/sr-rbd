@@ -117,7 +117,8 @@ namespace RBD.Communication
                     if (node.getIsServer())
                         ++count;
 
-                return count;
+                // add self
+                return count + 1;
             }
         }
 

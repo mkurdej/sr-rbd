@@ -68,7 +68,6 @@ namespace RBD.Communication
                     Logger.getInstance().log("Could not accept new connection!",
                             LOGGING_NAME, Logger.Level.WARNING);
                 }
-
             }
         }
     }

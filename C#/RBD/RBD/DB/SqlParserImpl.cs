@@ -260,7 +260,7 @@ namespace RBD.DB
 
         public String getQueryString()
         {
-            return query;
+            return parsedQueryString;
         }
 
         public String getTableName()

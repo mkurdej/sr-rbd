@@ -6,6 +6,7 @@ using MySql.Data.MySqlClient;
 
 namespace RBD.DB
 {
+    [Serializable]
     public class DatabaseTable
     {
         private string table;
@@ -16,6 +17,7 @@ namespace RBD.DB
 
             while (recordSet.Read())
             {
+                columnCount = recordSet.FieldCount;
                 String thisrow = "";
                 for (int i = 0; i < recordSet.FieldCount; i++)
                 {
@@ -36,6 +38,14 @@ namespace RBD.DB
         public String toString() {
             return this.table;
         }
+
+        public int getColumnCount()
+        {
+            return columnCount;
+        }
+
+        /** Liczba kolumn w tabeli. */
+        int columnCount;
 
     }
 }
