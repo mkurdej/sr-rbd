@@ -16,7 +16,7 @@ namespace RBD.Msg.Client
 
         public void setResultSet(DatabaseTable table)
         {
-            this.setResult(table.toString());
+            this.setResult(table.ToString());
         }
 
         public void setResult(String result)

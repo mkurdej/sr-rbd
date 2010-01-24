@@ -55,6 +55,7 @@ namespace RBD.Communication
         catch (ThreadInterruptedException) {
         	Logger.getInstance().log("InterruptedException", LOGGING_NAME, Logger.Level.INFO);
 		}
+        Thread.CurrentThread.Abort();
     }
 }
 }

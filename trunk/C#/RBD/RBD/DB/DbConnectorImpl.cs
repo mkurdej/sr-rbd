@@ -12,26 +12,30 @@ namespace RBD.DB
     {
         static DbConnector instance = new DbConnectorImpl();
         const String LOGGING_NAME = "SqlConnector";
-        const String SERVER = "192.168.0.1";
-        const String DATABASE = "sr";
-        const String USERNAME = "sr";
-        const String PASSWORD = "sr";
+
+        String server;
+        String database;
+        String username;
+        String password;
 
         MySqlConnection connection;
 
         DbConnectorImpl()
         {
-
+            server = Config.Host();
+            database = Config.Database();
+            username = Config.User();
+            password = Config.Password();
         }
 
         void openDatabase()
         {
             try
             {
-                string MyConString = "SERVER=" + SERVER +
-                                     ";DATABASE=" + DATABASE +
-                                     ";UID=" + USERNAME +
-                                     ";PASSWORD=" + PASSWORD + ";";
+                string MyConString = "SERVER=" + server +
+                                     ";DATABASE=" + database +
+                                     ";UID=" + username +
+                                     ";PASSWORD=" + password + ";";
                 Logger.getInstance().log(MyConString, LOGGING_NAME, Logger.Level.INFO);
                 connection = new MySqlConnection(MyConString);
                 connection.Open();
@@ -102,7 +106,7 @@ namespace RBD.DB
             ProcessStartInfo mysqldump = new ProcessStartInfo();
             mysqldump.FileName = "mysqldump";
             //mysqldump.Arguments = "-u " + USERNAME + " -p" + PASSWORD + " " + DATABASE + " " + tableName;
-            mysqldump.Arguments = "-u " + USERNAME + " -p" + PASSWORD + " -h " + SERVER + " " + DATABASE + " " + tableName;
+            mysqldump.Arguments = "-u " + username + " -p" + password + " -h " + server + " " + database + " " + tableName;
             mysqldump.UseShellExecute = false;
             mysqldump.RedirectStandardOutput = true;
 
@@ -129,7 +133,7 @@ namespace RBD.DB
             ProcessStartInfo mysql = new ProcessStartInfo();
             mysql.FileName = "mysql";
             //mysql.Arguments = "-u " + USERNAME + " -p" + PASSWORD + " " + DATABASE;
-            mysql.Arguments = "-u " + USERNAME + " -p" + PASSWORD + " -h " + SERVER + " " + DATABASE;
+            mysql.Arguments = "-u " + username + " -p" + password + " -h " + server + " " + database;
             mysql.UseShellExecute = false;
             mysql.RedirectStandardInput = true;
 

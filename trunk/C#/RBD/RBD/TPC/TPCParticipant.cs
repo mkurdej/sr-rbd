@@ -231,6 +231,7 @@ namespace RBD.TPC
             {
                 waitForMessage();
             }
+            Thread.CurrentThread.Abort();
         }
 
         /**

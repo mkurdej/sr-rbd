@@ -65,6 +65,7 @@ namespace RBD.Communication
                     Message m = Message.Unserialize(Message.FromInt(type), b, address);
                     storage.put(m);
                 }
+                Thread.CurrentThread.Abort();
             }
             catch (IOException ex)
             {

@@ -80,6 +80,7 @@ namespace RBD.Communication
                         LOGGING_NAME,
                         Logger.Level.WARNING);
             }
+            Thread.CurrentThread.Abort();
         }
     }
 }

@@ -61,7 +61,9 @@
     <Compile Include="DB\DBException.cs" />
     <Compile Include="DB\DumpTableException.cs" />
     <Compile Include="DB\ImportTableException.cs" />
+    <Compile Include="DB\NoSuchTableFieldException.cs" />
     <Compile Include="DB\TableLockedException.cs" />
+    <Compile Include="DB\TableRow.cs" />
     <Compile Include="DB\TableState.cs" />
     <Compile Include="Msg\Client\ResultSetMessage.cs" />
     <Compile Include="Msg\Client\SuccessMessage.cs" />
