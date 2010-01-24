@@ -1,3 +1,5 @@
+// +
+
 using RBD.Communication;
 using RBD.TPC.Msg;
 using RBD.DB;
@@ -10,12 +12,11 @@ public class InitState : CoordinatorState {
 
     override public void onTimeout()
     {
-		coordinator.abortTransaction(new TimeoutMessage());
+		coordinator.abortTransaction(new RBD.Msg.Client.TimeoutMessage());
 	}
 
     override public void onTransaction(TransactionMessage message)
     {
-	
 		Logger.getInstance().log("Processing transaction", LOGGING_NAME, Logger.Level.INFO);
 
         coordinator.setNodeCount(TcpSender.getInstance().getServerNodesCount());

@@ -1,3 +1,5 @@
+// +
+
 using System.Net;
 using RBD.TPC.Msg;
 
@@ -11,7 +13,7 @@ namespace RBD.TPC.COR
 
         override public void onTimeout()
         {
-            coordinator.abortTransaction(new RBD.TPC.Msg.TimeoutMessage());
+            coordinator.abortTransaction(new RBD.Msg.Client.TimeoutMessage());
         }
 
         override public void onYesForCommit(IPAddress node)
