@@ -1,7 +1,10 @@
+// +
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading;
 
 using RBD.Communication;
 using RBD.Msg;
@@ -14,7 +17,7 @@ namespace RBD.Restore {
 	    private static string LOGGING_NAME = "RestoreCoordinator";
 	    private static int RESTORE_TIMEOUT = 1000;
 
-        private List<EndRestorationListener> endRestorationListeners = new List<EndRestorationListener>();
+        private HashSet<EndRestorationListener> endRestorationListeners = new HashSet<EndRestorationListener>();
 	    private IPEndPoint targetNode;
 
         public RestoreCoordinator(IPEndPoint node)
@@ -40,8 +43,8 @@ namespace RBD.Restore {
 	    {
 		    return targetNode;
 	    }
-    	
-	    public void Restore()
+
+        public void Restore() //  throws TimeoutException, InterruptedException
 	    {
 		    Message msg;
             Message.MessageType[] incentiveReply = { Message.MessageType.RESTORE_ACK, Message.MessageType.RESTORE_NACK };
@@ -50,7 +53,6 @@ namespace RBD.Restore {
 				    "Starting restoration - sending incentive : " + targetNode.ToString(), 
 				    LOGGING_NAME, 
 				    Logger.Level.INFO);
-    		
     		
 		    // send restore incentive
 		    TcpSender.getInstance().sendToNode(new RestoreIncentive(), targetNode);
@@ -93,8 +95,6 @@ namespace RBD.Restore {
 				    LOGGING_NAME, 
 				    Logger.Level.INFO);
     		
-		    // TODO: release lock
-    		
 		    // send all tables
 		    foreach(TableVersion tv in rtl.getTables())
 		    {
@@ -135,7 +135,7 @@ namespace RBD.Restore {
 					    "Restore timed out",
 					    LOGGING_NAME, 
 					    Logger.Level.WARNING);
-		    } catch (Exception) {
+		    } catch (ThreadInterruptedException) {
 			    Logger.getInstance().log(
 					    "InterruptedException",
 					    LOGGING_NAME, 

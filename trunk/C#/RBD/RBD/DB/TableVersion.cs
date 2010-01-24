@@ -57,7 +57,7 @@ namespace RBD.DB
         public void ToBinary(DataOutputStream dos) //throws IOException
         {
             dos.WriteString(Name);
-            dos.Write((int)Version);
+            dos.writeInt(Version);
         }
 
     }

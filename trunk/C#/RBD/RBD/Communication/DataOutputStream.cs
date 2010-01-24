@@ -18,6 +18,11 @@ namespace RBD.Communication
         {
         }
 
+        public void writeBoolean(bool value)
+        {
+            Write(value);
+        }
+
         public void writeInt(int value)
         {
             Write(IPAddress.HostToNetworkOrder(value));
@@ -34,7 +39,7 @@ namespace RBD.Communication
             byte[] bytes = Config.GetEncoding().GetBytes(s);
 
             // write length
-            Write(bytes.Length);
+            writeInt(bytes.Length);
 
             // write content to stream
             Write(bytes, 0, bytes.Length);

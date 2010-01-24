@@ -1,4 +1,4 @@
-// + TODO check
+// +
 
 using RBD.Communication;
 
@@ -59,7 +59,7 @@ namespace RBD.Restore.Msg
 
         override public void ToBinary(DataOutputStream s)
         {
-            s.Write((int)tableVersion);
+            s.writeInt(tableVersion);
 		    s.WriteString(tableName);
 		    s.WriteString(tableDump);
 	    }

@@ -1,4 +1,7 @@
+// +
+
 using System;
+using System.Threading;
 
 using RBD.Communication;
 using RBD.TPC.Msg;
@@ -36,7 +39,7 @@ namespace RBD.Restore {
 		    try {
 			    while(true)
 				    ForbidTransaction();
-		    } catch (Exception) {
+		    } catch (ThreadInterruptedException) {
 			    Logger.getInstance().log(
 					    "InterruptedException - terminating", 
 					    LOGGING_NAME, 
