@@ -74,10 +74,10 @@ namespace RBD.TPC.Msg
         public void ToBinary(DataOutputStream s) //throws IOException 
         {
             base.ToBinary(s);
-            s.WriteString(QueryString);
-            s.WriteString(TableName);
-            s.Write((bool)IsCreate);
-            s.Write((int)TableVersion);
+            s.writeString(QueryString);
+            s.writeString(TableName);
+            s.Write((bool)IsCreate);    // TODO
+            s.writeInt(TableVersion);
         }
     }
 }

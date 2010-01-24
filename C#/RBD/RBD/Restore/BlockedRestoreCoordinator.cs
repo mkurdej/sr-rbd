@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 
 using RBD.Communication;
 using RBD.Msg;
@@ -35,7 +36,7 @@ namespace RBD.Restore {
 		    try {
 			    while(true)
 				    ForbidRestoration();
-		    } catch (Exception) {
+		    } catch (ThreadInterruptedException) {
 			    Logger.getInstance().log(
 					    "InterruptedException - terminating", 
 					    LOGGING_NAME, 

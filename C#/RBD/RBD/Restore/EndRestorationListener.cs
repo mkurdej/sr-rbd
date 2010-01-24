@@ -1,3 +1,5 @@
+// +
+
 namespace RBD.Restore
 {
     public interface EndRestorationListener

@@ -1,4 +1,4 @@
-// + TODO check
+// +
 
 using System.Collections;
 using System.Collections.Generic;
@@ -49,7 +49,7 @@ namespace RBD.Restore.Msg
         override public void ToBinary(DataOutputStream s)
         {
 		    // write length
-            s.Write((int)getTables().Count);
+            s.writeInt(getTables().Count);
 
             // write tables
             foreach (TableVersion tv in getTables())

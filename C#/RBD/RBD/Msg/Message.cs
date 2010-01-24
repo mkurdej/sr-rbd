@@ -126,8 +126,8 @@ namespace RBD.Msg
             byte[] bytes = ms.ToArray();
 
             // size + type + data
-            envelopeDataStream.Write((int)bytes.Length);
-            envelopeDataStream.Write((int)GetMessageType());
+            envelopeDataStream.writeInt(bytes.Length);
+            envelopeDataStream.writeInt((int)GetMessageType());
             envelopeDataStream.Write(bytes);
 
             return envelopeMs.ToArray();
