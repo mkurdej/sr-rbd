@@ -1,4 +1,4 @@
-﻿// + TODO check
+﻿// +
 
 using System;
 using System.Collections.Generic;
@@ -15,13 +15,14 @@ namespace RBD.TPC.Msg
     {
         public DBException Exception { get; set; }
 
-        public ErrorMessage(string msg)
+        public void setException(DBException e)
         {
-            //TODO
+            Exception = e;
         }
 
-        public ErrorMessage()
+        public DBException getException()
         {
+            return Exception;
         }
 
         override

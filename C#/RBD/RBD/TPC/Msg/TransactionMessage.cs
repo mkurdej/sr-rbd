@@ -1,4 +1,4 @@
-﻿// + TODO check
+﻿// +
 
 using System;
 using System.Collections.Generic;
@@ -20,6 +20,16 @@ namespace RBD.TPC.Msg
         }
 
         public TransactionMessage(String queryString)
+        {
+            QueryString = queryString;
+        }
+
+        public String getQueryString()
+        {
+            return QueryString;
+        }
+
+        public void setQueryString(String queryString)
         {
             QueryString = queryString;
         }

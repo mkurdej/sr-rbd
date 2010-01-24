@@ -12,23 +12,34 @@ namespace RBD.TPC.Msg
 {
     public class CanCommitMessage : TPCMessage
     {
-        public String getQueryString() {
-            return QueryString;
-        }
-        public void setQueryString(String queryString)
-        {
-            QueryString =queryString;
-        }
         public String QueryString { get; set; }
+
+        public String TableName { get; set; }
+
+        public bool IsCreate { get; set; }
+
+        public int TableVersion { get; set; }
+
         public String getTableName()
         {
             return TableName;
         }
+
         public void setTableName(String tableName)
         {
             TableName = tableName;
         }
-        public String TableName { get; set; }
+
+        public void setQueryString(String queryString)
+        {
+            QueryString = queryString;
+        }
+
+        public String getQueryString()
+        {
+            return QueryString;
+        }
+
         /**
          * Czy transakcja dotyczy utworzenia nowej tabeli
          */
@@ -36,10 +47,10 @@ namespace RBD.TPC.Msg
         {
             return IsCreate;
         }
-        public void setCreate(bool isCreate) {
+        public void setCreate(bool isCreate)
+        {
             IsCreate = isCreate;
         }
-        public bool IsCreate { get; set; }
         /**
          * Numer wersji tabeli na koordynatorze
          */
@@ -51,16 +62,14 @@ namespace RBD.TPC.Msg
         {
             TableVersion = tableVersion;
         }
-        public int TableVersion { get; set; }
 
         override
         public void FromBinary(DataInputStream s) //throws IOException 
         {
             base.FromBinary(s);
-            QueryString = s.ReadString();
-            TableName = s.ReadString();
-            //http://java.sun.com/j2se/1.4.2/docs/api/java/io/DataInput.html#readBoolean()
-            IsCreate = s.ReadBoolean(); // 1 Byte
+            QueryString = s.readString();
+            TableName = s.readString();
+            IsCreate = s.readBoolean();
             TableVersion = s.readInt();
         }
 
@@ -76,7 +85,7 @@ namespace RBD.TPC.Msg
             base.ToBinary(s);
             s.writeString(QueryString);
             s.writeString(TableName);
-            s.Write((bool)IsCreate);    // TODO
+            s.writeBoolean(IsCreate);
             s.writeInt(TableVersion);
         }
     }

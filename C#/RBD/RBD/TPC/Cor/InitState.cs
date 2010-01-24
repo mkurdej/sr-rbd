@@ -25,7 +25,7 @@ public class InitState : CoordinatorState {
 		{
 			Logger.getInstance().log("Unparsable query - send back error and end transaction", LOGGING_NAME, Logger.Level.INFO);
 			
-			TcpSender.getInstance().sendToNode(new ErrorMessage("Bad query"), message.Sender);
+			TcpSender.getInstance().sendToNode(new RBD.Msg.Client.ErrorMessage("Bad query"), message.Sender);
 			coordinator.endTransaction();
 			return;
 		}
