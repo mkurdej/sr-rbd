@@ -1,4 +1,4 @@
-﻿// + TODO check
+﻿// +
 
 using System;
 using System.Collections.Generic;
@@ -11,18 +11,27 @@ namespace RBD.Msg.Client
 {
     public class SuccessMessage : ClientResponse
     {
-        public String DatabaseMessage { get; set; }
+        private String databaseMessage = "SUCCESS";
 
+        public void setDatabaseMessage(String message)
+        {
+            databaseMessage = message;
+        }
+
+        public String getDatabaseMessage()
+        {
+            return databaseMessage;
+        }
         override
         public void FromBinary(DataInputStream s) //throws IOException 
         {
-            DatabaseMessage = s.ReadString();
+            databaseMessage = s.readString();
         }
 
         override
         public void ToBinary(DataOutputStream s) //throws IOException 
         {
-            s.WriteString(DatabaseMessage);
+            s.writeString(databaseMessage);
 
         }
 
