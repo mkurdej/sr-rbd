@@ -16,7 +16,7 @@ namespace RBD.TPC.COR
             coordinator.abortTransaction(new RBD.Msg.Client.TimeoutMessage());
         }
 
-        override public void onYesForCommit(IPAddress node)
+        override public void onYesForCommit(IPEndPoint node)
         {
             coordinator.processAnswer(node, new PreCommitMessage(), new PreparedState());
             Logger.getInstance().log("Got answer "
@@ -25,7 +25,7 @@ namespace RBD.TPC.COR
  				Logger.Level.INFO);
         }
 
-        override public void onNoForCommit(IPAddress node)
+        override public void onNoForCommit(IPEndPoint node)
         {
             Logger.getInstance().log("Got no - aborting!", LOGGING_NAME, Logger.Level.INFO);
             coordinator.abortTransaction(new ConflictMessage());

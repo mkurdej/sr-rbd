@@ -14,7 +14,7 @@ public class PreparedState : CoordinatorState {
 		coordinator.abortTransaction(new TimeoutMessage());
 	}
 
-    override public void onAckPreCommit(IPAddress node)
+    override public void onAckPreCommit(IPEndPoint node)
     {
 		coordinator.processAnswer(node, new DoCommitMessage(), new CommitState());
         Logger.getInstance().log(
