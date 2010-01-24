@@ -1,4 +1,4 @@
-﻿// + TODO check, wartości enuma !
+﻿// +
 
 using System;
 using System.Collections.Generic;
@@ -68,15 +68,15 @@ namespace RBD.Msg
 
         const string LOGGING_NAME = "Message";
 
-        //InetSocketAddress sender;
-        public IPEndPoint getSender() {
-            return Sender;
-        }
+        public IPEndPoint Sender { get; set; }
+
         public void setSender(IPEndPoint sender)
         {
             Sender = sender;
         }
-        public IPEndPoint Sender { get; set; }
+        public IPEndPoint getSender() {
+            return Sender;
+        }
 
         public String toString()
         {
