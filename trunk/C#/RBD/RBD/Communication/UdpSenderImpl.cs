@@ -49,7 +49,7 @@ namespace RBD.Communication
                 {
                     byte[] data = msg.Serialize();
                     socket.Send(data);
-                    Logger.getInstance().log("Sending: [" + msg.ToString() + "]", LOGGING_NAME, Logger.Level.INFO);
+                    //Logger.getInstance().log("Sending: [" + msg.ToString() + "]", LOGGING_NAME, Logger.Level.INFO);
                 }
                 catch (SocketException ex)
                 {

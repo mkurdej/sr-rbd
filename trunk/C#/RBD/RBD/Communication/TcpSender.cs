@@ -80,14 +80,12 @@ namespace RBD.Communication
                 if (nodeInfo == null)
                 {
                     // connect to node
-                    IPEndPoint nodeEndPoint;
                     Socket socket;
                     try
                     {
-                        nodeEndPoint = new IPEndPoint(node.Address, node.Port);
                         socket = new Socket(AddressFamily.InterNetwork,
                                     SocketType.Stream, ProtocolType.Tcp);
-                        socket.Connect(nodeEndPoint);
+                        socket.Connect(node);
 
                         TcpWorker worker = new TcpWorker(socket, storage);
                         new Thread(new ThreadStart(worker.run)).Start();
